@@ -63,8 +63,16 @@ function saveStore(data) {
 
 const DEFAULT_PASSWORD = process.env.EDIT_PASSWORD || 'rnf2026';
 
+let store = loadStore();
+
 // Assure la présence de la section sécurité
-if (store && !store.security) {
+if (!store) {
+  store = {
+    projects: [],
+    activeProjectId: null,
+    security: { editPassword: DEFAULT_PASSWORD }
+  };
+} else if (!store.security) {
   store.security = { editPassword: DEFAULT_PASSWORD };
   saveStore(store);
 }
