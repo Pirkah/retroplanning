@@ -5,11 +5,13 @@ import { GanttChartView } from './components/GanttChartView';
 import { CalendarView } from './components/CalendarView';
 import { TaskListView } from './components/TaskListView';
 import { TaskModal } from './components/TaskModal';
+import { Footer } from './components/Footer';
+import { GanttExportCanvas } from './components/GanttExportCanvas';
 import { CheckCircle2, Clock, Sparkles } from 'lucide-react';
 import { formatDateFr } from './utils/scheduler';
 
 const MainLayout: React.FC = () => {
-  const { viewMode, currentProject } = usePlanning();
+  const { viewMode, currentProject, members } = usePlanning();
 
   const totalTasks = currentProject.tasks.length;
   const completedTasks = currentProject.tasks.filter((t) => t.status === 'completed').length;
@@ -65,8 +67,16 @@ const MainLayout: React.FC = () => {
         {viewMode === 'list' && <TaskListView />}
       </main>
 
+      {/* Pied de page & Liens X / GitHub */}
+      <Footer />
+
       {/* Modale d'ajout / modification de tâche */}
       <TaskModal />
+
+      {/* Cible d'export HD complète (invisible à l'écran, accessible pour le rendu PDF/PNG paysage) */}
+      <div className="fixed -left-[99999px] top-0 pointer-events-none select-none" aria-hidden="true">
+        <GanttExportCanvas project={currentProject} members={members} />
+      </div>
     </div>
   );
 };

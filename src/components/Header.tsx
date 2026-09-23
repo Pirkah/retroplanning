@@ -16,6 +16,8 @@ import {
   X,
   FileImage,
   FileCode,
+  FileText,
+  Loader2,
   Users,
   Wifi,
   Share2,
@@ -26,6 +28,7 @@ import {
 import html2canvas from 'html2canvas';
 import { TeamModal } from './TeamModal';
 import { AuthModal } from './AuthModal';
+import { exportGanttToPdf, exportGanttToPng } from '../utils/pdfExport';
 
 export const Header: React.FC = () => {
   const {
@@ -96,25 +99,33 @@ export const Header: React.FC = () => {
     e.target.value = '';
   };
 
-  const handleExportImage = async () => {
-    setIsExportMenuOpen(false);
-    const element = document.getElementById('planning-main-view');
-    if (!element) return;
+  const [exportStatus, setExportStatus] = useState<string | null>(null);
 
+  const handleExportPdf = async (format: 'a3' | 'a4') => {
+    setIsExportMenuOpen(false);
     try {
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        backgroundColor: '#f8fafc',
-        useCORS: true
+      await exportGanttToPdf({
+        projectName: currentProject.name,
+        format,
+        onProgress: (msg) => setExportStatus(msg)
       });
-      const imgData = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.href = imgData;
-      link.download = `${currentProject.name.toLowerCase().replace(/\s+/g, '_')}_gantt.png`;
-      link.click();
     } catch (err) {
       console.error(err);
-      alert("Impossible de générer l'image.");
+      alert("Erreur lors de la génération du PDF.");
+    } finally {
+      setExportStatus(null);
+    }
+  };
+
+  const handleExportPng = async () => {
+    setIsExportMenuOpen(false);
+    try {
+      await exportGanttToPng(currentProject.name, (msg) => setExportStatus(msg));
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de l'export de l'image.");
+    } finally {
+      setExportStatus(null);
     }
   };
 
@@ -314,24 +325,79 @@ export const Header: React.FC = () => {
             </button>
 
             {isExportMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-1.5 z-50 animate-fadeIn">
+              <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-2xl py-2 z-50 animate-fadeIn">
+                <div className="px-3.5 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                  Export & Impression
+                </div>
+
+                {/* PDF Paysage A3 */}
                 <button
-                  onClick={() => {
-                    setIsExportMenuOpen(false);
-                    exportProjectJson();
-                  }}
-                  className="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+                  onClick={() => handleExportPdf('a3')}
+                  disabled={!!exportStatus}
+                  className="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 flex items-start gap-2.5 transition group"
                 >
-                  <FileCode size={14} className="text-indigo-600" />
-                  Sauvegarde (JSON)
+                  <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                    <FileText size={16} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold text-slate-800">PDF Paysage A3</p>
+                      <span className="text-[9px] bg-rose-100 text-rose-700 px-1.5 py-0.2 rounded font-extrabold uppercase">
+                        Optimal
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                      Toutes les semaines & tâches visibles sans coupure (Grand format HD)
+                    </p>
+                  </div>
                 </button>
+
+                {/* PDF Paysage A4 */}
                 <button
-                  onClick={handleExportImage}
-                  className="w-full text-left px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2"
+                  onClick={() => handleExportPdf('a4')}
+                  disabled={!!exportStatus}
+                  className="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
                 >
-                  <FileImage size={14} className="text-emerald-600" />
-                  Image capture Gantt (PNG)
+                  <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                    <FileText size={16} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">PDF Paysage A4</p>
+                    <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                      Format standard paysage compact pour impression
+                    </p>
+                  </div>
                 </button>
+
+                {/* Image Panoramique PNG */}
+                <button
+                  onClick={handleExportPng}
+                  disabled={!!exportStatus}
+                  className="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                    <FileImage size={16} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">Image Panoramique (PNG)</p>
+                    <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                      Image haute résolution intégrale
+                    </p>
+                  </div>
+                </button>
+
+                <div className="border-t border-slate-100 my-1 pt-1">
+                  <button
+                    onClick={() => {
+                      setIsExportMenuOpen(false);
+                      exportProjectJson();
+                    }}
+                    className="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-xs text-slate-700 transition"
+                  >
+                    <FileCode size={15} className="text-slate-400" />
+                    <span>Sauvegarde complète (JSON)</span>
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -564,6 +630,21 @@ export const Header: React.FC = () => {
 
       {/* Modale de mot de passe / déverrouillage */}
       <AuthModal />
+
+      {/* Indicateur de progression d'exportation PDF / PNG */}
+      {exportStatus && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
+          <div className="bg-white rounded-2xl p-6 shadow-2xl border border-slate-200 flex items-center gap-4 max-w-sm w-full mx-4">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+              <Loader2 size={22} className="animate-spin" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Génération du document...</p>
+              <p className="text-xs text-slate-500 mt-0.5">{exportStatus}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 };
