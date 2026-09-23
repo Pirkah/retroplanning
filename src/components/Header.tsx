@@ -23,7 +23,8 @@ import {
   Share2,
   Copy,
   Lock,
-  Unlock
+  Unlock,
+  Eye
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { TeamModal } from './TeamModal';
@@ -402,25 +403,39 @@ export const Header: React.FC = () => {
             )}
           </div>
 
-          {/* Bouton de statut de verrouillage / mot de passe */}
-          {isAuthorized ? (
-            <button
-              onClick={openAuthModal}
-              className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
-              title="Mode édition actif (cliquez pour verrouiller ou changer le mot de passe)"
-            >
-              <Unlock size={14} className="text-emerald-600" />
-              <span className="hidden sm:inline">Édition active</span>
-            </button>
+          {/* Badge et Sélecteur Mode Lecteur / Mode Éditeur */}
+          {!isAuthorized ? (
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold shadow-2xs">
+                <Eye size={14} className="text-amber-600" />
+                <span>Mode Lecteur</span>
+                <span className="text-[10px] text-amber-600 font-normal hidden lg:inline">(Lecture seule)</span>
+              </div>
+              <button
+                onClick={openAuthModal}
+                className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-xs"
+                title="Saisir le mot de passe pour passer en mode édition"
+              >
+                <Lock size={13} className="text-amber-400" />
+                <span className="hidden sm:inline">Déverrouiller</span>
+              </button>
+            </div>
           ) : (
-            <button
-              onClick={openAuthModal}
-              className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
-              title="Mode consultation (cliquez pour déverrouiller la modification avec le mot de passe)"
-            >
-              <Lock size={14} className="text-amber-600" />
-              <span>Déverrouiller</span>
-            </button>
+            <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-2xs">
+                <Edit3 size={14} className="text-emerald-600" />
+                <span>Mode Éditeur</span>
+                <span className="text-[10px] text-emerald-600 font-normal hidden lg:inline">(Modifications autorisées)</span>
+              </div>
+              <button
+                onClick={openAuthModal}
+                className="px-2.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+                title="Options de sécurité ou verrouiller en mode lecteur"
+              >
+                <Lock size={13} className="text-slate-400" />
+                <span className="hidden sm:inline">Verrouiller</span>
+              </button>
+            </div>
           )}
 
           <button

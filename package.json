@@ -9,6 +9,7 @@
     "client": "vite --host",
     "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,magenta\" \"npm run server\" \"npm run client\"",
     "build": "tsc && vite build",
+    "postinstall": "npm run build",
     "preview": "vite preview"
   },
   "dependencies": {

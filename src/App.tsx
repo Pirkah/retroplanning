@@ -7,11 +7,11 @@ import { TaskListView } from './components/TaskListView';
 import { TaskModal } from './components/TaskModal';
 import { Footer } from './components/Footer';
 import { GanttExportCanvas } from './components/GanttExportCanvas';
-import { CheckCircle2, Clock, Sparkles } from 'lucide-react';
+import { CheckCircle2, Clock, Sparkles, Eye, Lock } from 'lucide-react';
 import { formatDateFr } from './utils/scheduler';
 
 const MainLayout: React.FC = () => {
-  const { viewMode, currentProject, members } = usePlanning();
+  const { viewMode, currentProject, members, isAuthorized, openAuthModal } = usePlanning();
 
   const totalTasks = currentProject.tasks.length;
   const completedTasks = currentProject.tasks.filter((t) => t.status === 'completed').length;
@@ -21,6 +21,25 @@ const MainLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-100/70 flex flex-col">
       <Header />
+
+      {/* Bandeau d'information Mode Lecteur */}
+      {!isAuthorized && (
+        <div className="bg-amber-500/10 border-b border-amber-200/80 px-6 py-2 flex items-center justify-between text-xs text-amber-900 transition-all">
+          <div className="flex items-center gap-2">
+            <Eye size={15} className="text-amber-700 shrink-0" />
+            <span>
+              <strong>Mode Lecteur actif :</strong> Vous visualisez le planning en lecture seule. Saisissez le mot de passe pour modifier les tâches.
+            </span>
+          </div>
+          <button
+            onClick={openAuthModal}
+            className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-xs shrink-0 flex items-center gap-1.5 shadow-2xs transition"
+          >
+            <Lock size={12} />
+            <span>Passer en Mode Édition</span>
+          </button>
+        </div>
+      )}
 
       {/* Barre de synthèse & KPIs rapides */}
       <div className="px-6 py-2 bg-white/70 border-b border-slate-200/60 backdrop-blur-xs flex flex-wrap items-center justify-between text-xs text-slate-600 gap-4">
