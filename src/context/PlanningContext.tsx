@@ -1,6 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { Project, Task, ViewMode, TimelineZoom, TeamMember, DEFAULT_TEAM_MEMBERS } from '../types/planning';
-import { DEFAULT_PROJECT } from '../data/defaultProject';
+import {
+  Project,
+  Task,
+  ViewMode,
+  TimelineZoom,
+  TeamMember,
+  DEFAULT_TEAM_MEMBERS,
+  RetroplanningEvent,
+  RetroplanningTask
+} from '../types/planning';
+import { DEFAULT_PROJECT, GEA_ENTREPRENEURIAT_PROJECT } from '../data/defaultProject';
 import { sortTasksChronologically } from '../utils/scheduler';
 
 interface PlanningContextType {
@@ -58,6 +67,14 @@ interface PlanningContextType {
   lockEditMode: () => void;
   changePassword: (oldPass: string, newPass: string) => Promise<{ success: boolean; message?: string }>;
 
+  // Rétroplanning par Événements (style Excel)
+  addRetroEvent: (event: Omit<RetroplanningEvent, 'id'>) => void;
+  updateRetroEvent: (event: RetroplanningEvent) => void;
+  deleteRetroEvent: (eventId: string) => void;
+  addRetroTask: (eventId: string, task: Omit<RetroplanningTask, 'id'>) => void;
+  updateRetroTask: (eventId: string, task: RetroplanningTask) => void;
+  deleteRetroTask: (eventId: string, taskId: string) => void;
+
   // Import / Export
   exportProjectJson: () => void;
   importProjectJson: (content: string) => boolean;
@@ -75,17 +92,30 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map((p) => ({
-            ...p,
-            tasks: sortTasksChronologically(p.tasks || []),
-            members: p.members || DEFAULT_TEAM_MEMBERS
-          }));
+          const loaded = parsed.map((p) => {
+            let events = p.events;
+            if (!events || events.length === 0) {
+              if (p.id === 'proj-rnf-2026') events = DEFAULT_PROJECT.events;
+              if (p.id === 'proj-gea-2026') events = GEA_ENTREPRENEURIAT_PROJECT.events;
+            }
+            return {
+              ...p,
+              tasks: sortTasksChronologically(p.tasks || []),
+              members: p.members || (p.id === 'proj-gea-2026' ? GEA_ENTREPRENEURIAT_PROJECT.members : DEFAULT_TEAM_MEMBERS),
+              events: events || []
+            };
+          });
+
+          if (!loaded.some((p: Project) => p.id === 'proj-gea-2026')) {
+            loaded.push(GEA_ENTREPRENEURIAT_PROJECT);
+          }
+          return loaded;
         }
       }
     } catch (e) {
       console.error('Erreur chargement localStorage:', e);
     }
-    return [DEFAULT_PROJECT];
+    return [DEFAULT_PROJECT, GEA_ENTREPRENEURIAT_PROJECT];
   });
 
   const [activeProjectId, setActiveProjectId] = useState<string>(() => {
@@ -466,6 +496,124 @@ const AUTH_KEY = 'rnf_auth_password_v1';
     setDefaultDateForNewTask(null);
   };
 
+  // --- Gestion du Rétroplanning par Événements (style Excel) ---
+  const addRetroEvent = (eventData: Omit<RetroplanningEvent, 'id'>) => {
+    const newEvent: RetroplanningEvent = {
+      ...eventData,
+      id: `event-${Date.now()}`,
+      tasks: eventData.tasks || []
+    };
+    const updatedProjects = projects.map((p) => {
+      if (p.id === activeProjectId) {
+        return {
+          ...p,
+          events: [...(p.events || []), newEvent]
+        };
+      }
+      return p;
+    });
+    setProjects(updatedProjects);
+    broadcastState(updatedProjects, activeProjectId);
+  };
+
+  const updateRetroEvent = (updatedEvent: RetroplanningEvent) => {
+    const updatedProjects = projects.map((p) => {
+      if (p.id === activeProjectId) {
+        return {
+          ...p,
+          events: (p.events || []).map((e) => (e.id === updatedEvent.id ? updatedEvent : e))
+        };
+      }
+      return p;
+    });
+    setProjects(updatedProjects);
+    broadcastState(updatedProjects, activeProjectId);
+  };
+
+  const deleteRetroEvent = (eventId: string) => {
+    const updatedProjects = projects.map((p) => {
+      if (p.id === activeProjectId) {
+        return {
+          ...p,
+          events: (p.events || []).filter((e) => e.id !== eventId)
+        };
+      }
+      return p;
+    });
+    setProjects(updatedProjects);
+    broadcastState(updatedProjects, activeProjectId);
+  };
+
+  const addRetroTask = (eventId: string, taskData: Omit<RetroplanningTask, 'id'>) => {
+    const newTask: RetroplanningTask = {
+      ...taskData,
+      id: `rtask-${Date.now()}`
+    };
+    const updatedProjects = projects.map((p) => {
+      if (p.id === activeProjectId) {
+        return {
+          ...p,
+          events: (p.events || []).map((e) => {
+            if (e.id === eventId) {
+              return {
+                ...e,
+                tasks: [...(e.tasks || []), newTask]
+              };
+            }
+            return e;
+          })
+        };
+      }
+      return p;
+    });
+    setProjects(updatedProjects);
+    broadcastState(updatedProjects, activeProjectId);
+  };
+
+  const updateRetroTask = (eventId: string, updatedTask: RetroplanningTask) => {
+    const updatedProjects = projects.map((p) => {
+      if (p.id === activeProjectId) {
+        return {
+          ...p,
+          events: (p.events || []).map((e) => {
+            if (e.id === eventId) {
+              return {
+                ...e,
+                tasks: (e.tasks || []).map((t) => (t.id === updatedTask.id ? updatedTask : t))
+              };
+            }
+            return e;
+          })
+        };
+      }
+      return p;
+    });
+    setProjects(updatedProjects);
+    broadcastState(updatedProjects, activeProjectId);
+  };
+
+  const deleteRetroTask = (eventId: string, taskId: string) => {
+    const updatedProjects = projects.map((p) => {
+      if (p.id === activeProjectId) {
+        return {
+          ...p,
+          events: (p.events || []).map((e) => {
+            if (e.id === eventId) {
+              return {
+                ...e,
+                tasks: (e.tasks || []).filter((t) => t.id !== taskId)
+              };
+            }
+            return e;
+          })
+        };
+      }
+      return p;
+    });
+    setProjects(updatedProjects);
+    broadcastState(updatedProjects, activeProjectId);
+  };
+
   const exportProjectJson = () => {
     const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(currentProject, null, 2));
     const downloadAnchor = document.createElement('a');
@@ -488,7 +636,8 @@ const AUTH_KEY = 'rnf_auth_password_v1';
         description: parsed.description || '',
         createdAt: new Date().toISOString(),
         tasks: sortTasksChronologically(parsed.tasks),
-        members: parsed.members || DEFAULT_TEAM_MEMBERS
+        members: parsed.members || DEFAULT_TEAM_MEMBERS,
+        events: parsed.events || []
       };
       const nextProjects = [...projects, imported];
       setProjects(nextProjects);
@@ -545,6 +694,12 @@ const AUTH_KEY = 'rnf_auth_password_v1';
         unlockEditMode,
         lockEditMode,
         changePassword,
+        addRetroEvent,
+        updateRetroEvent,
+        deleteRetroEvent,
+        addRetroTask,
+        updateRetroTask,
+        deleteRetroTask,
         exportProjectJson,
         importProjectJson,
       }}

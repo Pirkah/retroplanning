@@ -17,6 +17,7 @@ import {
   FileImage,
   FileCode,
   FileText,
+  FileSpreadsheet,
   Loader2,
   Users,
   Wifi,
@@ -476,8 +477,9 @@ export const Header: React.FC = () => {
 
       {/* Ligne 2 : Sélecteur de Vue & Barre de Collaborateurs */}
       <div className="px-6 py-2.5 flex flex-wrap items-center justify-between gap-4 bg-slate-50/60">
-        {/* Sélecteur de Vue */}
+        {/* Sélecteur de Vue : 1er Onglet Gantt + 2ème Onglet Rétroplanning Événements */}
         <div className="flex items-center bg-slate-200/70 p-1 rounded-xl gap-1">
+          {/* 1er Onglet : Diagramme de Gantt */}
           <button
             onClick={() => setViewMode('gantt')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
@@ -487,11 +489,31 @@ export const Header: React.FC = () => {
             }`}
           >
             <GanttChartSquare size={15} />
-            <span>Diagramme de Gantt (Semaines)</span>
+            <span>Diagramme de Gantt</span>
           </button>
+
+          {/* 2ème Onglet : Rétroplanning Événements (style Excel) */}
+          <button
+            onClick={() => setViewMode('retroplanning')}
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
+              viewMode === 'retroplanning'
+                ? 'bg-white text-blue-700 shadow-xs font-bold'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <FileSpreadsheet size={15} />
+            <div className="flex items-center gap-1">
+              <span>Rétroplanning Événements</span>
+              <span className="px-1.5 py-0.2 bg-blue-100 text-blue-800 rounded text-[9px] font-black uppercase">
+                Excel
+              </span>
+            </div>
+          </button>
+
+          {/* Vues complémentaires */}
           <button
             onClick={() => setViewMode('calendar')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
+            className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
               viewMode === 'calendar'
                 ? 'bg-white text-indigo-700 shadow-xs font-bold'
                 : 'text-slate-600 hover:text-slate-900'
@@ -502,14 +524,14 @@ export const Header: React.FC = () => {
           </button>
           <button
             onClick={() => setViewMode('list')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
+            className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
               viewMode === 'list'
                 ? 'bg-white text-indigo-700 shadow-xs font-bold'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
             <ListOrdered size={15} />
-            <span>Échéancier & Liste</span>
+            <span>Liste</span>
           </button>
         </div>
 

@@ -7,6 +7,7 @@ import { TaskListView } from './components/TaskListView';
 import { TaskModal } from './components/TaskModal';
 import { Footer } from './components/Footer';
 import { GanttExportCanvas } from './components/GanttExportCanvas';
+import { RetroplanningView } from './components/RetroplanningView';
 import { CheckCircle2, Clock, Sparkles, Eye, Lock } from 'lucide-react';
 import { formatDateFr } from './utils/scheduler';
 
@@ -82,6 +83,7 @@ const MainLayout: React.FC = () => {
       {/* Conteneur principal de la vue */}
       <main id="planning-main-view" className="flex-1 p-4 md:p-6 flex flex-col overflow-hidden max-w-[1920px] w-full mx-auto">
         {(viewMode === 'gantt' || viewMode === 'timeline') && <GanttChartView />}
+        {viewMode === 'retroplanning' && <RetroplanningView />}
         {viewMode === 'calendar' && <CalendarView />}
         {viewMode === 'list' && <TaskListView />}
       </main>

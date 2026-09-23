@@ -560,5 +560,251 @@ export const DEFAULT_PROJECT: Project = {
       assigneeId: 'm-vianney',
       isMilestone: true
     }
+  ],
+  events: [
+    {
+      id: 'event-rnf-1',
+      title: 'Remise des Chèques Partenaires',
+      date: '18-oct-26',
+      objective: 'Cérémonie officielle de remerciement et remise des dons',
+      content: 'Accueil des partenaires institutionnels et sponsors, discours officiel, cocktail et remise des chèques.',
+      color: '#0EA5E9',
+      tasks: [
+        { id: 't-rnf-1-1', weekLabel: 'S40', category: 'Administratif', action: 'Demande de salle pour la remise de chèque à la mairie', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-rnf-1-2', weekLabel: 'S41', category: 'Partenaires', action: 'Envoyer un mail aux fournisseurs pour les inviter à la remise', assignee: 'Julien Nicolle', status: 'completed' },
+        { id: 't-rnf-1-3', weekLabel: 'S42', category: 'Communication', action: 'Création des affiches et cartons d’invitation officiels', assignee: 'Sina Abdoul Bastoi', status: 'in_progress' },
+        { id: 't-rnf-1-4', weekLabel: 'S42 (18 oct.)', category: 'Activité', action: 'Cérémonie de Remise des Chèques – 18 octobre 2026', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 't-rnf-1-5', weekLabel: 'S43', category: 'Post-événement', action: 'Publication des photos officielles et remerciements presse', assignee: 'Sina Abdoul Bastoi', status: 'todo' }
+      ]
+    },
+    {
+      id: 'event-rnf-2',
+      title: 'Lancement Billetterie & Dossards',
+      date: '15-janv-27',
+      objective: 'Ouverture grand public des inscriptions de la course Run & Fun',
+      content: 'Activation du module d’inscription en ligne, communication massive et coordination avec la plateforme de paiement.',
+      color: '#16A34A',
+      tasks: [
+        { id: 't-rnf-2-1', weekLabel: 'S01', category: 'Communication', action: 'Validation de la page d’inscription et des tarifs dossards', assignee: 'Julien Nicolle', status: 'todo' },
+        { id: 't-rnf-2-2', weekLabel: 'S02', category: 'Communication', action: 'Teaser vidéo sur Instagram et TikTok', assignee: 'Sina Abdoul Bastoi', status: 'todo' },
+        { id: 't-rnf-2-3', weekLabel: 'S02 (15 janv.)', category: 'Activité', action: 'Ouverture officielle de la Billetterie Run & Fun 2027', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 't-rnf-2-4', weekLabel: 'S03', category: 'Logistique', action: 'Suivi des premiers quotas et commande des lots dossards', assignee: 'Tetew', status: 'todo' }
+      ]
+    },
+    {
+      id: 'event-rnf-3',
+      title: 'Jour J : Course Run & Fun',
+      date: '28-mars-27',
+      objective: 'Grand événement sportif et solidaire annuel',
+      content: 'Organisation des départs, sécurité du parcours, ravitaillement, animations musicales et remise des trophées.',
+      color: '#EF4444',
+      tasks: [
+        { id: 't-rnf-3-1', weekLabel: 'S11', category: 'Logistique', action: 'Briefing sécurité avec la Croix-Rouge et les bénévoles', assignee: 'Mathias Samson', status: 'todo' },
+        { id: 't-rnf-3-2', weekLabel: 'S12', category: 'Logistique', action: 'Balisage complet du parcours de la course', assignee: 'Tetew', status: 'todo' },
+        { id: 't-rnf-3-3', weekLabel: 'S12 (28 mars)', category: 'Activité', action: 'JOUR J : Grande Course Solidaire Run & Fun 2027 !', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 't-rnf-3-4', weekLabel: 'S13', category: 'Post-événement', action: 'Démontage, nettoyage du site et débriefing général', assignee: 'Toute l’équipe', status: 'todo' }
+      ]
+    }
+  ]
+};
+
+export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
+  id: 'proj-gea-2026',
+  name: 'GEA ENTREPRENEURIAT - RÉTRO-PLANNING ANNÉE 2026-2027',
+  description: 'Rétro-planning prévisionnel des 4 événements majeurs de l’année 2026-2027.',
+  createdAt: '2026-09-23T10:00:00.000Z',
+  members: [
+    { id: 'm-nora', name: 'Nora RIVET', role: 'Membre équipe', color: '#EC4899', initials: 'NR' },
+    { id: 'm-laurine', name: 'Laurine COGHE', role: 'Membre équipe', color: '#10B981', initials: 'LC' },
+    { id: 'm-alexandre', name: 'Alexandre VARIERAS', role: 'Membre équipe', color: '#3B82F6', initials: 'AV' },
+    { id: 'm-nolann', name: 'Nolann MAZEAU', role: 'Membre équipe', color: '#8B5CF6', initials: 'NM' },
+    { id: 'm-david', name: 'David MEIRA', role: 'Membre équipe', color: '#F59E0B', initials: 'DM' },
+    { id: 'm-paul', name: 'Paul De SEZE', role: 'Membre équipe', color: '#0EA5E9', initials: 'PS' }
+  ],
+  tasks: [
+    {
+      id: 'gea-task-1',
+      title: 'Escape Game Entrepreneuriat',
+      startDate: '2026-09-21',
+      endDate: '2026-10-23',
+      color: '#10B981',
+      status: 'in_progress',
+      priority: 'high',
+      progress: 40,
+      category: 'activité',
+      assignee: 'Toute l’équipe'
+    },
+    {
+      id: 'gea-task-2',
+      title: 'Simulation d’entreprise',
+      startDate: '2026-10-12',
+      endDate: '2026-11-06',
+      color: '#3B82F6',
+      status: 'todo',
+      priority: 'high',
+      progress: 10,
+      category: 'activité',
+      assignee: 'Toute l’équipe'
+    },
+    {
+      id: 'gea-task-3',
+      title: 'Conférence PÉPITE & Étudiants',
+      startDate: '2026-11-23',
+      endDate: '2027-01-08',
+      color: '#8B5CF6',
+      status: 'todo',
+      priority: 'high',
+      progress: 0,
+      category: 'activité',
+      assignee: 'Toute l’équipe'
+    },
+    {
+      id: 'gea-task-4',
+      title: 'Grand Dîner Entrepreneurial',
+      startDate: '2027-01-18',
+      endDate: '2027-03-12',
+      color: '#F59E0B',
+      status: 'todo',
+      priority: 'high',
+      progress: 0,
+      category: 'activité',
+      assignee: 'Toute l’équipe'
+    }
+  ],
+  events: [
+    {
+      id: 'gea-event-1',
+      title: 'Escape Game',
+      date: '15-oct-26',
+      objective: 'Initiation aux notions de l’entreprenariat pour les BUT 1',
+      content: 'Mise en avant des notions de l’entreprenariat de façon ludique ainsi que de faciliter le travail de groupe et l’intégration des BUT 1. Possibilité de le mettre obligatoire sur l’emploi du temps, sinon faire un système d’inscription.',
+      color: '#10B981',
+      tasks: [
+        {
+          id: 'gea-eg-1',
+          weekLabel: 'S39',
+          category: 'Communication',
+          action: 'Créer le formulaire d’inscription en ligne. Si impossible de le rendre obligatoire.',
+          assignee: 'Laurine COGHE',
+          status: 'todo'
+        },
+        {
+          id: 'gea-eg-2',
+          weekLabel: 'S40',
+          category: 'Communication',
+          action: 'Réaliser une vidéo de promotion (Reel)',
+          assignee: 'Nolann MAZEAU',
+          status: 'todo'
+        },
+        {
+          id: 'gea-eg-3',
+          weekLabel: 'S40',
+          category: 'Logistique',
+          action: 'Intervenir dans les cours de BUT 1 pour présenter l’atelier',
+          assignee: 'Alexandre VARIERAS',
+          status: 'todo'
+        },
+        {
+          id: 'gea-eg-4',
+          weekLabel: 'S41',
+          category: 'Logistique',
+          action: 'Contrôler les inscriptions et relancer si nécessaire',
+          assignee: 'Paul De SEZE',
+          status: 'todo'
+        },
+        {
+          id: 'gea-eg-5',
+          weekLabel: 'S41',
+          category: 'Logistique',
+          action: 'Préparer l’activité entrepreneurial',
+          assignee: 'David MEIRA',
+          status: 'todo'
+        },
+        {
+          id: 'gea-eg-6',
+          weekLabel: 'S42',
+          category: 'Logistique',
+          action: 'Organiser l’ouverture de la salle et le matériel',
+          assignee: 'Laurine COGHE',
+          status: 'todo'
+        },
+        {
+          id: 'gea-eg-7',
+          weekLabel: 'S42 (12 oct.)',
+          category: 'Activité',
+          action: 'Escape Game – Jeudi 22 octobre 2026, 2H',
+          assignee: 'Toute l’équipe',
+          status: 'event',
+          isEventHighlight: true
+        },
+        {
+          id: 'gea-eg-8',
+          weekLabel: 'S42 (12 oct.)',
+          category: 'Événement',
+          action: 'Envoyer un sondage de satisfaction aux participants',
+          assignee: 'Nora RIVET',
+          status: 'todo'
+        },
+        {
+          id: 'gea-eg-9',
+          weekLabel: 'S43',
+          category: 'Post-événement',
+          action: 'Débriefing interne + bilan des inscriptions (formulaire)',
+          assignee: 'Toute l’équipe',
+          status: 'todo'
+        }
+      ]
+    },
+    {
+      id: 'gea-event-2',
+      title: 'Simulation d’une application pour créer une entreprise',
+      date: '05-nov-26',
+      objective: 'Simulation entrepreneuriale – préparation à certaines évaluations',
+      content: 'Simulation de compétition de gestion d’entreprise pour initier les BUT 1',
+      color: '#3B82F6',
+      tasks: [
+        { id: 'gea-sim-1', weekLabel: 'S42', category: 'Préparation', action: 'Définition des règles et du scénario d’application', assignee: 'Nora RIVET', status: 'todo' },
+        { id: 'gea-sim-2', weekLabel: 'S43', category: 'Communication', action: 'Affiche, vidéo, réseaux sociaux et teasing', assignee: 'Nolann MAZEAU', status: 'todo' },
+        { id: 'gea-sim-3', weekLabel: 'S44', category: 'Logistique', action: 'Réservation salle informatique et matériel', assignee: 'Alexandre VARIERAS', status: 'todo' },
+        { id: 'gea-sim-4', weekLabel: 'S44', category: 'Logistique', action: 'Installation des logiciels de simulation et tests techniques', assignee: 'David MEIRA', status: 'todo' },
+        { id: 'gea-sim-5', weekLabel: 'S45 (05 nov.)', category: 'Activité', action: 'Simulation Entreprise – Jeudi 5 novembre 2026', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 'gea-sim-6', weekLabel: 'S45', category: 'Événement', action: 'Analyse des résultats et remise des classements', assignee: 'Paul De SEZE', status: 'todo' },
+        { id: 'gea-sim-7', weekLabel: 'S46', category: 'Post-événement', action: 'Questionnaire satisfaction et bilan pédagogique', assignee: 'Laurine COGHE', status: 'todo' }
+      ]
+    },
+    {
+      id: 'gea-event-3',
+      title: 'Conférence',
+      date: '07-janv-27',
+      objective: 'Table ronde PÉPITE + étudiants entrepreneurs',
+      content: 'Table ronde interactive en partenariat PÉPITE. Témoignages d’étudiants-entrepreneurs présentation des avantages du Statut National d’Étudiant-Entrepreneur (SNEE), des aides disponibles, et session de Questions/Réponses',
+      color: '#8B5CF6',
+      tasks: [
+        { id: 'gea-conf-1', weekLabel: 'S48', category: 'Partenaires', action: 'Prise de contact avec les référents PÉPITE et intervenants', assignee: 'Nora RIVET', status: 'todo' },
+        { id: 'gea-conf-2', weekLabel: 'S49', category: 'Partenaires', action: 'Cadrage des thématiques et des témoignages d’étudiants', assignee: 'David MEIRA', status: 'todo' },
+        { id: 'gea-conf-3', weekLabel: 'S50', category: 'Logistique', action: 'Réservation amphi et matériel audiovisuel (micros, vidéo)', assignee: 'Alexandre VARIERAS', status: 'todo' },
+        { id: 'gea-conf-4', weekLabel: 'S51', category: 'Communication', action: 'Diffusion des affiches et campagne réseaux sociaux', assignee: 'Nolann MAZEAU', status: 'todo' },
+        { id: 'gea-conf-5', weekLabel: 'S01 (07 janv.)', category: 'Activité', action: 'Conférence PÉPITE & Étudiants Entrepreneurs – 7 janvier 2027', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 'gea-conf-6', weekLabel: 'S01', category: 'Événement', action: 'Session Questions/Réponses et cocktail networking', assignee: 'Toute l’équipe', status: 'todo' },
+        { id: 'gea-conf-7', weekLabel: 'S02', category: 'Post-événement', action: 'Remerciements intervenants et synthèse écrite', assignee: 'Paul De SEZE', status: 'todo' }
+      ]
+    },
+    {
+      id: 'gea-event-4',
+      title: 'Dîner entreprenariale',
+      date: '11-mars-27',
+      objective: 'Dîner avec des entrepreneurs, des anciens élèves (partenariat avec galumni) + aide de Pépite',
+      content: 'Un moment convivial autour d’un dîner, dédié au partage d’expériences professionnelles, permettant d’échanger avec différents professionnels, de découvrir de nouveaux parcours et secteurs d’activité, d’élargir son réseau, de partager des conseils et de rencontrer de nouvelles personnes afin de créer de potentielles opportunités professionnelles.',
+      color: '#F59E0B',
+      tasks: [
+        { id: 'gea-din-1', weekLabel: 'S04', category: 'Partenaires', action: 'Partenariat avec galumni et coordination avec Pépite', assignee: 'Nora RIVET', status: 'todo' },
+        { id: 'gea-din-2', weekLabel: 'S05', category: 'Logistique', action: 'Recherche de salle et devis traiteur pour le dîner', assignee: 'Alexandre VARIERAS', status: 'todo' },
+        { id: 'gea-din-3', weekLabel: 'S06', category: 'Partenaires', action: 'Envoi des invitations aux entrepreneurs et confirmation intervenants', assignee: 'David MEIRA', status: 'todo' },
+        { id: 'gea-din-4', weekLabel: 'S07', category: 'Communication', action: 'Ouverture des inscriptions étudiants et communication', assignee: 'Nolann MAZEAU', status: 'todo' },
+        { id: 'gea-din-5', weekLabel: 'S09', category: 'Logistique', action: 'Clôture inscriptions et finalisation plan de table', assignee: 'Laurine COGHE', status: 'todo' },
+        { id: 'gea-din-6', weekLabel: 'S10 (11 mars)', category: 'Activité', action: 'Grand Dîner Entrepreneurial – Jeudi 11 mars 2027', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 'gea-din-7', weekLabel: 'S11', category: 'Post-événement', action: 'Album photo, remerciements et débriefing général', assignee: 'Paul De SEZE', status: 'todo' }
+      ]
+    }
   ]
 };

@@ -25,6 +25,26 @@ export interface Task {
   isMilestone?: boolean;
 }
 
+export interface RetroplanningTask {
+  id: string;
+  weekLabel: string; // e.g. "S39", "S40", "S42 (12 oct.)"
+  category: string;  // e.g. "Communication", "Logistique", "Activité", "Événement", "Post-événement"
+  action: string;
+  assignee: string;  // e.g. "Laurine COGHE", "Toute l'équipe"
+  status: 'todo' | 'in_progress' | 'completed' | 'event';
+  isEventHighlight?: boolean;
+}
+
+export interface RetroplanningEvent {
+  id: string;
+  title: string;
+  date: string; // e.g. "15-oct-26"
+  objective: string;
+  content: string;
+  color?: string;
+  tasks: RetroplanningTask[];
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -32,9 +52,10 @@ export interface Project {
   createdAt: string;
   tasks: Task[];
   members?: TeamMember[];
+  events?: RetroplanningEvent[];
 }
 
-export type ViewMode = 'gantt' | 'timeline' | 'calendar' | 'list';
+export type ViewMode = 'gantt' | 'retroplanning' | 'timeline' | 'calendar' | 'list';
 export type TimelineZoom = 'week' | 'day' | 'month';
 
 export interface ColorPreset {
