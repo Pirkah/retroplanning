@@ -594,137 +594,405 @@
       ],
       "events": [
         {
-          "id": "event-rnf-1",
-          "title": "Remise des Chèques Partenaires",
-          "date": "18-oct-26",
-          "objective": "Cérémonie officielle de remerciement et remise des dons",
-          "content": "Accueil des partenaires institutionnels et sponsors, discours officiel, cocktail et remise des chèques.",
-          "color": "#0EA5E9",
+          "id": "event-rnf-remise",
+          "title": "Remise de Chèque Gravir pour Guérir & Rentrée",
+          "date": "08-oct-26",
+          "objective": "Cérémonie officielle de remise de chèque à l’association Gravir pour Guérir et animation de rentrée",
+          "content": "Organisation de la cérémonie avec les partenaires et la presse, réservation de salle à l’IUT, cartons d’invitation et communication réseaux.",
+          "color": "#F97316",
           "tasks": [
             {
-              "id": "t-rnf-1-1",
-              "weekLabel": "S40",
-              "category": "Administratif",
-              "action": "Demande de salle pour la remise de chèque à la mairie",
+              "id": "t-rnf-1",
+              "weekLabel": "S36",
+              "category": "Association",
+              "action": "Appelée Gravir pour Guérir (dispo le 8 octobre)",
               "assignee": "Vianney Urbanick",
               "status": "completed"
             },
             {
-              "id": "t-rnf-1-2",
-              "weekLabel": "S41",
-              "category": "Partenaires",
-              "action": "Envoyer un mail aux fournisseurs pour les inviter à la remise",
+              "id": "t-rnf-2",
+              "weekLabel": "S36",
+              "category": "Événement",
+              "action": "Trouver une activité pour le 17 septembre",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-rnf-3",
+              "weekLabel": "S37",
+              "category": "Fournisseurs",
+              "action": "Envoyer un mail à DPB pour les 5 t-shirts et négocier",
               "assignee": "Julien Nicolle",
               "status": "completed"
             },
             {
-              "id": "t-rnf-1-3",
-              "weekLabel": "S42",
-              "category": "Communication",
-              "action": "Création des affiches et cartons d’invitation officiels",
-              "assignee": "Sina Abdoul Bastoi",
-              "status": "in_progress"
+              "id": "t-rnf-4",
+              "weekLabel": "S37",
+              "category": "Administratif",
+              "action": "Carte bleue association reçue le 19 septembre",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
             },
             {
-              "id": "t-rnf-1-4",
-              "weekLabel": "S42 (18 oct.)",
+              "id": "t-rnf-5",
+              "weekLabel": "S38",
+              "category": "Communication",
+              "action": "Créer le club Strava et préparer la première page",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-rnf-6",
+              "weekLabel": "S38",
+              "category": "Administratif",
+              "action": "Demande de salle pour la remise de chèque à l’administration",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-rnf-7",
+              "weekLabel": "S39",
+              "category": "Fournisseurs",
+              "action": "Envoyer un mail aux fournisseurs pour les inviter à la remise de chèque",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-rnf-8",
+              "weekLabel": "S39",
+              "category": "Administratif",
+              "action": "Aller chercher le chèque grand format pour la remise",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-rnf-9",
+              "weekLabel": "S39",
+              "category": "Communication",
+              "action": "Faire l’affiche pour le hall de GEA",
+              "assignee": "Mathias Samson",
+              "status": "completed"
+            },
+            {
+              "id": "t-rnf-10",
+              "weekLabel": "S40",
+              "category": "Partenaires",
+              "action": "Rappel invitation des partenaires de l’an dernier pour la remise",
+              "assignee": "Julien Nicolle",
+              "status": "completed"
+            },
+            {
+              "id": "t-rnf-11",
+              "weekLabel": "S41 (08 oct.)",
               "category": "Activité",
-              "action": "Cérémonie de Remise des Chèques – 18 octobre 2026",
+              "action": "Remise de chèque officielle à l’association Gravir pour Guérir – 8 octobre 2026",
               "assignee": "Toute l’équipe",
               "status": "event",
               "isEventHighlight": true
             },
             {
-              "id": "t-rnf-1-5",
-              "weekLabel": "S43",
+              "id": "t-rnf-12",
+              "weekLabel": "S42",
               "category": "Post-événement",
-              "action": "Publication des photos officielles et remerciements presse",
+              "action": "Post et photos sur les réseaux sociaux pour la remise de chèque",
               "assignee": "Sina Abdoul Bastoi",
               "status": "todo"
             }
           ]
         },
         {
-          "id": "event-rnf-2",
-          "title": "Lancement Billetterie & Dossards",
-          "date": "15-janv-27",
-          "objective": "Ouverture grand public des inscriptions de la course Run & Fun",
-          "content": "Activation du module d’inscription en ligne, communication massive et coordination avec la plateforme de paiement.",
-          "color": "#16A34A",
+          "id": "event-rnf-passation",
+          "title": "Passation & Gestion Administrative",
+          "date": "28-sept-26",
+          "objective": "Transfert officiel de l’association, mise à jour bancaire, statuts préfecture et conformité",
+          "content": "Élection du nouveau bureau, déclaration préfecture, transmission des accès site web et réseaux sociaux, mise à jour de l’assurance.",
+          "color": "#0EA5E9",
           "tasks": [
             {
-              "id": "t-rnf-2-1",
-              "weekLabel": "S01",
+              "id": "t-adm-1",
+              "weekLabel": "S24",
               "category": "Communication",
-              "action": "Validation de la page d’inscription et des tarifs dossards",
+              "action": "Récupération du site internet (accès administration et code source)",
+              "assignee": "Julien Nicolle",
+              "status": "completed"
+            },
+            {
+              "id": "t-adm-2",
+              "weekLabel": "S28",
+              "category": "Administratif",
+              "action": "Assemblée générale pour la passation et élection du bureau",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-adm-3",
+              "weekLabel": "S29",
+              "category": "Administratif",
+              "action": "Valider la passation et signature des procès-verbaux",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-adm-4",
+              "weekLabel": "S29",
+              "category": "Administratif",
+              "action": "Passation administrative à la préfecture et statuts modifiés",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-adm-5",
+              "weekLabel": "S32",
+              "category": "Finance",
+              "action": "Passation banque et assurance (rendez-vous bancaire)",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-adm-6",
+              "weekLabel": "S32",
+              "category": "Finance",
+              "action": "Changement de nom du président sur le compte bancaire",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-adm-7",
+              "weekLabel": "S33",
+              "category": "Administratif",
+              "action": "Changement de nom au niveau du contrat d’assurance",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
+            },
+            {
+              "id": "t-adm-8",
+              "weekLabel": "S35",
+              "category": "Communication",
+              "action": "Récupération des comptes réseaux sociaux de l’association",
+              "assignee": "Mathias Samson",
+              "status": "completed"
+            },
+            {
+              "id": "t-adm-8b",
+              "weekLabel": "S39 (28 sept.)",
+              "category": "Activité",
+              "action": "Validation de la Passation Officielle & Statuts déposés en Préfecture",
+              "assignee": "Toute l’équipe",
+              "status": "event",
+              "isEventHighlight": true
+            },
+            {
+              "id": "t-adm-9",
+              "weekLabel": "S40",
+              "category": "Finance",
+              "action": "Appeler SMACL pour avenant manifestation et responsabilités",
+              "assignee": "Vianney Urbanick",
+              "status": "todo"
+            },
+            {
+              "id": "t-adm-10",
+              "weekLabel": "S40",
+              "category": "Administratif",
+              "action": "Effectuer la demande de permanence et de TPE (terminal carte)",
+              "assignee": "Vianney Urbanick",
+              "status": "todo"
+            },
+            {
+              "id": "t-adm-11",
+              "weekLabel": "S40",
+              "category": "Administratif",
+              "action": "S’informer sur la vente d’alcool, autorisation et réglementation buvette",
+              "assignee": "Tetew",
+              "status": "todo"
+            },
+            {
+              "id": "t-adm-12",
+              "weekLabel": "S41",
+              "category": "Finance",
+              "action": "Préparer le dossier de subvention et budget prévisionnel",
+              "assignee": "Vianney Urbanick",
+              "status": "todo"
+            }
+          ]
+        },
+        {
+          "id": "event-rnf-partenaires",
+          "title": "Partenaires & Sponsors de la Course",
+          "date": "06-déc-26",
+          "objective": "Recherche de fonds, synergie avec les autres BDE, partenariats commerçants et mécènes",
+          "content": "Prospection active des sponsors locaux, signature des conventions de mécénat, relations presse et démarches administratives mairie.",
+          "color": "#EAB308",
+          "tasks": [
+            {
+              "id": "t-part-1",
+              "weekLabel": "S39",
+              "category": "Partenaires",
+              "action": "Contact des BDE pour partenariat et synergie inter-promos",
+              "assignee": "Julien Nicolle",
+              "status": "in_progress"
+            },
+            {
+              "id": "t-part-2",
+              "weekLabel": "S39",
+              "category": "Partenaires",
+              "action": "Rédiger la liste des partenaires potentiels à contacter (sponsors)",
+              "assignee": "Mathias Samson",
+              "status": "in_progress"
+            },
+            {
+              "id": "t-part-3",
+              "weekLabel": "S39",
+              "category": "Partenaires",
+              "action": "Parler avec ACTU pour les événements passés et communication croisée",
+              "assignee": "Julien Nicolle",
+              "status": "in_progress"
+            },
+            {
+              "id": "t-part-4",
+              "weekLabel": "S39",
+              "category": "Communication",
+              "action": "Renouveler le site internet de la course (mentions, design)",
               "assignee": "Julien Nicolle",
               "status": "todo"
             },
             {
-              "id": "t-rnf-2-2",
-              "weekLabel": "S02",
+              "id": "t-part-5",
+              "weekLabel": "S39",
+              "category": "Administratif",
+              "action": "Contacter la mairie pour les autorisations d’occupation",
+              "assignee": "Vianney Urbanick",
+              "status": "todo"
+            },
+            {
+              "id": "t-part-6",
+              "weekLabel": "S40",
               "category": "Communication",
-              "action": "Teaser vidéo sur Instagram et TikTok",
+              "action": "Faire un premier TikTok de présentation de l’équipe",
               "assignee": "Sina Abdoul Bastoi",
               "status": "todo"
             },
             {
-              "id": "t-rnf-2-3",
-              "weekLabel": "S02 (15 janv.)",
+              "id": "t-part-7",
+              "weekLabel": "S40",
+              "category": "Partenaires",
+              "action": "Appeler les pompiers de l’urgence internationale (suivi partenariat)",
+              "assignee": "Vianney Urbanick",
+              "status": "in_progress"
+            },
+            {
+              "id": "t-part-8",
+              "weekLabel": "S41",
+              "category": "Partenaires",
+              "action": "Démarchages actifs pour la recherche de partenaires et sponsors",
+              "assignee": "Mathias Samson",
+              "status": "in_progress"
+            },
+            {
+              "id": "t-part-9",
+              "weekLabel": "S44",
+              "category": "Administratif",
+              "action": "Demande officielle de manifestation sportive à la mairie",
+              "assignee": "Vianney Urbanick",
+              "status": "todo"
+            },
+            {
+              "id": "t-part-10",
+              "weekLabel": "S45",
+              "category": "Logistique",
+              "action": "Balisage & contact organisme de secourisme (Croix-Rouge)",
+              "assignee": "Tetew",
+              "status": "todo"
+            },
+            {
+              "id": "t-part-11",
+              "weekLabel": "S49 (06 déc.)",
               "category": "Activité",
-              "action": "Ouverture officielle de la Billetterie Run & Fun 2027",
+              "action": "Clôture de la Campagne de Sponsoring & Budgets validés",
               "assignee": "Toute l’équipe",
               "status": "event",
               "isEventHighlight": true
-            },
-            {
-              "id": "t-rnf-2-4",
-              "weekLabel": "S03",
-              "category": "Logistique",
-              "action": "Suivi des premiers quotas et commande des lots dossards",
-              "assignee": "Tetew",
-              "status": "todo"
             }
           ]
         },
         {
-          "id": "event-rnf-3",
-          "title": "Jour J : Course Run & Fun",
-          "date": "28-mars-27",
-          "objective": "Grand événement sportif et solidaire annuel",
-          "content": "Organisation des départs, sécurité du parcours, ravitaillement, animations musicales et remise des trophées.",
+          "id": "event-rnf-course",
+          "title": "Grande Course Solidaire Run & Fun 2027",
+          "date": "22-mars-27",
+          "objective": "Organisation complète, billetterie, sécurité et déroulement de la course solidaire",
+          "content": "Recrutement des bénévoles, vente de dossards en ligne via HelloAsso, communication sur le campus, balisage du parcours et gestion du jour J.",
           "color": "#EF4444",
           "tasks": [
             {
-              "id": "t-rnf-3-1",
-              "weekLabel": "S11",
-              "category": "Logistique",
-              "action": "Briefing sécurité avec la Croix-Rouge et les bénévoles",
-              "assignee": "Mathias Samson",
-              "status": "todo"
+              "id": "t-crs-1",
+              "weekLabel": "S39",
+              "category": "Événement",
+              "action": "Choisir une date officielle pour la course solidaire",
+              "assignee": "Vianney Urbanick",
+              "status": "completed"
             },
             {
-              "id": "t-rnf-3-2",
-              "weekLabel": "S12",
+              "id": "t-crs-2",
+              "weekLabel": "S50",
               "category": "Logistique",
-              "action": "Balisage complet du parcours de la course",
+              "action": "Recherche et recrutement des bénévoles (signaleurs, ravitaillement)",
               "assignee": "Tetew",
               "status": "todo"
             },
             {
-              "id": "t-rnf-3-3",
-              "weekLabel": "S12 (28 mars)",
+              "id": "t-crs-3",
+              "weekLabel": "S01",
+              "category": "Communication",
+              "action": "Communication de la course, affichage campus et réseaux",
+              "assignee": "Sina Abdoul Bastoi",
+              "status": "todo"
+            },
+            {
+              "id": "t-crs-4",
+              "weekLabel": "S02",
+              "category": "Communication",
+              "action": "Vente de dossards en ligne via HelloAsso et stands IUT",
+              "assignee": "Julien Nicolle",
+              "status": "todo"
+            },
+            {
+              "id": "t-crs-5",
+              "weekLabel": "S02 (15 janv.)",
               "category": "Activité",
-              "action": "JOUR J : Grande Course Solidaire Run & Fun 2027 !",
+              "action": "Lancement Officiel de la Billetterie & Inscriptions Dossards",
               "assignee": "Toute l’équipe",
               "status": "event",
               "isEventHighlight": true
             },
             {
-              "id": "t-rnf-3-4",
+              "id": "t-crs-6",
+              "weekLabel": "S11",
+              "category": "Logistique",
+              "action": "Briefing sécurité avec la Croix-Rouge et l’ensemble des bénévoles",
+              "assignee": "Mathias Samson",
+              "status": "todo"
+            },
+            {
+              "id": "t-crs-7",
+              "weekLabel": "S12",
+              "category": "Logistique",
+              "action": "Balisage complet du parcours de la course et installation buvette",
+              "assignee": "Tetew",
+              "status": "todo"
+            },
+            {
+              "id": "t-crs-8",
+              "weekLabel": "S12 (22 mars)",
+              "category": "Activité",
+              "action": "JOUR J : RUN AND FUN DAY – Grande Course Solidaire 2027 !",
+              "assignee": "Toute l’équipe",
+              "status": "event",
+              "isEventHighlight": true
+            },
+            {
+              "id": "t-crs-9",
               "weekLabel": "S13",
               "category": "Post-événement",
-              "action": "Démontage, nettoyage du site et débriefing général",
+              "action": "Démontage, nettoyage du site, bilan des chronos et débriefing général",
               "assignee": "Toute l’équipe",
               "status": "todo"
             }

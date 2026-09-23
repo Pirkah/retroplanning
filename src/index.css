@@ -39,10 +39,15 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  header, footer, nav, #planning-main-view, .no-print {
+  header, footer, nav, .no-print {
     display: none !important;
   }
-  #export-canvas-container {
+
+  /* Si impression Gantt classique : masque la vue normale et montre le canvas vectoriel */
+  body:not(.print-retroplanning) #planning-main-view {
+    display: none !important;
+  }
+  body:not(.print-retroplanning) #export-canvas-container {
     display: block !important;
     position: static !important;
     left: auto !important;
@@ -51,10 +56,23 @@
     opacity: 1 !important;
     z-index: auto !important;
   }
-  #gantt-export-canvas-target {
+  body:not(.print-retroplanning) #gantt-export-canvas-target {
     display: block !important;
     position: static !important;
     width: 100% !important;
     page-break-inside: avoid;
   }
+
+  /* Si impression Rétroplanning Événements : imprime directement le tableau Excel */
+  body.print-retroplanning #export-canvas-container {
+    display: none !important;
+  }
+  body.print-retroplanning #planning-main-view {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
 }
+

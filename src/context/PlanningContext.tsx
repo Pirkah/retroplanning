@@ -80,8 +80,8 @@ interface PlanningContextType {
   importProjectJson: (content: string) => boolean;
 }
 
-const STORAGE_KEY = 'retroplanning_projects_v2';
-const ACTIVE_PROJ_KEY = 'retroplanning_active_id_v2';
+const STORAGE_KEY = 'retroplanning_projects_v3';
+const ACTIVE_PROJ_KEY = 'retroplanning_active_id_v3';
 
 const PlanningContext = createContext<PlanningContextType | undefined>(undefined);
 
@@ -94,7 +94,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (Array.isArray(parsed) && parsed.length > 0) {
           const loaded = parsed.map((p) => {
             let events = p.events;
-            if (!events || events.length === 0) {
+            if (!events || events.length === 0 || (p.id === 'proj-rnf-2026' && events.length < 4)) {
               if (p.id === 'proj-rnf-2026') events = DEFAULT_PROJECT.events;
               if (p.id === 'proj-gea-2026') events = GEA_ENTREPRENEURIAT_PROJECT.events;
             }
@@ -223,7 +223,15 @@ const AUTH_KEY = 'rnf_auth_password_v1';
             const data = JSON.parse(event.data);
             if (data.type === 'INIT_STATE' && data.payload) {
               if (data.payload.projects && data.payload.projects.length > 0) {
-                setProjects(data.payload.projects);
+                const refreshed = data.payload.projects.map((p: Project) => {
+                  let events = p.events;
+                  if (!events || events.length === 0 || (p.id === 'proj-rnf-2026' && events.length < 4)) {
+                    if (p.id === 'proj-rnf-2026') events = DEFAULT_PROJECT.events;
+                    if (p.id === 'proj-gea-2026') events = GEA_ENTREPRENEURIAT_PROJECT.events;
+                  }
+                  return { ...p, events: events || [] };
+                });
+                setProjects(refreshed);
                 if (data.payload.activeProjectId) {
                   setActiveProjectId(data.payload.activeProjectId);
                 }

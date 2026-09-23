@@ -97,18 +97,67 @@ export const RETRO_CATEGORIES: {
     borderBadge: 'border-orange-300',
     blockColor: '#FB923C',
     textColor: '#7C2D12'
+  },
+  {
+    id: 'administratif',
+    label: 'Administratif & Juridique',
+    description: 'Statuts, préfecture, mairie, autorisations et assurances',
+    bgBadge: 'bg-indigo-100',
+    textBadge: 'text-indigo-800',
+    borderBadge: 'border-indigo-300',
+    blockColor: '#818CF8',
+    textColor: '#312E81'
+  },
+  {
+    id: 'finance',
+    label: 'Finance & Trésorerie',
+    description: 'Banque, compte, TPE, budget prévisionnel et subventions',
+    bgBadge: 'bg-cyan-100',
+    textBadge: 'text-cyan-800',
+    borderBadge: 'border-cyan-300',
+    blockColor: '#06B6D4',
+    textColor: '#164E63'
+  },
+  {
+    id: 'fournisseurs',
+    label: 'Fournisseurs & Matériel',
+    description: 'Commandes t-shirts, ravitaillement, devis et prestataires',
+    bgBadge: 'bg-teal-100',
+    textBadge: 'text-teal-800',
+    borderBadge: 'border-teal-300',
+    blockColor: '#14B8A6',
+    textColor: '#134E4A'
   }
 ];
 
 export function getCategoryStyle(categoryName: string) {
   const norm = categoryName.toLowerCase().replace(/[^a-z]/g, '');
+  if (norm.includes('admin') || norm.includes('jurid') || norm.includes('prefect') || norm.includes('statut')) {
+    return RETRO_CATEGORIES.find(c => c.id === 'administratif') || RETRO_CATEGORIES[0];
+  }
+  if (norm.includes('finan') || norm.includes('tresor') || norm.includes('banq') || norm.includes('budget') || norm.includes('subvent')) {
+    return RETRO_CATEGORIES.find(c => c.id === 'finance') || RETRO_CATEGORIES[0];
+  }
+  if (norm.includes('fourn') || norm.includes('tshirt') || norm.includes('matos')) {
+    return RETRO_CATEGORIES.find(c => c.id === 'fournisseurs') || RETRO_CATEGORIES[0];
+  }
   if (norm.includes('prep') || norm.includes('concep')) return RETRO_CATEGORIES[0];
-  if (norm.includes('comm') || norm.includes('video') || norm.includes('reseau')) return RETRO_CATEGORIES[1];
-  if (norm.includes('logist') || norm.includes('salle') || norm.includes('materiel')) return RETRO_CATEGORIES[2];
-  if (norm.includes('parten') || norm.includes('interven')) return RETRO_CATEGORIES[3];
-  if (norm.includes('activ') || norm.includes('jourj')) return RETRO_CATEGORIES[4];
-  if (norm.includes('post') || norm.includes('bilan') || norm.includes('sondage') || norm.includes('debrief')) return RETRO_CATEGORIES[6];
-  if (norm.includes('even')) return RETRO_CATEGORIES[5];
+  if (norm.includes('comm') || norm.includes('video') || norm.includes('reseau') || norm.includes('tiktok') || norm.includes('strava')) {
+    return RETRO_CATEGORIES[1];
+  }
+  if (norm.includes('logist') || norm.includes('salle') || norm.includes('balis') || norm.includes('secour') || norm.includes('benevol')) {
+    return RETRO_CATEGORIES[2];
+  }
+  if (norm.includes('parten') || norm.includes('interven') || norm.includes('bde') || norm.includes('sponsor')) {
+    return RETRO_CATEGORIES[3];
+  }
+  if (norm.includes('activ') || norm.includes('jourj') || norm.includes('billett') || norm.includes('dossard')) {
+    return RETRO_CATEGORIES[4];
+  }
+  if (norm.includes('post') || norm.includes('bilan') || norm.includes('sondage') || norm.includes('debrief')) {
+    return RETRO_CATEGORIES.find(c => c.id === 'post_evenement') || RETRO_CATEGORIES[6];
+  }
+  if (norm.includes('even') || norm.includes('assoc')) return RETRO_CATEGORIES[5];
   return RETRO_CATEGORIES[1];
 }
 
@@ -127,6 +176,14 @@ export const RetroplanningView: React.FC = () => {
   } = usePlanning();
 
   const events = useMemo(() => currentProject.events || [], [currentProject.events]);
+
+  // Active le mode d'impression dédié au rétroplanning
+  React.useEffect(() => {
+    document.body.classList.add('print-retroplanning');
+    return () => {
+      document.body.classList.remove('print-retroplanning');
+    };
+  }, []);
 
   // Onglet sélectionné : 'overview' pour Vue d'ensemble, ou event.id
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -623,7 +680,9 @@ export const RetroplanningView: React.FC = () => {
 
                               {/* 4. Timeline visuelle par colonnes de semaines */}
                               {eventWeeks.map((w) => {
-                                const isMatched = task.weekLabel.toLowerCase().includes(w.toLowerCase().split(' ')[0]);
+                                const targetWeekKey = w.split(' ')[0].toUpperCase();
+                                const taskWeekKey = task.weekLabel.split(' ')[0].toUpperCase();
+                                const isMatched = task.weekLabel.trim() === w.trim() || taskWeekKey === targetWeekKey;
 
                                 return (
                                   <td
