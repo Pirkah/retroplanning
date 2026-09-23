@@ -61,7 +61,13 @@ function saveStore(data) {
   }
 }
 
-let store = loadStore();
+const DEFAULT_PASSWORD = process.env.EDIT_PASSWORD || 'rnf2026';
+
+// Assure la présence de la section sécurité
+if (store && !store.security) {
+  store.security = { editPassword: DEFAULT_PASSWORD };
+  saveStore(store);
+}
 
 // Routes API
 app.get('/api/info', (req, res) => {
@@ -73,7 +79,39 @@ app.get('/api/info', (req, res) => {
 });
 
 app.get('/api/projects', (req, res) => {
-  res.json(store || { projects: [], activeProjectId: null });
+  // Masque le mot de passe dans le retour public
+  if (store) {
+    const { security, ...safeStore } = store;
+    res.json(safeStore);
+  } else {
+    res.json({ projects: [], activeProjectId: null });
+  }
+});
+
+// Vérification du mot de passe de modification
+app.post('/api/auth/verify', (req, res) => {
+  const { password } = req.body || {};
+  const currentPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
+  if (password === currentPassword) {
+    return res.json({ success: true });
+  }
+  return res.status(401).json({ success: false, message: 'Mot de passe incorrect' });
+});
+
+// Changement de mot de passe (nécessite l'ancien mot de passe)
+app.post('/api/auth/change-password', (req, res) => {
+  const { oldPassword, newPassword } = req.body || {};
+  const currentPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
+  if (oldPassword !== currentPassword) {
+    return res.status(401).json({ success: false, message: 'Ancien mot de passe invalide' });
+  }
+  if (!newPassword || newPassword.trim().length < 3) {
+    return res.status(400).json({ success: false, message: 'Le mot de passe doit faire au moins 3 caractères' });
+  }
+  if (!store.security) store.security = {};
+  store.security.editPassword = newPassword.trim();
+  saveStore(store);
+  return res.json({ success: true });
 });
 
 // Diffusion WebSocket
@@ -100,9 +138,10 @@ wss.on('connection', (ws) => {
   console.log(`[WS] Collaborateur connecté. Total en ligne: ${wss.clients.size}`);
 
   if (store) {
+    const { security, ...safeStore } = store;
     ws.send(JSON.stringify({
       type: 'INIT_STATE',
-      payload: store
+      payload: safeStore
     }));
   }
 
@@ -113,12 +152,30 @@ wss.on('connection', (ws) => {
       const data = JSON.parse(message.toString());
 
       if (data.type === 'SYNC_PROJECTS') {
-        store = data.payload;
+        const currentPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
+        
+        // Vérifie si le mot de passe fourni autorise la modification
+        if (data.password !== currentPassword) {
+          ws.send(JSON.stringify({
+            type: 'AUTH_ERROR',
+            message: 'Mot de passe requis ou invalide pour modifier le rétroplanning.'
+          }));
+          return;
+        }
+
+        // Sauvegarde avec préservation de la sécurité
+        const updatedStore = {
+          ...store,
+          projects: data.payload.projects,
+          activeProjectId: data.payload.activeProjectId
+        };
+        store = updatedStore;
         saveStore(store);
 
+        const { security, ...safeStore } = store;
         broadcast({
           type: 'STATE_UPDATED',
-          payload: store,
+          payload: safeStore,
           senderName: data.senderName || 'Un collaborateur'
         }, ws);
       }

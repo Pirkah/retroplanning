@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { usePlanning } from '../context/PlanningContext';
-import { X, UserPlus, Users, Trash2 } from 'lucide-react';
+import { X, UserPlus, Users, Trash2, Lock, Unlock } from 'lucide-react';
 import { COLOR_PRESETS } from '../types/planning';
 
 interface TeamModalProps {
@@ -9,7 +9,7 @@ interface TeamModalProps {
 }
 
 export const TeamModal: React.FC<TeamModalProps> = ({ isOpen, onClose }) => {
-  const { members, addTeamMember, deleteTeamMember } = usePlanning();
+  const { members, addTeamMember, deleteTeamMember, isAuthorized, openAuthModal } = usePlanning();
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const [color, setColor] = useState('#6366F1');
@@ -18,6 +18,11 @@ export const TeamModal: React.FC<TeamModalProps> = ({ isOpen, onClose }) => {
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAuthorized) {
+      onClose();
+      openAuthModal();
+      return;
+    }
     if (!name.trim()) return;
 
     const parts = name.trim().split(' ');
@@ -73,7 +78,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
 
-                {members.length > 1 && (
+                {isAuthorized && members.length > 1 && (
                   <button
                     onClick={() => {
                       if (confirm(`Supprimer ${m.name} de l'équipe ? Les tâches qui lui étaient assignées ne seront plus attribuées.`)) {
@@ -90,54 +95,76 @@ export const TeamModal: React.FC<TeamModalProps> = ({ isOpen, onClose }) => {
             ))}
           </div>
 
-          {/* Formulaire d'ajout */}
-          <form onSubmit={handleAdd} className="border-t border-slate-100 pt-4 space-y-3">
-            <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">
-              Ajouter un collaborateur
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                type="text"
-                placeholder="Prénom ou Nom"
-                required
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500"
-              />
-              <input
-                type="text"
-                placeholder="Rôle (ex: Développeur)"
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-
-            <div className="flex items-center justify-between pt-1">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[11px] text-slate-500 font-medium">Couleur :</span>
-                <div className="flex items-center gap-1">
-                  {COLOR_PRESETS.slice(0, 5).map((p) => (
-                    <button
-                      key={p.id}
-                      type="button"
-                      onClick={() => setColor(p.hex)}
-                      style={{ backgroundColor: p.hex }}
-                      className={`w-4 h-4 rounded-full ${color === p.hex ? 'ring-2 ring-indigo-500 scale-110' : ''}`}
-                    />
-                  ))}
-                </div>
+          {/* Formulaire d'ajout ou invite de déverrouillage */}
+          {isAuthorized ? (
+            <form onSubmit={handleAdd} className="border-t border-slate-100 pt-4 space-y-3">
+              <p className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                Ajouter un collaborateur
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  placeholder="Prénom ou Nom"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500"
+                />
+                <input
+                  type="text"
+                  placeholder="Rôle (ex: Développeur)"
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-indigo-500"
+                />
               </div>
 
-              <button
-                type="submit"
-                className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1 transition"
-              >
-                <UserPlus size={14} />
-                Ajouter
-              </button>
+              <div className="flex items-center justify-between pt-1">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] text-slate-500 font-medium">Couleur :</span>
+                  <div className="flex items-center gap-1">
+                    {COLOR_PRESETS.slice(0, 5).map((p) => (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => setColor(p.hex)}
+                        style={{ backgroundColor: p.hex }}
+                        className={`w-4 h-4 rounded-full ${color === p.hex ? 'ring-2 ring-indigo-500 scale-110' : ''}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-xs flex items-center gap-1 transition"
+                >
+                  <UserPlus size={14} />
+                  Ajouter
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className="border-t border-slate-100 pt-4">
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs text-amber-800">
+                <div className="flex items-center gap-2">
+                  <Lock size={15} className="text-amber-600 shrink-0" />
+                  <span>Mode consultation</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                    openAuthModal();
+                  }}
+                  className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-xs flex items-center gap-1.5 shadow-xs transition"
+                >
+                  <Unlock size={13} />
+                  Déverrouiller
+                </button>
+              </div>
             </div>
-          </form>
+          )}
         </div>
       </div>
     </div>

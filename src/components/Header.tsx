@@ -19,10 +19,13 @@ import {
   Users,
   Wifi,
   Share2,
-  Copy
+  Copy,
+  Lock,
+  Unlock
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { TeamModal } from './TeamModal';
+import { AuthModal } from './AuthModal';
 
 export const Header: React.FC = () => {
   const {
@@ -47,7 +50,9 @@ export const Header: React.FC = () => {
     onlineCount,
     isWebSocketConnected,
     serverInfo,
-    members
+    members,
+    isAuthorized,
+    openAuthModal
   } = usePlanning();
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -163,6 +168,10 @@ export const Header: React.FC = () => {
                 </h1>
                 <button
                   onClick={() => {
+                    if (!isAuthorized) {
+                      openAuthModal();
+                      return;
+                    }
                     setEditedTitle(currentProject.name);
                     setIsEditingTitle(true);
                   }}
@@ -224,7 +233,14 @@ export const Header: React.FC = () => {
                 ))}
                 <div className="border-t border-slate-100 mt-1 pt-1 px-2 space-y-1">
                   <button
-                    onClick={handleCreateProjectPrompt}
+                    onClick={() => {
+                      if (!isAuthorized) {
+                        setIsProjectDropdownOpen(false);
+                        openAuthModal();
+                        return;
+                      }
+                      handleCreateProjectPrompt();
+                    }}
                     className="w-full text-left px-2 py-1.5 text-xs text-indigo-600 hover:bg-indigo-50 rounded-lg font-medium flex items-center gap-1.5 transition"
                   >
                     <Plus size={14} /> Nouveau planning
@@ -232,6 +248,11 @@ export const Header: React.FC = () => {
                   {projects.length > 1 && (
                     <button
                       onClick={() => {
+                        if (!isAuthorized) {
+                          setIsProjectDropdownOpen(false);
+                          openAuthModal();
+                          return;
+                        }
                         if (confirm(`Supprimer le planning "${currentProject.name}" ?`)) {
                           deleteProject(currentProject.id);
                           setIsProjectDropdownOpen(false);
@@ -268,7 +289,13 @@ export const Header: React.FC = () => {
           />
 
           <button
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => {
+              if (!isAuthorized) {
+                openAuthModal();
+                return;
+              }
+              fileInputRef.current?.click();
+            }}
             className="px-2.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold transition flex items-center gap-1"
             title="Importer un fichier JSON"
           >
@@ -309,8 +336,35 @@ export const Header: React.FC = () => {
             )}
           </div>
 
+          {/* Bouton de statut de verrouillage / mot de passe */}
+          {isAuthorized ? (
+            <button
+              onClick={openAuthModal}
+              className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+              title="Mode édition actif (cliquez pour verrouiller ou changer le mot de passe)"
+            >
+              <Unlock size={14} className="text-emerald-600" />
+              <span className="hidden sm:inline">Édition active</span>
+            </button>
+          ) : (
+            <button
+              onClick={openAuthModal}
+              className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
+              title="Mode consultation (cliquez pour déverrouiller la modification avec le mot de passe)"
+            >
+              <Lock size={14} className="text-amber-600" />
+              <span>Déverrouiller</span>
+            </button>
+          )}
+
           <button
-            onClick={() => openNewTaskModal()}
+            onClick={() => {
+              if (!isAuthorized) {
+                openAuthModal();
+              } else {
+                openNewTaskModal();
+              }
+            }}
             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-200 hover:shadow-indigo-300 transition flex items-center gap-2"
           >
             <Plus size={16} />
@@ -507,6 +561,9 @@ export const Header: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Modale de mot de passe / déverrouillage */}
+      <AuthModal />
     </header>
   );
 };

@@ -13,7 +13,7 @@ import {
   parseISO
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { X, Calendar, Flag, Tag, CheckCircle2, Clock, Trash2, Palette, Sparkles, UserCheck, CalendarDays } from 'lucide-react';
+import { X, Calendar, Flag, Tag, CheckCircle2, Clock, Trash2, Palette, Sparkles, UserCheck, CalendarDays, Lock, Unlock } from 'lucide-react';
 import { getDurationDays } from '../utils/scheduler';
 
 export const TaskModal: React.FC = () => {
@@ -25,7 +25,9 @@ export const TaskModal: React.FC = () => {
     addTask,
     updateTask,
     deleteTask,
-    members
+    members,
+    isAuthorized,
+    openAuthModal
   } = usePlanning();
 
   const today = new Date();
@@ -113,6 +115,11 @@ export const TaskModal: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAuthorized) {
+      closeTaskModal();
+      openAuthModal();
+      return;
+    }
     if (!title.trim()) return;
 
     const assignedMember = members.find((m) => m.id === assigneeId);
@@ -170,11 +177,33 @@ export const TaskModal: React.FC = () => {
 
         {/* Formulaire */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
-          {/* Titre */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
-              Intitulé de la tâche <span className="text-rose-500">*</span>
-            </label>
+          {!isAuthorized && (
+            <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs text-amber-800">
+              <div className="flex items-center gap-2">
+                <Lock size={16} className="text-amber-600 shrink-0" />
+                <span>
+                  <strong>Mode consultation :</strong> Saisissez le mot de passe équipe pour modifier cette tâche.
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  closeTaskModal();
+                  openAuthModal();
+                }}
+                className="ml-3 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-xs shrink-0 shadow-xs transition"
+              >
+                Déverrouiller
+              </button>
+            </div>
+          )}
+
+          <fieldset disabled={!isAuthorized} className="space-y-5">
+            {/* Titre */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+                Intitulé de la tâche <span className="text-rose-500">*</span>
+              </label>
             <input
               type="text"
               required
@@ -479,43 +508,75 @@ export const TaskModal: React.FC = () => {
               className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:ring-2 focus:ring-indigo-500"
             />
           </div>
-        </form>
+        </fieldset>
+      </form>
 
         {/* Pied de page modal */}
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-          {editingTask ? (
-            <button
-              type="button"
-              onClick={() => {
-                if (confirm('Voulez-vous vraiment supprimer cette tâche ?')) {
-                  deleteTask(editingTask.id);
-                  closeTaskModal();
-                }
-              }}
-              className="px-3 py-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
-            >
-              <Trash2 size={15} />
-              Supprimer
-            </button>
+          {!isAuthorized ? (
+            <>
+              <div className="flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
+                <Lock size={13} className="text-amber-600" />
+                <span>Lecture seule</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={closeTaskModal}
+                  className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold transition"
+                >
+                  Fermer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeTaskModal();
+                    openAuthModal();
+                  }}
+                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-200 hover:shadow-amber-300 transition flex items-center gap-1.5"
+                >
+                  <Unlock size={14} />
+                  Déverrouiller pour modifier
+                </button>
+              </div>
+            </>
           ) : (
-            <div />
-          )}
+            <>
+              {editingTask ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm('Voulez-vous vraiment supprimer cette tâche ?')) {
+                      deleteTask(editingTask.id);
+                      closeTaskModal();
+                    }
+                  }}
+                  className="px-3 py-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
+                >
+                  <Trash2 size={15} />
+                  Supprimer
+                </button>
+              ) : (
+                <div />
+              )}
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={closeTaskModal}
-              className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold transition"
-            >
-              Annuler
-            </button>
-            <button
-              onClick={handleSubmit}
-              className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-200 hover:shadow-indigo-300 transition"
-            >
-              {editingTask ? 'Mettre à jour' : 'Ajouter au rétroplanning'}
-            </button>
-          </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={closeTaskModal}
+                  className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold transition"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-200 hover:shadow-indigo-300 transition"
+                >
+                  {editingTask ? 'Mettre à jour' : 'Ajouter au rétroplanning'}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

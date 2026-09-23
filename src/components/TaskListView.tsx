@@ -16,7 +16,17 @@ import {
 import { Task } from '../types/planning';
 
 export const TaskListView: React.FC = () => {
-  const { currentProject, openEditTaskModal, openNewTaskModal, duplicateTask, deleteTask, searchQuery, selectedColor } = usePlanning();
+  const {
+    currentProject,
+    openEditTaskModal,
+    openNewTaskModal,
+    duplicateTask,
+    deleteTask,
+    searchQuery,
+    selectedColor,
+    isAuthorized,
+    openAuthModal
+  } = usePlanning();
 
   const filteredTasks = currentProject.tasks.filter((task) => {
     const matchSearch =
@@ -63,7 +73,13 @@ export const TaskListView: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => openNewTaskModal()}
+          onClick={() => {
+            if (!isAuthorized) {
+              openAuthModal();
+            } else {
+              openNewTaskModal();
+            }
+          }}
           className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-sm transition flex items-center gap-1.5"
         >
           <Plus size={15} />
@@ -174,6 +190,10 @@ export const TaskListView: React.FC = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (!isAuthorized) {
+                              openAuthModal();
+                              return;
+                            }
                             duplicateTask(task.id);
                           }}
                           className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg transition"
@@ -194,6 +214,10 @@ export const TaskListView: React.FC = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
+                            if (!isAuthorized) {
+                              openAuthModal();
+                              return;
+                            }
                             if (confirm('Supprimer cette tâche ?')) {
                               deleteTask(task.id);
                             }

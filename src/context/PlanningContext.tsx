@@ -49,6 +49,15 @@ interface PlanningContextType {
   addTeamMember: (member: Omit<TeamMember, 'id'>) => void;
   deleteTeamMember: (memberId: string) => void;
 
+  // Sécurité & Mode Édition
+  isAuthorized: boolean;
+  isAuthModalOpen: boolean;
+  openAuthModal: () => void;
+  closeAuthModal: () => void;
+  unlockEditMode: (password: string) => Promise<boolean>;
+  lockEditMode: () => void;
+  changePassword: (oldPass: string, newPass: string) => Promise<{ success: boolean; message?: string }>;
+
   // Import / Export
   exportProjectJson: () => void;
   importProjectJson: (content: string) => boolean;
@@ -94,12 +103,51 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [defaultDateForNewTask, setDefaultDateForNewTask] = useState<string | null>(null);
 
+const AUTH_KEY = 'rnf_auth_password_v1';
+
+  // États Sécurité & Mode Édition
+  const [authPassword, setAuthPassword] = useState<string>(() => {
+    return localStorage.getItem(AUTH_KEY) || '';
+  });
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+
   // États WebSocket & Présence
   const [onlineCount, setOnlineCount] = useState<number>(1);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState<boolean>(false);
   const [serverInfo, setServerInfo] = useState<{ localIp: string; port: number } | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
   const isBroadcastingRef = useRef<boolean>(false);
+
+  // Vérifie si le mot de passe sauvegardé est valide au démarrage
+  useEffect(() => {
+    const checkSavedAuth = async () => {
+      const savedPass = localStorage.getItem(AUTH_KEY);
+      if (savedPass) {
+        try {
+          const isDev = window.location.port === '5173';
+          const apiUrl = isDev
+            ? `http://${window.location.hostname}:3001/api/auth/verify`
+            : '/api/auth/verify';
+          const res = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: savedPass })
+          });
+          if (res.ok) {
+            setIsAuthorized(true);
+            setAuthPassword(savedPass);
+          } else {
+            localStorage.removeItem(AUTH_KEY);
+          }
+        } catch {
+          // Mode local/offline
+          setIsAuthorized(true);
+        }
+      }
+    };
+    checkSavedAuth();
+  }, []);
 
   // Récupère les infos du serveur pour le partage
   useEffect(() => {
@@ -206,6 +254,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       socketRef.current.send(
         JSON.stringify({
           type: 'SYNC_PROJECTS',
+          password: authPassword,
           payload: {
             projects: newProjects,
             activeProjectId: newActiveId
@@ -214,6 +263,69 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       );
     }
   };
+
+  const unlockEditMode = async (password: string): Promise<boolean> => {
+    try {
+      const isDev = window.location.port === '5173';
+      const apiUrl = isDev
+        ? `http://${window.location.hostname}:3001/api/auth/verify`
+        : '/api/auth/verify';
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+      if (res.ok) {
+        setIsAuthorized(true);
+        setAuthPassword(password);
+        localStorage.setItem(AUTH_KEY, password);
+        setIsAuthModalOpen(false);
+        return true;
+      }
+      return false;
+    } catch {
+      if (password === 'rnf2026') {
+        setIsAuthorized(true);
+        setAuthPassword(password);
+        localStorage.setItem(AUTH_KEY, password);
+        setIsAuthModalOpen(false);
+        return true;
+      }
+      return false;
+    }
+  };
+
+  const lockEditMode = () => {
+    setIsAuthorized(false);
+    setAuthPassword('');
+    localStorage.removeItem(AUTH_KEY);
+  };
+
+  const changePassword = async (oldPass: string, newPass: string): Promise<{ success: boolean; message?: string }> => {
+    try {
+      const isDev = window.location.port === '5173';
+      const apiUrl = isDev
+        ? `http://${window.location.hostname}:3001/api/auth/change-password`
+        : '/api/auth/change-password';
+      const res = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ oldPassword: oldPass, newPassword: newPass })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setAuthPassword(newPass);
+        localStorage.setItem(AUTH_KEY, newPass);
+        return { success: true };
+      }
+      return { success: false, message: data.message || 'Mot de passe invalide' };
+    } catch {
+      return { success: false, message: 'Erreur réseau' };
+    }
+  };
+
+  const openAuthModal = () => setIsAuthModalOpen(true);
+  const closeAuthModal = () => setIsAuthModalOpen(false);
 
   const currentProject = projects.find((p) => p.id === activeProjectId) || projects[0] || DEFAULT_PROJECT;
   const members = currentProject.members || DEFAULT_TEAM_MEMBERS;
@@ -426,6 +538,13 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         closeTaskModal,
         addTeamMember,
         deleteTeamMember,
+        isAuthorized,
+        isAuthModalOpen,
+        openAuthModal,
+        closeAuthModal,
+        unlockEditMode,
+        lockEditMode,
+        changePassword,
         exportProjectJson,
         importProjectJson,
       }}

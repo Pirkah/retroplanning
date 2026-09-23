@@ -21,7 +21,9 @@ export const GanttChartView: React.FC = () => {
     searchQuery,
     selectedColor,
     selectedMemberId,
-    members
+    members,
+    isAuthorized,
+    openAuthModal
   } = usePlanning();
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -202,7 +204,13 @@ export const GanttChartView: React.FC = () => {
                 </span>
               </div>
               <button
-                onClick={() => openNewTaskModal()}
+                onClick={() => {
+                  if (!isAuthorized) {
+                    openAuthModal();
+                  } else {
+                    openNewTaskModal();
+                  }
+                }}
                 className="p-1 hover:bg-indigo-50 text-indigo-600 rounded-lg transition"
                 title="Ajouter une tâche"
               >
@@ -217,13 +225,19 @@ export const GanttChartView: React.FC = () => {
                   key={`${col.year}-${col.weekNumber}`}
                   ref={col.isCurrentWeek ? currentWeekRef : null}
                   style={{ width: `${columnWidth}px` }}
-                  onClick={() => openNewTaskModal(format(col.start, 'yyyy-MM-dd'))}
+                  onClick={() => {
+                    if (!isAuthorized) {
+                      openAuthModal();
+                    } else {
+                      openNewTaskModal(format(col.start, 'yyyy-MM-dd'));
+                    }
+                  }}
                   className={`h-[68px] px-2 py-2 flex flex-col justify-between border-r border-slate-200 text-center cursor-pointer transition-colors group ${
                     col.isCurrentWeek
                       ? 'bg-rose-50/70 border-rose-300 ring-1 ring-inset ring-rose-300'
                       : 'hover:bg-indigo-50/40 bg-slate-50/40'
                   }`}
-                  title={`Cliquer pour ajouter une tâche en ${col.label}`}
+                  title={isAuthorized ? `Cliquer pour ajouter une tâche en ${col.label}` : `Cliquer pour déverrouiller l'édition`}
                 >
                   <div className="flex items-center justify-center gap-1.5">
                     <span

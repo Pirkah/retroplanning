@@ -20,7 +20,15 @@ import { ChevronLeft, ChevronRight, Plus, Sparkles } from 'lucide-react';
 import { Task } from '../types/planning';
 
 export const CalendarView: React.FC = () => {
-  const { currentProject, openEditTaskModal, openNewTaskModal, searchQuery, selectedColor } = usePlanning();
+  const {
+    currentProject,
+    openEditTaskModal,
+    openNewTaskModal,
+    searchQuery,
+    selectedColor,
+    isAuthorized,
+    openAuthModal
+  } = usePlanning();
   const [currentMonthDate, setCurrentMonthDate] = useState(new Date());
 
   const monthStart = startOfMonth(currentMonthDate);
@@ -134,9 +142,15 @@ export const CalendarView: React.FC = () => {
                 </span>
 
                 <button
-                  onClick={() => openNewTaskModal(dateString)}
+                  onClick={() => {
+                    if (!isAuthorized) {
+                      openAuthModal();
+                    } else {
+                      openNewTaskModal(dateString);
+                    }
+                  }}
                   className="opacity-0 group-hover:opacity-100 p-1 hover:bg-indigo-50 text-indigo-600 rounded transition"
-                  title="Ajouter une tâche à cette date"
+                  title={isAuthorized ? "Ajouter une tâche à cette date" : "Déverrouiller pour ajouter une tâche"}
                 >
                   <Plus size={14} />
                 </button>
