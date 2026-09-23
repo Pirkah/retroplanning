@@ -6,5 +6,18 @@ export default defineConfig({
   server: {
     port: 5173,
     open: false
+  },
+  build: {
+    chunkSizeWarningLimit: 2000,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-pdf': ['jspdf', 'html2canvas'],
+          'vendor-icons': ['lucide-react'],
+          'vendor-utils': ['date-fns']
+        }
+      }
+    }
   }
 });
