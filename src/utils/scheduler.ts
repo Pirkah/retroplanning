@@ -15,6 +15,122 @@ import {
 import { fr } from 'date-fns/locale';
 import { Task, WeekColumn } from '../types/planning';
 
+export interface CategoryClass {
+  id: string;
+  label: string;
+  color: string;
+  bgLight: string;
+  borderLight: string;
+  textDark: string;
+}
+
+/**
+ * Ordre exact des classes (catégories) tel qu'affiché dans le diagramme Gantt
+ */
+export const CATEGORY_CLASSES: CategoryClass[] = [
+  {
+    id: 'communication',
+    label: 'Communication',
+    color: '#16A34A',
+    bgLight: 'bg-emerald-50',
+    borderLight: 'border-emerald-200',
+    textDark: 'text-emerald-800'
+  },
+  {
+    id: 'association',
+    label: 'Association',
+    color: '#F97316',
+    bgLight: 'bg-orange-50',
+    borderLight: 'border-orange-200',
+    textDark: 'text-orange-800'
+  },
+  {
+    id: 'administratif',
+    label: 'Administratif',
+    color: '#0EA5E9',
+    bgLight: 'bg-sky-50',
+    borderLight: 'border-sky-200',
+    textDark: 'text-sky-800'
+  },
+  {
+    id: 'partenaires_fournisseurs',
+    label: 'Partenaire et Fournisseurs',
+    color: '#EAB308',
+    bgLight: 'bg-amber-50',
+    borderLight: 'border-amber-200',
+    textDark: 'text-amber-800'
+  },
+  {
+    id: 'finance',
+    label: 'Finance',
+    color: '#84CC16',
+    bgLight: 'bg-lime-50',
+    borderLight: 'border-lime-200',
+    textDark: 'text-lime-800'
+  },
+  {
+    id: 'activite',
+    label: 'Activité',
+    color: '#D946EF',
+    bgLight: 'bg-fuchsia-50',
+    borderLight: 'border-fuchsia-200',
+    textDark: 'text-fuchsia-800'
+  },
+  {
+    id: 'logistique_securite',
+    label: 'Logistique et Sécurité de la course',
+    color: '#EF4444',
+    bgLight: 'bg-rose-50',
+    borderLight: 'border-rose-200',
+    textDark: 'text-rose-800'
+  },
+  {
+    id: 'autre',
+    label: 'Autres Tâches',
+    color: '#64748B',
+    bgLight: 'bg-slate-50',
+    borderLight: 'border-slate-200',
+    textDark: 'text-slate-800'
+  }
+];
+
+/**
+ * Normalise n'importe quelle catégorie saisie vers l'identifiant canonique de classe
+ */
+export function getCategoryClassId(cat?: string): string {
+  if (!cat) return 'autre';
+  const c = cat.toLowerCase().trim();
+
+  if (c.includes('comm') || c.includes('réseau') || c.includes('reseau') || c.includes('tiktok') || c.includes('info') || c.includes('site') || c.includes('affiche')) {
+    return 'communication';
+  }
+  if (c.includes('asso') && !c.includes('passation')) {
+    return 'association';
+  }
+  if (c.includes('admin') || c.includes('préfect') || c.includes('prefect') || c.includes('compte') || c.includes('mairie') || c.includes('salle') || c.includes('alcool') || c.includes('tpe') || c.includes('subvent')) {
+    return 'administratif';
+  }
+  if (c.includes('parten') || c.includes('fourn') || c.includes('bde') || c.includes('sponso') || c.includes('dpb') || c.includes('camion') || c.includes('dj') || c.includes('food')) {
+    return 'partenaires_fournisseurs';
+  }
+  if (c.includes('finan') || c.includes('banque') || c.includes('assur') || c.includes('chèque') || c.includes('cheque') || c.includes('smacl')) {
+    return 'finance';
+  }
+  if (c.includes('activ') || c.includes('even') || c.includes('évén') || c.includes('strava') || c.includes('run') || c.includes('gateau') || c.includes('bonbon') || c.includes('dossard') || c.includes('course')) {
+    return 'activite';
+  }
+  if (c.includes('logist') || c.includes('sécur') || c.includes('secur') || c.includes('benevol') || c.includes('bénévol') || c.includes('balis') || c.includes('pompier') || c.includes('croix')) {
+    return 'logistique_securite';
+  }
+
+  return 'autre';
+}
+
+export function getCategoryInfo(cat?: string): CategoryClass {
+  const classId = getCategoryClassId(cat);
+  return CATEGORY_CLASSES.find((c) => c.id === classId) || CATEGORY_CLASSES[CATEGORY_CLASSES.length - 1];
+}
+
 /**
  * Trie automatiquement et strictement les tâches dans l'ordre chronologique
  */
@@ -32,6 +148,68 @@ export function sortTasksChronologically(tasks: Task[]): Task[] {
     }
     return a.title.localeCompare(b.title);
   });
+}
+
+/**
+ * Trie les tâches par CLASSE (selon l'ordre du diagramme Gantt), puis chronologiquement à l'intérieur
+ */
+export function sortTasksByClass(tasks: Task[]): Task[] {
+  const classOrderMap = new Map<string, number>();
+  CATEGORY_CLASSES.forEach((c, idx) => classOrderMap.set(c.id, idx));
+
+  return [...tasks].sort((a, b) => {
+    const classA = getCategoryClassId(a.category);
+    const classB = getCategoryClassId(b.category);
+
+    const orderA = classOrderMap.get(classA) ?? 999;
+    const orderB = classOrderMap.get(classB) ?? 999;
+
+    if (orderA !== orderB) {
+      return orderA - orderB;
+    }
+
+    // Même classe : ordonnancement chronologique strict
+    const startA = a.startDate || '9999-12-31';
+    const startB = b.startDate || '9999-12-31';
+    if (startA !== startB) {
+      return startA.localeCompare(startB);
+    }
+    const endA = a.endDate || startA;
+    const endB = b.endDate || startB;
+    if (endA !== endB) {
+      return endA.localeCompare(endB);
+    }
+    return a.title.localeCompare(b.title);
+  });
+}
+
+/**
+ * Regroupe les tâches par classe pour l'affichage en sections dans le Gantt
+ */
+export function groupTasksByClass(tasks: Task[]): { categoryClass: CategoryClass; tasks: Task[] }[] {
+  const sorted = sortTasksByClass(tasks);
+  const groupsMap = new Map<string, Task[]>();
+
+  for (const t of sorted) {
+    const classId = getCategoryClassId(t.category);
+    if (!groupsMap.has(classId)) {
+      groupsMap.set(classId, []);
+    }
+    groupsMap.get(classId)!.push(t);
+  }
+
+  const result: { categoryClass: CategoryClass; tasks: Task[] }[] = [];
+  for (const catClass of CATEGORY_CLASSES) {
+    const groupTasks = groupsMap.get(catClass.id);
+    if (groupTasks && groupTasks.length > 0) {
+      result.push({
+        categoryClass: catClass,
+        tasks: groupTasks
+      });
+    }
+  }
+
+  return result;
 }
 
 /**
