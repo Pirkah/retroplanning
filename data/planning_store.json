@@ -1,0 +1,42 @@
+{
+  "projects": [
+    {
+      "id": "proj-collab-test",
+      "name": "Test Collaboration Multi-Utilisateurs",
+      "createdAt": "2026-09-23T07:38:28.792Z",
+      "tasks": [
+        {
+          "title": "ajouter les membres au comptes bancaires",
+          "description": "",
+          "startDate": "2026-09-21",
+          "endDate": "2026-10-04",
+          "color": "#8B5CF6",
+          "status": "todo",
+          "priority": "medium",
+          "progress": 0,
+          "category": "Banque",
+          "assignee": "Julien",
+          "assigneeId": "m-1",
+          "isMilestone": false,
+          "id": "task_1790149346395_eor4d"
+        },
+        {
+          "title": "remise de chèque",
+          "description": "",
+          "startDate": "2026-10-08",
+          "endDate": "2026-10-08",
+          "color": "#F43F5E",
+          "status": "in_progress",
+          "priority": "high",
+          "progress": 50,
+          "category": "evenement",
+          "assignee": "Julien",
+          "assigneeId": "m-1",
+          "isMilestone": false,
+          "id": "t-test"
+        }
+      ]
+    }
+  ],
+  "activeProjectId": "proj-collab-test"
+}

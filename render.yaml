@@ -1,0 +1,19 @@
+# ==============================================================================
+# BLUEPRINT RENDER : RÉTROPLANNING COLLABORATIF TEMPS RÉEL (GRATUIT)
+# ==============================================================================
+# Déploiement en 1-clic sur le plan gratuit de Render (Free Web Service)
+# Permet à tous vos collègues d'accéder au planning depuis chez eux avec HTTPS et WebSockets !
+# ==============================================================================
+
+services:
+  - type: web
+    name: retroplanning-collaboratif
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20
