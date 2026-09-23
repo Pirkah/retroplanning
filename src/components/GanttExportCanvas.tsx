@@ -325,19 +325,19 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
                         />
                       ))}
 
-                      {/* Barre de Gantt */}
+                      {/* Barre de Gantt : Pure couleur sans texte pour une lisibilité parfaite */}
                       <div
                         style={{
                           left: `${pos.left}px`,
                           width: `${pos.width}px`,
-                          height: '26px',
+                          height: '24px',
                           backgroundColor: task.color
                         }}
-                        className={`absolute rounded-md flex items-center px-2 shadow-xs overflow-hidden z-10 border border-black/10 ${
-                          task.isMilestone ? '!w-7 !h-7 justify-center !p-0 !rounded-md' : ''
+                        className={`absolute rounded-md shadow-xs overflow-hidden z-10 border border-black/15 ${
+                          task.isMilestone ? '!w-6 !h-6 justify-center !p-0 !rounded-md' : ''
                         }`}
                       >
-                        {/* Barre de progression */}
+                        {/* Barre de progression si applicable */}
                         {!task.isMilestone && task.progress > 0 && (
                           <div
                             className="absolute inset-y-0 left-0 bg-black/25 border-r border-white/50"
@@ -345,19 +345,10 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
                           />
                         )}
 
-                        {/* Label de la barre */}
-                        {task.isMilestone ? (
-                          <Sparkles size={14} className="text-white relative z-10" />
-                        ) : pos.width >= 85 ? (
-                          <div className="relative z-10 flex items-center justify-between w-full text-white text-[11px] font-black overflow-hidden leading-none">
-                            <span className="truncate pr-1 drop-shadow-xs">{task.title}</span>
-                            <span className="text-[10px] bg-black/40 px-1.5 py-0.5 rounded font-mono font-black shrink-0">
-                              {pos.durationWeeks}s
-                            </span>
-                          </div>
-                        ) : (
-                          <div className="relative z-10 w-full text-center text-white text-[10px] font-black drop-shadow-xs">
-                            {pos.durationWeeks}s
+                        {/* Jalon : icône discrète */}
+                        {task.isMilestone && (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Sparkles size={13} className="text-white" />
                           </div>
                         )}
                       </div>
