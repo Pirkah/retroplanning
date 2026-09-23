@@ -25,7 +25,7 @@ export async function exportGanttToPdf(options: ExportPdfOptions): Promise<void>
   await new Promise((resolve) => setTimeout(resolve, 200));
 
   const canvas = await html2canvas(element, {
-    scale: 2, // 2x pour une netteté de rendu optimale (polices lisses, pas de flou)
+    scale: 2.2, // Rendu haute résolution ultra-net
     useCORS: true,
     backgroundColor: '#ffffff',
     logging: false,
@@ -64,7 +64,8 @@ export async function exportGanttToPdf(options: ExportPdfOptions): Promise<void>
   const xOffset = margin + (printableWidth - finalWidth) / 2;
   const yOffset = margin + (printableHeight - finalHeight) / 2;
 
-  const imgData = canvas.toDataURL('image/jpeg', 0.98);
+  // Format PNG sans perte : aucun artefact de compression sur les textes et bordures
+  const imgData = canvas.toDataURL('image/png');
 
   const pdf = new jsPDF({
     orientation: 'landscape',
@@ -72,7 +73,7 @@ export async function exportGanttToPdf(options: ExportPdfOptions): Promise<void>
     format: isA3 ? 'a3' : 'a4'
   });
 
-  pdf.addImage(imgData, 'JPEG', xOffset, yOffset, finalWidth, finalHeight, undefined, 'FAST');
+  pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight, undefined, 'FAST');
 
   const cleanName = projectName
     .toLowerCase()
