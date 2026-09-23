@@ -24,12 +24,13 @@ import {
   Copy,
   Lock,
   Unlock,
-  Eye
+  Eye,
+  Printer
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { TeamModal } from './TeamModal';
 import { AuthModal } from './AuthModal';
-import { exportGanttToPdf, exportGanttToPng } from '../utils/pdfExport';
+import { exportGanttToPdf, exportGanttToPng, printGantt } from '../utils/pdfExport';
 
 export const Header: React.FC = () => {
   const {
@@ -383,6 +384,25 @@ export const Header: React.FC = () => {
                     <p className="text-xs font-bold text-slate-800">Image Panoramique (PNG)</p>
                     <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
                       Image haute résolution intégrale
+                    </p>
+                  </div>
+                </button>
+
+                {/* Impression / Export Vectoriel Navigateur */}
+                <button
+                  onClick={() => {
+                    setIsExportMenuOpen(false);
+                    printGantt();
+                  }}
+                  className="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                    <Printer size={16} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">Imprimer / PDF Vectoriel (Navigateur)</p>
+                    <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                      Via la boîte d'impression macOS ("Enregistrer au format PDF")
                     </p>
                   </div>
                 </button>

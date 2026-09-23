@@ -33,36 +33,12 @@ export async function exportGanttToPdf(options: ExportPdfOptions): Promise<void>
     windowHeight: element.scrollHeight
   });
 
-  onProgress?.('Mise en page PDF paysage...');
+  onProgress?.('Mise en page PDF paysage 100% plein cadre...');
 
-  // Dimensions de la page PDF en format Paysage (en millimètres)
-  // A3 paysage = 420 x 297 mm (Recommandé : très large, lisible même avec 40+ semaines)
-  // A4 paysage = 297 x 210 mm
-  const isA3 = format === 'a3';
-  const pageWidth = isA3 ? 420 : 297;
-  const pageHeight = isA3 ? 297 : 210;
-  const margin = isA3 ? 8 : 6;
-
-  const printableWidth = pageWidth - 2 * margin;
-  const printableHeight = pageHeight - 2 * margin;
-
-  const canvasRatio = canvas.width / canvas.height;
-  const printableRatio = printableWidth / printableHeight;
-
-  let finalWidth: number;
-  let finalHeight: number;
-
-  if (canvasRatio > printableRatio) {
-    finalWidth = printableWidth;
-    finalHeight = finalWidth / canvasRatio;
-  } else {
-    finalHeight = printableHeight;
-    finalWidth = finalHeight * canvasRatio;
-  }
-
-  // Centrage dans la page paysage
-  const xOffset = margin + (printableWidth - finalWidth) / 2;
-  const yOffset = margin + (printableHeight - finalHeight) / 2;
+  // Dimensions exactes de la page calculées à partir du ratio du diagramme
+  // Ainsi le diagramme remplit 100% de la page sans marges vides superflues
+  const targetWidthMm = format === 'a3' ? 420 : 297;
+  const targetHeightMm = Math.round((targetWidthMm * canvas.height) / canvas.width);
 
   // Format PNG sans perte : aucun artefact de compression sur les textes et bordures
   const imgData = canvas.toDataURL('image/png');
@@ -70,10 +46,11 @@ export async function exportGanttToPdf(options: ExportPdfOptions): Promise<void>
   const pdf = new jsPDF({
     orientation: 'landscape',
     unit: 'mm',
-    format: isA3 ? 'a3' : 'a4'
+    format: [targetWidthMm, targetHeightMm]
   });
 
-  pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight, undefined, 'FAST');
+  // Le diagramme occupe 100% de la surface pour une lisibilité maximale
+  pdf.addImage(imgData, 'PNG', 0, 0, targetWidthMm, targetHeightMm, undefined, 'FAST');
 
   const cleanName = projectName
     .toLowerCase()
@@ -101,7 +78,7 @@ export async function exportGanttToPng(
   await new Promise((resolve) => setTimeout(resolve, 200));
 
   const canvas = await html2canvas(element, {
-    scale: 2,
+    scale: 2.2,
     useCORS: true,
     backgroundColor: '#ffffff',
     logging: false,
@@ -122,4 +99,12 @@ export async function exportGanttToPng(
   link.href = imgData;
   link.download = `${cleanName}_gantt_panoramique_hd.png`;
   link.click();
+}
+
+/**
+ * Ouvre la boîte de dialogue d'impression native du navigateur
+ * Permet à l'utilisateur sur Mac de faire "Enregistrer au format PDF" directement en vectoriel
+ */
+export function printGantt(): void {
+  window.print();
 }

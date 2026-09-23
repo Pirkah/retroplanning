@@ -27,3 +27,22 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Règles d'impression pour l'export vectoriel navigateur */
+@media print {
+  @page {
+    size: landscape;
+    margin: 10mm;
+  }
+  header, footer, nav, #planning-main-view, .no-print {
+    display: none !important;
+  }
+  #gantt-export-canvas-target {
+    display: block !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    page-break-inside: avoid;
+  }
+}

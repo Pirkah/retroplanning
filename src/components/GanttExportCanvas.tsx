@@ -17,11 +17,11 @@ interface GanttExportCanvasProps {
 }
 
 export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, members }) => {
-  // Dimensions calibrées pour une lisibilité maximale sur A3 paysage (420 x 297 mm)
-  const exportColumnWidth = 58;
-  const leftPanelWidth = 540;
+  // Proportions calculées pour un ratio paysage optimal (1.45 - 1.55) sans tassement
+  const exportColumnWidth = 52;
+  const leftPanelWidth = 470;
 
-  // Colonnes de semaines calculées pour englober l'ensemble des tâches
+  // Colonnes de semaines
   const weekColumns = useMemo(() => {
     return generateWeekColumns(project.tasks, 1);
   }, [project.tasks]);
@@ -31,7 +31,7 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
     return groupTasksByClass(project.tasks);
   }, [project.tasks]);
 
-  // Groupement des semaines par mois pour l'en-tête temporel
+  // Groupement des semaines par mois
   const monthGroups = useMemo(() => {
     if (weekColumns.length === 0) return [];
     const groups: { label: string; weekCount: number }[] = [];
@@ -91,44 +91,44 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
         width: `${totalWidth}px`,
         backgroundColor: '#ffffff',
         color: '#0f172a',
-        fontFamily: 'Inter, system-ui, -apple-system, sans-serif'
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
       }}
-      className="p-8 bg-white border border-slate-300"
+      className="p-6 bg-white"
     >
-      {/* 1. EN-TÊTE PRINCIPAL DU DOCUMENT */}
-      <div className="border-b-2 border-slate-900 pb-5 mb-6 flex items-start justify-between">
+      {/* 1. EN-TÊTE PRINCIPAL COMPACT ET LISIBLE */}
+      <div className="border-b-2 border-slate-900 pb-4 mb-4 flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-3 mb-1.5">
+          <div className="flex items-center gap-3 mb-1">
             <span className="w-4 h-4 rounded-full bg-indigo-600 inline-block shadow-xs" />
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight">
               {project.name}
             </h1>
-            <span className="px-3 py-1 rounded-full text-xs font-black bg-indigo-100 text-indigo-900 uppercase tracking-wider">
-              Rétroplanning Prévisionnel Officiel
+            <span className="px-3 py-0.5 rounded-full text-xs font-black bg-indigo-100 text-indigo-900 uppercase tracking-wider">
+              Rétroplanning Général
             </span>
           </div>
-          <p className="text-sm text-slate-600 font-semibold">
-            Diagramme de Gantt hebdomadaire • 7 Classes Métiers • {totalTasks} tâches programmées
+          <p className="text-xs text-slate-600 font-bold">
+            Diagramme de Gantt Hebdomadaire • 7 Classes Métiers • {totalTasks} tâches
           </p>
         </div>
 
-        {/* Bloc Métriques & Avancement */}
-        <div className="flex items-center gap-6 bg-slate-50 px-6 py-3.5 rounded-2xl border border-slate-300">
+        {/* Métriques */}
+        <div className="flex items-center gap-5 bg-slate-50 px-5 py-2.5 rounded-xl border border-slate-300">
           <div>
-            <span className="block text-[11px] uppercase font-bold text-slate-500">Avancement Global</span>
-            <span className="text-xl font-black text-indigo-700">{globalProgress}%</span>
+            <span className="block text-[10px] uppercase font-black text-slate-500">Avancement</span>
+            <span className="text-lg font-black text-indigo-700">{globalProgress}%</span>
           </div>
-          <div className="h-9 w-px bg-slate-200" />
+          <div className="h-7 w-px bg-slate-200" />
           <div>
-            <span className="block text-[11px] uppercase font-bold text-slate-500">Tâches Réalisées</span>
-            <span className="text-xl font-black text-emerald-600">
+            <span className="block text-[10px] uppercase font-black text-slate-500">Tâches Faites</span>
+            <span className="text-lg font-black text-emerald-600">
               {completedTasks} / {totalTasks}
             </span>
           </div>
-          <div className="h-9 w-px bg-slate-200" />
+          <div className="h-7 w-px bg-slate-200" />
           <div>
-            <span className="block text-[11px] uppercase font-bold text-slate-500">Période du Rétroplanning</span>
-            <span className="text-sm font-bold text-slate-800">
+            <span className="block text-[10px] uppercase font-black text-slate-500">Horizon</span>
+            <span className="text-xs font-black text-slate-800">
               {weekColumns.length > 0
                 ? `${weekColumns[0].shortLabel} (${format(weekColumns[0].start, 'dd/MM/yy')}) → ${
                     weekColumns[weekColumns.length - 1].shortLabel
@@ -139,38 +139,38 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
         </div>
       </div>
 
-      {/* 2. LÉGENDE DES 7 CLASSES DU DIAGRAMME */}
-      <div className="bg-slate-50 p-4 rounded-xl border border-slate-300 mb-6 flex flex-wrap items-center justify-between gap-4">
-        <span className="font-black uppercase text-xs text-slate-700 tracking-wider">
-          Légende des 7 Classes :
+      {/* 2. LÉGENDE DES 7 CLASSES */}
+      <div className="bg-slate-50 px-4 py-2.5 rounded-lg border border-slate-300 mb-4 flex items-center justify-between gap-3">
+        <span className="font-black uppercase text-[11px] text-slate-700 tracking-wider shrink-0">
+          Légende :
         </span>
-        <div className="flex items-center gap-5 flex-wrap">
+        <div className="flex items-center gap-4 flex-wrap">
           {CATEGORY_CLASSES.map((cat) => (
-            <div key={cat.id} className="flex items-center gap-2">
+            <div key={cat.id} className="flex items-center gap-1.5">
               <span
-                className="w-3.5 h-3.5 rounded-full shadow-2xs shrink-0"
+                className="w-3 h-3 rounded-full shadow-2xs shrink-0"
                 style={{ backgroundColor: cat.color }}
               />
-              <span className="font-extrabold text-slate-800 text-xs">{cat.label}</span>
+              <span className="font-black text-slate-800 text-[11px]">{cat.label}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 3. GRILLE DU DIAGRAMME DE GANTT */}
-      <div className="border-2 border-slate-300 rounded-xl overflow-hidden shadow-xs">
-        {/* EN-TÊTE TEMPORELLE (Mois + Semaines) */}
+      {/* 3. GRILLE DU GANTT */}
+      <div className="border-2 border-slate-300 rounded-lg overflow-hidden shadow-xs">
+        {/* EN-TÊTE TEMPORELLE */}
         <div className="flex bg-slate-100 border-b-2 border-slate-300">
           {/* Angle haut-gauche */}
           <div
             style={{ width: `${leftPanelWidth}px` }}
-            className="border-r-2 border-slate-300 p-3.5 flex flex-col justify-center bg-slate-100 shrink-0"
+            className="border-r-2 border-slate-300 p-2.5 flex items-center justify-between bg-slate-100 shrink-0"
           >
             <span className="text-xs font-black text-slate-900 uppercase tracking-wider">
-              Classes & Intitulé des Tâches
+              Classes & Actions
             </span>
-            <span className="text-[11px] text-slate-500 font-semibold mt-0.5">
-              Responsable & Dates de réalisation
+            <span className="text-[10px] text-slate-600 font-bold">
+              Responsable • Période
             </span>
           </div>
 
@@ -182,7 +182,7 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
                 <div
                   key={idx}
                   style={{ width: `${mg.weekCount * exportColumnWidth}px` }}
-                  className="h-8 border-r border-slate-300 bg-slate-200/90 flex items-center justify-center text-xs font-black text-slate-800 uppercase tracking-wider text-center truncate px-1"
+                  className="h-7 border-r border-slate-300 bg-slate-200/90 flex items-center justify-center text-[11px] font-black text-slate-800 uppercase tracking-wider text-center truncate px-1"
                 >
                   {mg.label}
                 </div>
@@ -195,12 +195,12 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
                 <div
                   key={`${col.year}-${col.weekNumber}`}
                   style={{ width: `${exportColumnWidth}px` }}
-                  className={`h-10 border-r border-slate-300 flex flex-col items-center justify-center text-[11px] ${
+                  className={`h-9 border-r border-slate-300 flex flex-col items-center justify-center text-[10px] ${
                     col.isCurrentWeek ? 'bg-rose-100/90 text-rose-900 font-black' : 'bg-slate-50 text-slate-700'
                   }`}
                 >
-                  <span className="font-extrabold">{col.shortLabel}</span>
-                  <span className="text-[9px] text-slate-500 font-bold">
+                  <span className="font-black text-[11px]">{col.shortLabel}</span>
+                  <span className="text-[8px] text-slate-500 font-bold leading-none mt-0.5">
                     {format(col.start, 'dd/MM')}
                   </span>
                 </div>
@@ -214,16 +214,16 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
           {taskGroups.map((group) => (
             <div key={group.categoryClass.id} className="bg-white">
               {/* En-tête de Section Classe */}
-              <div className="flex bg-slate-100 border-y-2 border-slate-300">
+              <div className="flex bg-slate-100 border-y border-slate-300">
                 <div
-                  className="h-9 px-4 border-r-2 border-slate-300 flex items-center justify-between shrink-0"
+                  className="h-8 px-3 border-r-2 border-slate-300 flex items-center justify-between shrink-0"
                   style={{
                     width: `${leftPanelWidth}px`,
                     backgroundColor: `${group.categoryClass.color}18`,
-                    borderLeft: `6px solid ${group.categoryClass.color}`
+                    borderLeft: `5px solid ${group.categoryClass.color}`
                   }}
                 >
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2">
                     <span
                       className="w-3 h-3 rounded-full shrink-0 shadow-2xs"
                       style={{ backgroundColor: group.categoryClass.color }}
@@ -232,19 +232,19 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
                       {group.categoryClass.label}
                     </span>
                   </div>
-                  <span className="text-[11px] font-extrabold px-2.5 py-0.5 rounded-full bg-white text-slate-800 border border-slate-300 shadow-2xs">
-                    {group.tasks.length} tâche{group.tasks.length > 1 ? 's' : ''}
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-white text-slate-800 border border-slate-300 shadow-2xs">
+                    {group.tasks.length}
                   </span>
                 </div>
 
                 <div
-                  className="h-9 flex items-center px-4 shrink-0"
+                  className="h-8 flex items-center px-3 shrink-0"
                   style={{
                     width: `${timelineWidth}px`,
                     backgroundColor: `${group.categoryClass.color}0a`
                   }}
                 >
-                  <span className="text-xs font-extrabold uppercase tracking-wider text-slate-500">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
                     Section {group.categoryClass.label}
                   </span>
                 </div>
@@ -258,41 +258,41 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
                 return (
                   <div
                     key={task.id}
-                    className={`flex items-center h-11 border-b border-slate-200 ${
-                      idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'
+                    className={`flex items-center h-9 border-b border-slate-200 ${
+                      idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'
                     }`}
                   >
-                    {/* Volet gauche : Infos tâche SANS tronquage agressif */}
+                    {/* Volet gauche : Infos tâche ultra-lisible */}
                     <div
                       style={{ width: `${leftPanelWidth}px` }}
-                      className="h-full border-r-2 border-slate-300 px-3.5 flex items-center justify-between shrink-0 overflow-hidden"
+                      className="h-full border-r-2 border-slate-300 px-3 flex items-center justify-between shrink-0 overflow-hidden"
                     >
-                      <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-3">
+                      <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
                         <span
-                          className="w-3 h-3 rounded-full shrink-0 shadow-2xs"
+                          className="w-2.5 h-2.5 rounded-full shrink-0 shadow-2xs"
                           style={{ backgroundColor: task.color }}
                         />
-                        <span className="text-xs font-bold text-slate-900 leading-snug truncate" title={task.title}>
+                        <span className="text-[11px] font-black text-slate-900 leading-tight truncate" title={task.title}>
                           {task.title}
                         </span>
                       </div>
 
                       {/* Dates & Membre responsable */}
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-1.5 shrink-0">
                         {member && (
-                          <div className="flex items-center gap-1.5 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                          <div className="flex items-center gap-1 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                             <span
-                              className="w-4 h-4 rounded-full text-[9px] font-black text-white flex items-center justify-center shrink-0"
+                              className="w-3.5 h-3.5 rounded-full text-[8px] font-black text-white flex items-center justify-center shrink-0"
                               style={{ backgroundColor: member.color }}
                             >
                               {member.initials}
                             </span>
-                            <span className="text-[10px] font-bold text-slate-700 max-w-[70px] truncate">
+                            <span className="text-[9px] font-black text-slate-700 max-w-[65px] truncate">
                               {member.name.split(' ')[0]}
                             </span>
                           </div>
                         )}
-                        <span className="text-[10px] font-bold text-slate-600 bg-slate-100/90 px-2 py-0.5 rounded border border-slate-200">
+                        <span className="text-[9px] font-black text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                           {formatDateFr(task.startDate, 'dd/MM')}
                           {!task.isMilestone && ` → ${formatDateFr(task.endDate, 'dd/MM')}`}
                         </span>
@@ -320,11 +320,11 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
                         style={{
                           left: `${pos.left}px`,
                           width: `${pos.width}px`,
-                          height: '28px',
+                          height: '24px',
                           backgroundColor: task.color
                         }}
-                        className={`absolute rounded-lg flex items-center px-2 shadow-xs overflow-hidden z-10 ${
-                          task.isMilestone ? '!w-7 !h-7 justify-center !p-0 !rounded-lg' : ''
+                        className={`absolute rounded-md flex items-center px-1.5 shadow-2xs overflow-hidden z-10 ${
+                          task.isMilestone ? '!w-6 !h-6 justify-center !p-0 !rounded-md' : ''
                         }`}
                       >
                         {/* Barre de progression */}
@@ -337,16 +337,16 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
 
                         {/* Label de la barre */}
                         {task.isMilestone ? (
-                          <Sparkles size={14} className="text-white relative z-10" />
-                        ) : pos.width >= 90 ? (
-                          <div className="relative z-10 flex items-center justify-between w-full text-white text-[11px] font-bold overflow-hidden leading-none">
+                          <Sparkles size={12} className="text-white relative z-10" />
+                        ) : pos.width >= 75 ? (
+                          <div className="relative z-10 flex items-center justify-between w-full text-white text-[10px] font-black overflow-hidden leading-none">
                             <span className="truncate pr-1 drop-shadow-2xs">{task.title}</span>
-                            <span className="text-[10px] bg-black/35 px-1.5 py-0.5 rounded font-mono font-bold shrink-0">
+                            <span className="text-[9px] bg-black/35 px-1 py-0.5 rounded font-mono font-black shrink-0">
                               {pos.durationWeeks}s
                             </span>
                           </div>
                         ) : (
-                          <div className="relative z-10 w-full text-center text-white text-[10px] font-black drop-shadow-2xs">
+                          <div className="relative z-10 w-full text-center text-white text-[9px] font-black drop-shadow-2xs">
                             {pos.durationWeeks}s
                           </div>
                         )}
@@ -360,17 +360,17 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
         </div>
       </div>
 
-      {/* 4. PIED DE PAGE DU DOCUMENT PDF */}
-      <div className="mt-6 pt-4 border-t-2 border-slate-300 flex items-center justify-between text-xs text-slate-600 font-semibold">
+      {/* 4. PIED DE PAGE */}
+      <div className="mt-4 pt-3 border-t border-slate-300 flex items-center justify-between text-[11px] text-slate-500 font-bold">
         <div>
-          <span className="font-extrabold text-slate-800">Rétroplanning RnF</span> • Document de synthèse prévisionnelle officiel
+          <span className="font-black text-slate-800">Rétroplanning RnF</span> • Document de synthèse prévisionnelle officiel
         </div>
         <div className="flex items-center gap-3">
           <span>Développé par <strong className="text-slate-900">Julien (@Pirkah)</strong></span>
           <span>•</span>
-          <span className="font-bold text-indigo-600">github.com/Pirkah</span>
+          <span className="font-black text-indigo-600">github.com/Pirkah</span>
           <span>•</span>
-          <span className="font-bold text-slate-800">x.com/Pirkah</span>
+          <span className="font-black text-slate-800">x.com/Pirkah</span>
         </div>
       </div>
     </div>
