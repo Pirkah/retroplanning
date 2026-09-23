@@ -15,51 +15,66 @@ export async function exportGanttToPdf(options: ExportPdfOptions): Promise<void>
 
   onProgress?.('Préparation du diagramme...');
   const element = document.getElementById('gantt-export-canvas-target');
+  const container = document.getElementById('export-canvas-container');
   if (!element) {
     throw new Error('Élément d’export introuvable.');
   }
 
-  onProgress?.('Rendu haute définition du diagramme (Gantt complet)...');
+  // Activer temporairement le conteneur en (0, 0) avec opacité 1 sous le rideau de chargement
+  // Permet à Safari (WebKit) et Chrome de calculer avec précision les polices et l'antialiasing subpixel
+  if (container) {
+    container.style.opacity = '1';
+    container.style.zIndex = '99998';
+  }
 
-  // Petit délai pour assurer que les polices et largeurs sont calculées
-  await new Promise((resolve) => setTimeout(resolve, 200));
+  try {
+    onProgress?.('Rendu haute définition du diagramme (Gantt complet)...');
 
-  const canvas = await html2canvas(element, {
-    scale: 2.2, // Rendu haute résolution ultra-net
-    useCORS: true,
-    backgroundColor: '#ffffff',
-    logging: false,
-    windowWidth: element.scrollWidth,
-    windowHeight: element.scrollHeight
-  });
+    // Délai pour laisser le moteur de rendu et les polices se stabiliser
+    await new Promise((resolve) => setTimeout(resolve, 250));
 
-  onProgress?.('Mise en page PDF paysage 100% plein cadre...');
+    const canvas = await html2canvas(element, {
+      scale: 2.0, // 2x haute résolution ultra-nette (~350 DPI sur A3)
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight
+    });
 
-  // Dimensions exactes de la page calculées à partir du ratio du diagramme
-  // Ainsi le diagramme remplit 100% de la page sans marges vides superflues
-  const targetWidthMm = format === 'a3' ? 420 : 297;
-  const targetHeightMm = Math.round((targetWidthMm * canvas.height) / canvas.width);
+    onProgress?.('Génération du fichier PDF paysage...');
 
-  // Format PNG sans perte : aucun artefact de compression sur les textes et bordures
-  const imgData = canvas.toDataURL('image/png');
+    // Dimensions exactes de la page calculées selon le ratio réel du diagramme
+    // Garantit zéro bande blanche, zéro marges superflues et un rendu 100% plein cadre
+    const targetWidthMm = format === 'a3' ? 420 : 297;
+    const targetHeightMm = Math.round((targetWidthMm * canvas.height) / canvas.width);
 
-  const pdf = new jsPDF({
-    orientation: 'landscape',
-    unit: 'mm',
-    format: [targetWidthMm, targetHeightMm]
-  });
+    // Format PNG sans perte : aucun artefact de compression sur les textes et bordures
+    const imgData = canvas.toDataURL('image/png');
 
-  // Le diagramme occupe 100% de la surface pour une lisibilité maximale
-  pdf.addImage(imgData, 'PNG', 0, 0, targetWidthMm, targetHeightMm, undefined, 'FAST');
+    const pdf = new jsPDF({
+      orientation: 'landscape',
+      unit: 'mm',
+      format: [targetWidthMm, targetHeightMm]
+    });
 
-  const cleanName = projectName
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '');
+    // Le diagramme occupe 100% de la surface pour une lisibilité maximale
+    pdf.addImage(imgData, 'PNG', 0, 0, targetWidthMm, targetHeightMm, undefined, 'FAST');
 
-  pdf.save(`${cleanName}_gantt_paysage_${format.toUpperCase()}.pdf`);
+    const cleanName = projectName
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+
+    pdf.save(`${cleanName}_gantt_paysage_${format.toUpperCase()}.pdf`);
+  } finally {
+    if (container) {
+      container.style.opacity = '0';
+      container.style.zIndex = '-9999';
+    }
+  }
 }
 
 /**
@@ -71,34 +86,47 @@ export async function exportGanttToPng(
 ): Promise<void> {
   onProgress?.('Capture panoramique du diagramme complet...');
   const element = document.getElementById('gantt-export-canvas-target');
+  const container = document.getElementById('export-canvas-container');
   if (!element) {
     throw new Error('Élément d’export introuvable.');
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 200));
+  if (container) {
+    container.style.opacity = '1';
+    container.style.zIndex = '99998';
+  }
 
-  const canvas = await html2canvas(element, {
-    scale: 2.2,
-    useCORS: true,
-    backgroundColor: '#ffffff',
-    logging: false,
-    windowWidth: element.scrollWidth,
-    windowHeight: element.scrollHeight
-  });
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 250));
 
-  const imgData = canvas.toDataURL('image/png');
-  const link = document.createElement('a');
+    const canvas = await html2canvas(element, {
+      scale: 2.0,
+      useCORS: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight
+    });
 
-  const cleanName = projectName
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '');
+    const imgData = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
 
-  link.href = imgData;
-  link.download = `${cleanName}_gantt_panoramique_hd.png`;
-  link.click();
+    const cleanName = projectName
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+
+    link.href = imgData;
+    link.download = `${cleanName}_gantt_panoramique_hd.png`;
+    link.click();
+  } finally {
+    if (container) {
+      container.style.opacity = '0';
+      container.style.zIndex = '-9999';
+    }
+  }
 }
 
 /**

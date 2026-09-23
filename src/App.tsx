@@ -92,8 +92,20 @@ const MainLayout: React.FC = () => {
       {/* Modale d'ajout / modification de tâche */}
       <TaskModal />
 
-      {/* Cible d'export HD complète (invisible à l'écran, accessible pour le rendu PDF/PNG paysage) */}
-      <div className="fixed -left-[99999px] top-0 pointer-events-none select-none" aria-hidden="true">
+      {/* Cible d'export HD complète (invisible à l'écran par défaut, accessible pour le rendu PDF/PNG paysage et impression vectorielle) */}
+      <div
+        id="export-canvas-container"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          zIndex: -9999,
+          opacity: 0,
+          pointerEvents: 'none',
+          userSelect: 'none'
+        }}
+        aria-hidden="true"
+      >
         <GanttExportCanvas project={currentProject} members={members} />
       </div>
     </div>
