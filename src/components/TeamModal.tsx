@@ -9,7 +9,7 @@ interface TeamModalProps {
 }
 
 export const TeamModal: React.FC<TeamModalProps> = ({ isOpen, onClose }) => {
-  const { members, addTeamMember } = usePlanning();
+  const { members, addTeamMember, deleteTeamMember } = usePlanning();
   const [name, setName] = useState('');
   const [role, setRole] = useState('');
   const [color, setColor] = useState('#6366F1');
@@ -58,7 +58,7 @@ export const TeamModal: React.FC<TeamModalProps> = ({ isOpen, onClose }) => {
             {members.map((m) => (
               <div
                 key={m.id}
-                className="p-2.5 rounded-xl border border-slate-100 bg-slate-50/60 flex items-center justify-between"
+                className="p-2.5 rounded-xl border border-slate-100 bg-slate-50/60 flex items-center justify-between group hover:bg-slate-100/60 transition"
               >
                 <div className="flex items-center gap-2.5">
                   <div
@@ -72,6 +72,20 @@ export const TeamModal: React.FC<TeamModalProps> = ({ isOpen, onClose }) => {
                     <p className="text-[10px] text-slate-400">{m.role}</p>
                   </div>
                 </div>
+
+                {members.length > 1 && (
+                  <button
+                    onClick={() => {
+                      if (confirm(`Supprimer ${m.name} de l'équipe ? Les tâches qui lui étaient assignées ne seront plus attribuées.`)) {
+                        deleteTeamMember(m.id);
+                      }
+                    }}
+                    className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                    title={`Supprimer ${m.name}`}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                )}
               </div>
             ))}
           </div>

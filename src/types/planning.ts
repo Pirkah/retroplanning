@@ -60,11 +60,11 @@ export const COLOR_PRESETS: ColorPreset[] = [
 ];
 
 export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
-  { id: 'm-1', name: 'Julien', role: 'Chef de projet', color: '#6366F1', initials: 'JU' },
-  { id: 'm-2', name: 'Thomas', role: 'Lead Dév', color: '#3B82F6', initials: 'TH' },
-  { id: 'm-3', name: 'Camille', role: 'Marketing & Comm', color: '#10B981', initials: 'CA' },
-  { id: 'm-4', name: 'Alice', role: 'Designer UX/UI', color: '#F43F5E', initials: 'AL' },
-  { id: 'm-5', name: 'Marc', role: 'Direction / Stratégie', color: '#8B5CF6', initials: 'MA' },
+  { id: 'm-vianney', name: 'Vianney Urbanick', role: 'Président / Admin', color: '#3B82F6', initials: 'VI' },
+  { id: 'm-julien', name: 'Julien Nicolle', role: 'Secrétaire / Dév', color: '#6366F1', initials: 'JU' },
+  { id: 'm-mathias', name: 'Mathias Samson', role: 'Événements & Partenaires', color: '#F59E0B', initials: 'MA' },
+  { id: 'm-sina', name: 'Sina Abdoul Bastoi', role: 'Communication & Réseaux', color: '#10B981', initials: 'SI' },
+  { id: 'm-tetew', name: 'Tetew', role: 'Événements & Logistique', color: '#EC4899', initials: 'TE' },
 ];
 
 export interface WeekColumn {

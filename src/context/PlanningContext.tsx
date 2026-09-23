@@ -47,6 +47,7 @@ interface PlanningContextType {
 
   // Membres
   addTeamMember: (member: Omit<TeamMember, 'id'>) => void;
+  deleteTeamMember: (memberId: string) => void;
 
   // Import / Export
   exportProjectJson: () => void;
@@ -314,6 +315,27 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     broadcastState(nextProjects, activeProjectId);
   };
 
+  const deleteTeamMember = (memberId: string) => {
+    const nextProjects = projects.map((p) =>
+      p.id === currentProject.id
+        ? {
+            ...p,
+            members: (p.members || DEFAULT_TEAM_MEMBERS).filter((m) => m.id !== memberId),
+            tasks: (p.tasks || []).map((t) =>
+              t.assigneeId === memberId
+                ? { ...t, assigneeId: undefined, assignee: undefined }
+                : t
+            )
+          }
+        : p
+    );
+    setProjects(nextProjects);
+    if (selectedMemberId === memberId) {
+      setSelectedMemberId(null);
+    }
+    broadcastState(nextProjects, activeProjectId);
+  };
+
   const openNewTaskModal = (defaultDate?: string) => {
     setEditingTask(null);
     setDefaultDateForNewTask(defaultDate || null);
@@ -403,6 +425,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         openEditTaskModal,
         closeTaskModal,
         addTeamMember,
+        deleteTeamMember,
         exportProjectJson,
         importProjectJson,
       }}
