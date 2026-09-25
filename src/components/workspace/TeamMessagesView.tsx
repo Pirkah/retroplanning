@@ -200,7 +200,7 @@ export const TeamMessagesView: React.FC = () => {
       </div>
 
       {/* 2. ZONE CENTRALE : FILS DE DISCUSSION DU SALON */}
-      <div className="flex-1 flex flex-col bg-white dark:bg-slate-950 overflow-hidden">
+      <div className="flex-1 flex flex-col bg-slate-50/50 dark:bg-slate-950 overflow-hidden">
         {/* En-tête du canal actif */}
         <div className="px-5 py-3.5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xs">
           <div className="flex items-center gap-2.5 min-w-0">
@@ -225,7 +225,7 @@ export const TeamMessagesView: React.FC = () => {
               placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-7 pr-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full pl-7 pr-2.5 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
           </div>
         </div>
@@ -308,8 +308,8 @@ export const TeamMessagesView: React.FC = () => {
                         onDoubleClick={() => handleStartReply(msg)}
                         className={`p-3 text-xs leading-relaxed break-words max-w-full shadow-xs transition ${
                           isMe
-                            ? 'bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-2xl rounded-br-xs'
-                            : 'bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100 border border-slate-200/80 dark:border-slate-700/80 rounded-2xl rounded-bl-xs'
+                            ? 'bg-indigo-600 dark:bg-indigo-600 text-white rounded-2xl rounded-br-xs'
+                            : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200/90 dark:border-slate-700 rounded-2xl rounded-bl-xs'
                         }`}
                       >
                         {/* Aperçu du message cité (Style Instagram) */}
@@ -319,36 +319,38 @@ export const TeamMessagesView: React.FC = () => {
                               e.stopPropagation();
                               scrollToMessage(msg.replyTo!.id);
                             }}
-                            className={`mb-2 p-2 rounded-xl text-left transition cursor-pointer flex flex-col gap-0.5 border-l-3 ${
+                            className={`mb-2 p-2 rounded-xl text-left transition cursor-pointer flex flex-col gap-0.5 border-l-4 ${
                               isMe
-                                ? 'bg-black/20 hover:bg-black/30 border-white text-white'
-                                : 'bg-slate-200/70 dark:bg-slate-700/60 hover:bg-slate-300/60 dark:hover:bg-slate-700 border-indigo-500 text-slate-700 dark:text-slate-300'
+                                ? 'bg-indigo-700/80 hover:bg-indigo-700 dark:bg-indigo-900/70 dark:hover:bg-indigo-900 border-white text-white'
+                                : 'bg-slate-100 dark:bg-slate-900/90 hover:bg-slate-200/70 dark:hover:bg-slate-900 border-indigo-500 text-slate-800 dark:text-slate-200'
                             }`}
                             title="Cliquer pour voir le message d'origine"
                           >
-                            <div className="flex items-center gap-1 text-[10px] font-bold">
+                            <div className={`flex items-center gap-1 text-[10px] font-bold ${isMe ? 'text-indigo-100' : 'text-indigo-600 dark:text-indigo-400'}`}>
                               <Reply size={10} className="shrink-0" />
                               <span className="truncate">{msg.replyTo.authorName}</span>
                             </div>
-                            <p className={`text-[11px] line-clamp-2 italic ${isMe ? 'text-white/90' : 'text-slate-600 dark:text-slate-300'}`}>
+                            <p className={`text-[11px] line-clamp-2 italic ${isMe ? 'text-white/95' : 'text-slate-600 dark:text-slate-300'}`}>
                               {msg.replyTo.content}
                             </p>
                           </div>
                         )}
 
                         {/* Texte du message */}
-                        <div className="select-text whitespace-pre-wrap">{msg.content}</div>
+                        <div className={`select-text whitespace-pre-wrap font-medium ${isMe ? 'text-white' : 'text-slate-900 dark:text-slate-100'}`}>
+                          {msg.content}
+                        </div>
                       </div>
 
                       {/* Barre d'actions au survol (Répondre + Emojis rapides) */}
-                      <div className="opacity-0 group-hover/bubble:opacity-100 transition-opacity flex items-center gap-0.5 bg-white/95 dark:bg-slate-850/95 backdrop-blur-xs p-0.5 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm shrink-0">
+                      <div className="opacity-0 group-hover/bubble:opacity-100 transition-opacity flex items-center gap-0.5 bg-white dark:bg-slate-800 p-0.5 rounded-full border border-slate-200 dark:border-slate-700 shadow-md shrink-0">
                         {isMe &&
                           COMMON_EMOJIS.slice(0, 3).map((emoji) => (
                             <button
                               key={emoji}
                               type="button"
                               onClick={() => addReaction(msg.id, emoji)}
-                              className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-xs transition"
+                              className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full text-xs transition"
                               title={`Réagir ${emoji}`}
                             >
                               {emoji}
@@ -357,7 +359,7 @@ export const TeamMessagesView: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleStartReply(msg)}
-                          className="p-1.5 hover:bg-indigo-50 dark:hover:bg-indigo-950/60 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-400 dark:text-slate-400 rounded-full transition flex items-center gap-1"
+                          className="p-1.5 hover:bg-indigo-50 dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-300 rounded-full transition flex items-center gap-1"
                           title="Répondre au message (comme Instagram)"
                         >
                           <Reply size={13} />
@@ -368,7 +370,7 @@ export const TeamMessagesView: React.FC = () => {
                               key={emoji}
                               type="button"
                               onClick={() => addReaction(msg.id, emoji)}
-                              className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full text-xs transition"
+                              className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full text-xs transition"
                               title={`Réagir ${emoji}`}
                             >
                               {emoji}
@@ -388,13 +390,13 @@ export const TeamMessagesView: React.FC = () => {
                               onClick={() => addReaction(msg.id, reaction.emoji)}
                               className={`px-2 py-0.5 rounded-full text-xs font-medium transition flex items-center gap-1 border ${
                                 hasReacted
-                                  ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-bold'
-                                  : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
+                                  ? 'bg-indigo-50 dark:bg-indigo-950/80 border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300 font-bold'
+                                  : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                               }`}
                               title={`Réagi par : ${reaction.users.join(', ')}`}
                             >
                               <span>{reaction.emoji}</span>
-                              <span className="text-[10px]">{reaction.count}</span>
+                              <span className="text-[10px] font-bold">{reaction.count}</span>
                             </button>
                           );
                         })}
@@ -420,25 +422,25 @@ export const TeamMessagesView: React.FC = () => {
         </div>
 
         {/* Barre de saisie en bas */}
-        <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/80">
+        <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/90">
           <form onSubmit={handleSend} className="space-y-2">
             {/* Bannière de réponse Instagram */}
             {replyingTo && (
-              <div className="flex items-center justify-between px-4 py-2 bg-indigo-50/90 dark:bg-indigo-950/50 border-t border-l border-r border-indigo-200 dark:border-indigo-800/60 rounded-t-2xl animate-fadeIn">
+              <div className="flex items-center justify-between px-4 py-2 bg-indigo-50 dark:bg-slate-800 border-t border-l border-r border-indigo-200 dark:border-slate-700 rounded-t-2xl animate-fadeIn">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
                     <Reply size={13} />
                   </div>
                   <div className="min-w-0 text-left">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-700 dark:text-indigo-300">
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-indigo-700 dark:text-indigo-400">
                         Réponse à
                       </span>
-                      <span className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                      <span className="text-xs font-bold text-slate-900 dark:text-slate-100 truncate">
                         {replyingTo.authorName}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-600 dark:text-slate-400 truncate max-w-sm sm:max-w-xl">
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300 truncate max-w-sm sm:max-w-xl">
                       {replyingTo.content}
                     </p>
                   </div>
@@ -446,7 +448,7 @@ export const TeamMessagesView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setReplyingTo(null)}
-                  className="p-1 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg transition shrink-0 ml-2"
+                  className="p-1 hover:bg-indigo-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg transition shrink-0 ml-2"
                   title="Annuler la réponse (Échap)"
                 >
                   <X size={15} />
@@ -474,7 +476,7 @@ export const TeamMessagesView: React.FC = () => {
                     ? `Répondre à ${replyingTo.authorName}... (Échap pour annuler)`
                     : `Écrire dans #${activeChannel.name} en tant que ${currentUser?.name || 'Membre'}...`
                 }
-                className="flex-1 px-4 py-3 text-xs text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 bg-transparent focus:outline-none"
+                className="flex-1 px-4 py-3 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 bg-transparent focus:outline-none font-medium"
               />
 
               <div className="flex items-center gap-1 pr-2">
