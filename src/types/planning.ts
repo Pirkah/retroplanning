@@ -9,6 +9,15 @@ export interface TeamMember {
   initials: string;
 }
 
+export interface ConnectedUser {
+  id?: string;
+  name: string;
+  role?: string;
+  color?: string;
+  initials?: string;
+  loggedInAt?: string;
+}
+
 export interface Task {
   id: string;
   title: string;

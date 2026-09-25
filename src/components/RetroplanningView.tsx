@@ -33,8 +33,13 @@ export const RetroplanningView: React.FC = () => {
     deleteRetroEvent,
     addRetroTask,
     updateRetroTask,
-    deleteRetroTask
+    deleteRetroTask,
+    retroActiveTab,
+    setRetroActiveTab
   } = usePlanning();
+
+  const activeTab = retroActiveTab;
+  const setActiveTab = setRetroActiveTab;
 
   const events = useMemo(
     () => sortRetroEventsChronologically(currentProject.events || []),
@@ -48,9 +53,6 @@ export const RetroplanningView: React.FC = () => {
       document.body.classList.remove('print-retroplanning');
     };
   }, []);
-
-  // Onglet sélectionné : 'overview' pour Vue d'ensemble, ou event.id
-  const [activeTab, setActiveTab] = useState<string>('overview');
 
   // Modales
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);

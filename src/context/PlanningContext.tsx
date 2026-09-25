@@ -5,6 +5,7 @@ import {
   ViewMode,
   TimelineZoom,
   TeamMember,
+  ConnectedUser,
   DEFAULT_TEAM_MEMBERS,
   RetroplanningEvent,
   RetroplanningTask
@@ -25,6 +26,15 @@ interface PlanningContextType {
   isTaskModalOpen: boolean;
   editingTask: Task | null;
   defaultDateForNewTask: string | null;
+
+  // Utilisateur connecté & Sommaire
+  currentUser: ConnectedUser | null;
+  setCurrentUser: (user: ConnectedUser | null) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (open: boolean) => void;
+  toggleSidebar: () => void;
+  retroActiveTab: string;
+  setRetroActiveTab: (tab: string) => void;
 
   // Temps réel & Équipe
   onlineCount: number;
@@ -64,7 +74,7 @@ interface PlanningContextType {
   isAuthModalOpen: boolean;
   openAuthModal: () => void;
   closeAuthModal: () => void;
-  unlockEditMode: (password: string) => Promise<boolean>;
+  unlockEditMode: (password: string, user?: ConnectedUser) => Promise<boolean>;
   lockEditMode: () => void;
   changePassword: (oldPass: string, newPass: string) => Promise<{ success: boolean; message?: string }>;
 
@@ -153,7 +163,23 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [defaultDateForNewTask, setDefaultDateForNewTask] = useState<string | null>(null);
 
-const AUTH_KEY = 'rnf_auth_password_v1';
+  const AUTH_KEY = 'rnf_auth_password_v1';
+  const USER_KEY = 'rnf_connected_user_v1';
+
+  // Utilisateur connecté & Navigation Sommaire
+  const [currentUser, setCurrentUser] = useState<ConnectedUser | null>(() => {
+    try {
+      const saved = localStorage.getItem(USER_KEY);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [retroActiveTab, setRetroActiveTab] = useState<string>('overview');
+
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   // États Sécurité & Mode Édition
   const [authPassword, setAuthPassword] = useState<string>(() => {
@@ -189,6 +215,8 @@ const AUTH_KEY = 'rnf_auth_password_v1';
             setAuthPassword(savedPass);
           } else {
             localStorage.removeItem(AUTH_KEY);
+            localStorage.removeItem(USER_KEY);
+            setCurrentUser(null);
           }
         } catch {
           // Mode local/offline
@@ -322,7 +350,20 @@ const AUTH_KEY = 'rnf_auth_password_v1';
     }
   };
 
-  const unlockEditMode = async (password: string): Promise<boolean> => {
+  const unlockEditMode = async (password: string, user?: ConnectedUser): Promise<boolean> => {
+    const applyUser = () => {
+      if (user) {
+        const completeUser: ConnectedUser = {
+          ...user,
+          loggedInAt: new Date().toISOString()
+        };
+        setCurrentUser(completeUser);
+        try {
+          localStorage.setItem(USER_KEY, JSON.stringify(completeUser));
+        } catch {}
+      }
+    };
+
     try {
       const isDev = window.location.port === '5173';
       const apiUrl = isDev
@@ -337,6 +378,7 @@ const AUTH_KEY = 'rnf_auth_password_v1';
         setIsAuthorized(true);
         setAuthPassword(password);
         localStorage.setItem(AUTH_KEY, password);
+        applyUser();
         setIsAuthModalOpen(false);
         return true;
       }
@@ -346,6 +388,7 @@ const AUTH_KEY = 'rnf_auth_password_v1';
         setIsAuthorized(true);
         setAuthPassword(password);
         localStorage.setItem(AUTH_KEY, password);
+        applyUser();
         setIsAuthModalOpen(false);
         return true;
       }
@@ -356,7 +399,9 @@ const AUTH_KEY = 'rnf_auth_password_v1';
   const lockEditMode = () => {
     setIsAuthorized(false);
     setAuthPassword('');
+    setCurrentUser(null);
     localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem(USER_KEY);
   };
 
   const changePassword = async (oldPass: string, newPass: string): Promise<{ success: boolean; message?: string }> => {
@@ -701,6 +746,13 @@ const AUTH_KEY = 'rnf_auth_password_v1';
         isTaskModalOpen,
         editingTask,
         defaultDateForNewTask,
+        currentUser,
+        setCurrentUser,
+        isSidebarOpen,
+        setIsSidebarOpen,
+        toggleSidebar,
+        retroActiveTab,
+        setRetroActiveTab,
         onlineCount,
         isWebSocketConnected,
         serverInfo,

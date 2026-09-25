@@ -8,6 +8,7 @@ import { TaskModal } from './components/TaskModal';
 import { Footer } from './components/Footer';
 import { GanttExportCanvas } from './components/GanttExportCanvas';
 import { RetroplanningView } from './components/RetroplanningView';
+import { NavigationSidebar } from './components/NavigationSidebar';
 import { CheckCircle2, Clock, Sparkles, Eye, Lock } from 'lucide-react';
 import { formatDateFr } from './utils/scheduler';
 
@@ -21,6 +22,9 @@ const MainLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-100/70 flex flex-col">
+      {/* Sommaire latéral en tiroir et onglet flottant */}
+      <NavigationSidebar />
+
       <Header />
 
       {/* Barre de synthèse & KPIs sobre */}

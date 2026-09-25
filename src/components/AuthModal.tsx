@@ -1,14 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePlanning } from '../context/PlanningContext';
-import { Lock, Unlock, Key, Eye, EyeOff, X, Check, AlertCircle } from 'lucide-react';
+import { TeamMember, ConnectedUser } from '../types/planning';
+import {
+  Lock,
+  Unlock,
+  Key,
+  Eye,
+  EyeOff,
+  X,
+  Check,
+  AlertCircle,
+  User,
+  Users,
+  ShieldCheck,
+  LogOut,
+  UserCheck
+} from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
-  const { isAuthorized, isAuthModalOpen, closeAuthModal, unlockEditMode, lockEditMode, changePassword } = usePlanning();
+  const {
+    isAuthorized,
+    isAuthModalOpen,
+    closeAuthModal,
+    unlockEditMode,
+    lockEditMode,
+    changePassword,
+    members,
+    currentUser,
+    setCurrentUser
+  } = usePlanning();
 
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Sélection du membre
+  const [selectedMemberId, setSelectedMemberId] = useState<string>('');
+  const [customName, setCustomName] = useState<string>('');
+  const [isSwitchingUser, setIsSwitchingUser] = useState<boolean>(false);
+
+  // Initialisation de la sélection au montage / à l'ouverture
+  useEffect(() => {
+    if (isAuthModalOpen) {
+      setErrorMessage('');
+      setPassword('');
+      setIsSwitchingUser(false);
+
+      if (currentUser?.id) {
+        setSelectedMemberId(currentUser.id);
+      } else if (currentUser?.name) {
+        setSelectedMemberId('custom');
+        setCustomName(currentUser.name);
+      } else if (members && members.length > 0) {
+        setSelectedMemberId(members[0].id);
+      }
+    }
+  }, [isAuthModalOpen, currentUser, members]);
 
   // Mode changement de mot de passe
   const [isChangingPass, setIsChangingPass] = useState(false);
@@ -18,14 +66,59 @@ export const AuthModal: React.FC = () => {
 
   if (!isAuthModalOpen) return null;
 
+  // Calcul du profil utilisateur sélectionné
+  const getSelectedUserProfile = (): ConnectedUser => {
+    if (selectedMemberId === 'custom') {
+      const trimmed = customName.trim() || 'Collaborateur';
+      const words = trimmed.split(' ');
+      const initials = words.length >= 2
+        ? (words[0][0] + words[1][0]).toUpperCase()
+        : trimmed.slice(0, 2).toUpperCase();
+
+      return {
+        name: trimmed,
+        role: 'Contributeur',
+        color: '#6366F1',
+        initials
+      };
+    }
+
+    const member = members.find((m) => m.id === selectedMemberId) || members[0];
+    if (member) {
+      return {
+        id: member.id,
+        name: member.name,
+        role: member.role,
+        color: member.color,
+        initials: member.initials
+      };
+    }
+
+    return {
+      name: 'Collaborateur',
+      role: 'Éditeur',
+      color: '#3B82F6',
+      initials: 'RNF'
+    };
+  };
+
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!password.trim()) return;
+    if (!password.trim()) {
+      setErrorMessage('Veuillez entrer le mot de passe.');
+      return;
+    }
+
+    if (selectedMemberId === 'custom' && !customName.trim()) {
+      setErrorMessage('Veuillez préciser votre prénom / nom.');
+      return;
+    }
 
     setIsLoading(true);
     setErrorMessage('');
 
-    const ok = await unlockEditMode(password.trim());
+    const userProfile = getSelectedUserProfile();
+    const ok = await unlockEditMode(password.trim(), userProfile);
     setIsLoading(false);
 
     if (ok) {
@@ -34,6 +127,27 @@ export const AuthModal: React.FC = () => {
     } else {
       setErrorMessage('Mot de passe incorrect. Veuillez réessayer.');
     }
+  };
+
+  const handleSwitchUserOnly = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedMemberId === 'custom' && !customName.trim()) {
+      setErrorMessage('Veuillez préciser votre prénom / nom.');
+      return;
+    }
+
+    const userProfile = getSelectedUserProfile();
+    const completeUser: ConnectedUser = {
+      ...userProfile,
+      loggedInAt: new Date().toISOString()
+    };
+    setCurrentUser(completeUser);
+    try {
+      localStorage.setItem('rnf_connected_user_v1', JSON.stringify(completeUser));
+    } catch {}
+
+    setIsSwitchingUser(false);
+    closeAuthModal();
   };
 
   const handleChangePassword = async (e: React.FormEvent) => {
@@ -58,97 +172,297 @@ export const AuthModal: React.FC = () => {
     }
   };
 
+  const activeSelectedUser = getSelectedUserProfile();
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
       <div
-        className="bg-white rounded-2xl shadow-2xl border border-slate-100 w-full max-w-md overflow-hidden transform transition-all"
+        className="bg-white rounded-2xl shadow-2xl border border-slate-100 w-full max-w-lg overflow-hidden transform transition-all"
         onClick={(e) => e.stopPropagation()}
       >
         {/* En-tête */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/70">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center">
-              {isAuthorized ? <Unlock size={18} /> : <Lock size={18} />}
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/80">
+          <div className="flex items-center gap-3">
+            <div
+              className={`w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-xs ${
+                isAuthorized ? 'bg-emerald-600' : 'bg-indigo-600'
+              }`}
+            >
+              {isAuthorized ? <ShieldCheck size={20} /> : <Lock size={18} />}
             </div>
-            <h2 className="text-base font-bold text-slate-800">
-              {isAuthorized ? 'Mode Édition Déverrouillé' : 'Protection par Mot de Passe'}
-            </h2>
+            <div>
+              <h2 className="text-base font-bold text-slate-800">
+                {isAuthorized
+                  ? isSwitchingUser
+                    ? 'Changer d’utilisateur'
+                    : 'Session d’édition active'
+                  : 'Connexion & Mode Édition'}
+              </h2>
+              <p className="text-[11px] text-slate-500">
+                {isAuthorized
+                  ? 'Connecté au rétroplanning collaboratif'
+                  : 'Identifiez-vous pour modifier le planning'}
+              </p>
+            </div>
           </div>
-          <button onClick={closeAuthModal} className="p-1 hover:bg-slate-100 text-slate-400 rounded-lg">
+          <button
+            onClick={closeAuthModal}
+            className="p-1 hover:bg-slate-200/60 text-slate-400 hover:text-slate-700 rounded-lg transition"
+          >
             <X size={18} />
           </button>
         </div>
 
         {/* Corps */}
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto custom-scrollbar">
           {errorMessage && (
             <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs flex items-center gap-2">
-              <AlertCircle size={16} className="flex-shrink-0" />
+              <AlertCircle size={16} className="shrink-0" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           {changeSuccess && (
             <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl text-xs flex items-center gap-2">
-              <Check size={16} className="flex-shrink-0" />
+              <Check size={16} className="shrink-0" />
               <span>Mot de passe d'équipe mis à jour avec succès !</span>
             </div>
           )}
 
+          {/* CAS 1 : Non connecté -> Formulaire de connexion (Qui est-ce + mot de passe) */}
           {!isAuthorized ? (
-            /* Formulaire de déverrouillage */
             <form onSubmit={handleUnlock} className="space-y-4">
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Le rétroplanning est protégé en écriture. Seules les personnes qui connaissent le mot de passe de l'équipe peuvent ajouter, modifier ou déplacer des tâches.
-              </p>
+              {/* Étape 1 : Qui se connecte ? */}
+              <div className="space-y-2">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <User size={13} className="text-indigo-600" />
+                  <span>1. Qui se connecte ?</span>
+                </label>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wider">
-                  Mot de passe d'équipe
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {members.map((member) => {
+                    const isSelected = selectedMemberId === member.id;
+                    return (
+                      <div
+                        key={member.id}
+                        onClick={() => setSelectedMemberId(member.id)}
+                        className={`p-2.5 rounded-xl border cursor-pointer transition-all flex items-center gap-2.5 ${
+                          isSelected
+                            ? 'bg-indigo-50/80 border-indigo-500 shadow-xs ring-2 ring-indigo-500/20'
+                            : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        }`}
+                      >
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-2xs"
+                          style={{ backgroundColor: member.color }}
+                        >
+                          {member.initials}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className={`text-xs font-bold truncate ${isSelected ? 'text-indigo-950' : 'text-slate-800'}`}>
+                            {member.name}
+                          </p>
+                          <p className="text-[10px] text-slate-400 truncate">{member.role}</p>
+                        </div>
+                        {isSelected && (
+                          <div className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                            <Check size={11} />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  {/* Option Autre / Nom personnalisé */}
+                  <div
+                    onClick={() => setSelectedMemberId('custom')}
+                    className={`p-2.5 rounded-xl border cursor-pointer transition-all flex items-center gap-2.5 sm:col-span-2 ${
+                      selectedMemberId === 'custom'
+                        ? 'bg-indigo-50/80 border-indigo-500 shadow-xs ring-2 ring-indigo-500/20'
+                        : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-bold shrink-0">
+                      <Users size={14} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-bold text-slate-800">Autre membre ou invité</p>
+                      <p className="text-[10px] text-slate-400">Saisir un prénom ou nom personnalisé</p>
+                    </div>
+                    {selectedMemberId === 'custom' && (
+                      <div className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                        <Check size={11} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Champ texte libre si 'custom' */}
+                {selectedMemberId === 'custom' && (
+                  <div className="pt-1 animate-fadeIn">
+                    <input
+                      type="text"
+                      required
+                      placeholder="Votre prénom et nom..."
+                      value={customName}
+                      onChange={(e) => setCustomName(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-indigo-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                      autoFocus
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Étape 2 : Mot de passe d'équipe */}
+              <div className="space-y-1.5 pt-1 border-t border-slate-100">
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <Key size={13} className="text-indigo-600" />
+                  <span>2. Mot de passe d'équipe</span>
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
-                    autoFocus
-                    placeholder="Entrez le mot de passe..."
+                    placeholder="Entrez le mot de passe (rnf2026)..."
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition font-mono"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1.5">
-                  Mot de passe initial par défaut : <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-600">rnf2026</code>
+                <p className="text-[11px] text-slate-400">
+                  Mot de passe par défaut : <code className="bg-slate-100 px-1 py-0.5 rounded font-mono text-slate-600">rnf2026</code>
                 </p>
               </div>
 
-              <div className="pt-2 flex items-center justify-end gap-2">
+              {/* Boutons d'action */}
+              <div className="pt-2 flex items-center justify-between border-t border-slate-100">
                 <button
                   type="button"
                   onClick={closeAuthModal}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition"
+                  className="px-3.5 py-2 text-xs font-semibold text-slate-500 hover:bg-slate-100 rounded-xl transition"
                 >
-                  Consulter en lecture seule
+                  Mode lecture seule
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-100 transition flex items-center gap-1.5"
+                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-100 transition flex items-center gap-2"
                 >
                   <Unlock size={14} />
-                  <span>{isLoading ? 'Vérification...' : 'Déverrouiller pour modifier'}</span>
+                  <span>
+                    {isLoading
+                      ? 'Connexion...'
+                      : `Se connecter en tant que ${activeSelectedUser.name.split(' ')[0] || '...'}`}
+                  </span>
+                </button>
+              </div>
+            </form>
+          ) : isSwitchingUser ? (
+            /* CAS 2 : Déjà connecté, veut juste changer qui est connecté */
+            <form onSubmit={handleSwitchUserOnly} className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-xs text-slate-600">
+                  Sélectionnez votre profil d'équipe pour signer vos modifications :
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {members.map((member) => {
+                    const isSelected = selectedMemberId === member.id;
+                    return (
+                      <div
+                        key={member.id}
+                        onClick={() => setSelectedMemberId(member.id)}
+                        className={`p-2.5 rounded-xl border cursor-pointer transition-all flex items-center gap-2.5 ${
+                          isSelected
+                            ? 'bg-indigo-50/80 border-indigo-500 shadow-xs ring-2 ring-indigo-500/20'
+                            : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        }`}
+                      >
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0 shadow-2xs"
+                          style={{ backgroundColor: member.color }}
+                        >
+                          {member.initials}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className={`text-xs font-bold truncate ${isSelected ? 'text-indigo-950' : 'text-slate-800'}`}>
+                            {member.name}
+                          </p>
+                          <p className="text-[10px] text-slate-400 truncate">{member.role}</p>
+                        </div>
+                        {isSelected && (
+                          <div className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                            <Check size={11} />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  <div
+                    onClick={() => setSelectedMemberId('custom')}
+                    className={`p-2.5 rounded-xl border cursor-pointer transition-all flex items-center gap-2.5 sm:col-span-2 ${
+                      selectedMemberId === 'custom'
+                        ? 'bg-indigo-50/80 border-indigo-500 shadow-xs ring-2 ring-indigo-500/20'
+                        : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-bold shrink-0">
+                      <Users size={14} />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-bold text-slate-800">Autre membre ou invité</p>
+                      <p className="text-[10px] text-slate-400">Saisir un prénom ou nom personnalisé</p>
+                    </div>
+                    {selectedMemberId === 'custom' && (
+                      <div className="w-4 h-4 rounded-full bg-indigo-600 text-white flex items-center justify-center shrink-0">
+                        <Check size={11} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {selectedMemberId === 'custom' && (
+                  <div className="pt-1">
+                    <input
+                      type="text"
+                      required
+                      placeholder="Votre prénom et nom..."
+                      value={customName}
+                      onChange={(e) => setCustomName(e.target.value)}
+                      className="w-full px-3 py-2 bg-slate-50 border border-indigo-300 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white"
+                      autoFocus
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsSwitchingUser(false)}
+                  className="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+                >
+                  <UserCheck size={14} />
+                  <span>Confirmer le profil</span>
                 </button>
               </div>
             </form>
           ) : isChangingPass ? (
-            /* Formulaire pour changer le mot de passe */
+            /* CAS 3 : Changement de mot de passe */
             <form onSubmit={handleChangePassword} className="space-y-3">
               <p className="text-xs text-slate-600">
                 Définissez un nouveau mot de passe pour restreindre l'édition aux personnes autorisées.
@@ -174,7 +488,7 @@ export const AuthModal: React.FC = () => {
                 />
               </div>
 
-              <div className="pt-2 flex items-center justify-end gap-2">
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsChangingPass(false)}
@@ -192,20 +506,48 @@ export const AuthModal: React.FC = () => {
               </div>
             </form>
           ) : (
-            /* Déjà autorisé : options de verrouillage ou changement de pass */
+            /* CAS 4 : Connecté & Affichage du profil connecté */
             <div className="space-y-4">
-              <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 flex items-center gap-2">
-                <Check size={16} className="text-emerald-600 flex-shrink-0" />
-                <span>Vous êtes actuellement <strong>autorisé à modifier</strong> le rétroplanning sur cet appareil.</span>
+              <div className="p-4 bg-emerald-50/80 border border-emerald-200 rounded-2xl flex items-center gap-3.5">
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-base shadow-sm shrink-0"
+                  style={{ backgroundColor: currentUser?.color || '#10B981' }}
+                >
+                  {currentUser?.initials || currentUser?.name?.slice(0, 2).toUpperCase() || 'RNF'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-emerald-950 truncate">
+                      {currentUser?.name || 'Membre de l’équipe'}
+                    </h3>
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 uppercase tracking-wide">
+                      Connecté
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-800/80 truncate">
+                    {currentUser?.role || 'Mode Édition Autorisé'}
+                  </p>
+                  <p className="text-[10px] text-emerald-700/60 mt-0.5">
+                    Toutes les modifications seront enregistrées sous ce profil.
+                  </p>
+                </div>
               </div>
 
-              <div className="pt-2 flex flex-col gap-2">
+              <div className="space-y-2 pt-1">
+                <button
+                  onClick={() => setIsSwitchingUser(true)}
+                  className="w-full py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition"
+                >
+                  <UserCheck size={15} className="text-indigo-600" />
+                  <span>Changer d'utilisateur connecté</span>
+                </button>
+
                 <button
                   onClick={() => setIsChangingPass(true)}
-                  className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition"
+                  className="w-full py-2.5 px-3 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition"
                 >
-                  <Key size={14} />
-                  <span>Changer le mot de passe d'équipe</span>
+                  <Key size={14} className="text-slate-500" />
+                  <span>Modifier le mot de passe d'équipe</span>
                 </button>
 
                 <button
@@ -213,10 +555,10 @@ export const AuthModal: React.FC = () => {
                     lockEditMode();
                     closeAuthModal();
                   }}
-                  className="w-full py-2 border border-rose-200 hover:bg-rose-50 text-rose-600 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition"
+                  className="w-full py-2.5 px-3 border border-rose-200 hover:bg-rose-50 text-rose-600 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition"
                 >
-                  <Lock size={14} />
-                  <span>Reverrouiller (Mode lecture seule)</span>
+                  <LogOut size={14} />
+                  <span>Se déconnecter (Mode lecture seule)</span>
                 </button>
               </div>
             </div>

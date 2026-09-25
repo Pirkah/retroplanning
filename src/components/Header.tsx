@@ -27,7 +27,8 @@ import {
   Unlock,
   Eye,
   Printer,
-  ChevronDown
+  ChevronDown,
+  Menu
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { TeamModal } from './TeamModal';
@@ -56,17 +57,16 @@ export const Header: React.FC = () => {
     setSearchQuery,
     selectedColor,
     setSelectedColor,
-    selectedMemberId,
-    setSelectedMemberId,
     openNewTaskModal,
     exportProjectJson,
     importProjectJson,
     onlineCount,
     isWebSocketConnected,
     serverInfo,
-    members,
     isAuthorized,
-    openAuthModal
+    openAuthModal,
+    currentUser,
+    toggleSidebar
   } = usePlanning();
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -210,7 +210,17 @@ export const Header: React.FC = () => {
     <header className="bg-white border-b border-slate-200/90 sticky top-0 z-40 shadow-xs">
       {/* Ligne 1 : Titre, Projets, Présence Temps Réel & Actions d'Équipe */}
       <div className="px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 border-b border-slate-100">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
+          {/* Bouton Sommaire pour ouvrir le tiroir de navigation gauche */}
+          <button
+            onClick={toggleSidebar}
+            className="px-2.5 py-1.5 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200/90 shadow-2xs group"
+            title="Ouvrir le sommaire (Gantt, Rétroplanning, Calendrier...)"
+          >
+            <Menu size={15} className="text-indigo-600 group-hover:scale-110 transition-transform" />
+            <span className="hidden sm:inline">Sommaire</span>
+          </button>
+
           <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-100">
             <CalendarIcon size={22} />
           </div>
@@ -581,24 +591,42 @@ export const Header: React.FC = () => {
             )}
           </div>
 
-          {/* Badge & Bascule Sécurisée Mode Lecteur / Mode Éditeur (1 seul bouton épuré) */}
-          {!isAuthorized ? (
+          {/* Badge Utilisateur Connecté / Connexion */}
+          {isAuthorized && currentUser ? (
             <button
               onClick={openAuthModal}
-              className="px-2.5 py-1.5 rounded-xl border border-amber-200 bg-amber-50/80 hover:bg-amber-100 text-amber-900 text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs"
-              title="Cliquez pour saisir le mot de passe et activer le mode édition"
+              className="px-2.5 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50/90 hover:bg-emerald-100 text-slate-800 text-xs font-semibold transition flex items-center gap-2 shadow-2xs group"
+              title="Connecté en mode édition. Cliquez pour modifier le profil ou verrouiller"
             >
-              <Lock size={13} className="text-amber-600" />
-              <span>Mode Lecteur</span>
+              <span
+                className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-2xs shrink-0"
+                style={{ backgroundColor: currentUser.color || '#10B981' }}
+              >
+                {currentUser.initials || currentUser.name.slice(0, 2).toUpperCase()}
+              </span>
+              <span className="font-bold text-emerald-950 truncate max-w-[130px]">
+                {currentUser.name}
+              </span>
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            </button>
+          ) : isAuthorized ? (
+            <button
+              onClick={openAuthModal}
+              className="px-2.5 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50/90 hover:bg-emerald-100 text-emerald-900 text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs"
+              title="Mode édition actif. Cliquez pour assigner votre nom"
+            >
+              <Unlock size={13} className="text-emerald-600" />
+              <span>Mode Éditeur</span>
             </button>
           ) : (
             <button
               onClick={openAuthModal}
-              className="px-2.5 py-1.5 rounded-xl border border-emerald-200 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs"
-              title="Mode édition actif. Cliquez pour options ou verrouiller"
+              className="px-2.5 py-1.5 rounded-xl border border-amber-200 bg-amber-50/80 hover:bg-amber-100 text-amber-900 text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs"
+              title="Cliquez pour vous identifier et activer le mode édition"
             >
-              <Unlock size={13} className="text-emerald-600" />
-              <span>Mode Éditeur</span>
+              <Lock size={13} className="text-amber-600" />
+              <span className="font-bold">Connexion</span>
+              <span className="text-[10px] text-amber-700/80 hidden sm:inline">(Lecture)</span>
             </button>
           )}
 
@@ -619,9 +647,9 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Ligne 2 : Navigation sobre, Filtres Collaborateurs & Recherche */}
+      {/* Ligne 2 : Navigation sobre des Vues & Recherche (sans encombrement d'équipe) */}
       <div className="px-6 py-2 flex flex-wrap items-center justify-between gap-3 bg-slate-50/70 border-b border-slate-200/60">
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2.5 flex-wrap">
           {/* Sélecteur de Vue Segmenté Minimaliste */}
           <div className="flex items-center bg-slate-200/60 p-0.5 rounded-xl gap-0.5">
             <button
@@ -656,72 +684,23 @@ export const Header: React.FC = () => {
           <div className="flex items-center bg-slate-200/40 p-0.5 rounded-lg">
             <button
               onClick={() => setViewMode('calendar')}
-              className={`p-1.5 rounded-md text-xs transition ${
-                viewMode === 'calendar' ? 'bg-white text-indigo-700 shadow-2xs font-bold' : 'text-slate-400 hover:text-slate-700'
+              className={`px-2.5 py-1.5 rounded-md text-xs transition flex items-center gap-1.5 ${
+                viewMode === 'calendar' ? 'bg-white text-indigo-700 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800 font-medium'
               }`}
-              title="Vue Calendrier"
+              title="Vue Calendrier Mensuel"
             >
               <CalendarIcon size={14} />
+              <span className="hidden sm:inline">Calendrier</span>
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-md text-xs transition ${
-                viewMode === 'list' ? 'bg-white text-indigo-700 shadow-2xs font-bold' : 'text-slate-400 hover:text-slate-700'
+              className={`px-2.5 py-1.5 rounded-md text-xs transition flex items-center gap-1.5 ${
+                viewMode === 'list' ? 'bg-white text-indigo-700 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800 font-medium'
               }`}
-              title="Vue Liste"
+              title="Vue Liste des Tâches"
             >
               <ListOrdered size={14} />
-            </button>
-          </div>
-
-          <div className="hidden md:block h-4 w-px bg-slate-200 mx-1" />
-
-          {/* Filtre Collaborateurs (Puces sobres avec prénom) */}
-          <div className="flex items-center gap-1 flex-wrap">
-            <span className="text-[11px] font-bold text-slate-400 mr-1 hidden sm:inline">
-              Équipe :
-            </span>
-
-            <button
-              onClick={() => setSelectedMemberId(null)}
-              className={`px-2 py-1 rounded-lg text-xs font-semibold transition ${
-                selectedMemberId === null
-                  ? 'bg-indigo-600 text-white shadow-2xs'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-              }`}
-            >
-              Tous
-            </button>
-
-            {members.map((member) => {
-              const isSelected = selectedMemberId === member.id;
-              const shortName = member.name.split(' ')[0]; // Prénom seul pour épurer
-              return (
-                <button
-                  key={member.id}
-                  onClick={() => setSelectedMemberId(isSelected ? null : member.id)}
-                  className={`px-2 py-1 rounded-lg border text-xs font-medium transition flex items-center gap-1.5 ${
-                    isSelected
-                      ? 'bg-indigo-50 border-indigo-400 text-indigo-800 font-bold shadow-2xs'
-                      : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                  }`}
-                  title={`${member.name} (${member.role})`}
-                >
-                  <span
-                    className="w-2 h-2 rounded-full shrink-0"
-                    style={{ backgroundColor: member.color }}
-                  />
-                  <span>{shortName}</span>
-                </button>
-              );
-            })}
-
-            <button
-              onClick={() => setIsTeamModalOpen(true)}
-              className="px-1.5 py-1 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-lg text-xs font-semibold transition"
-              title="Gérer les membres de l'équipe"
-            >
-              + Gérer
+              <span className="hidden sm:inline">Liste</span>
             </button>
           </div>
         </div>
