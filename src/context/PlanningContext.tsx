@@ -10,7 +10,7 @@ import {
   RetroplanningTask
 } from '../types/planning';
 import { DEFAULT_PROJECT, GEA_ENTREPRENEURIAT_PROJECT } from '../data/defaultProject';
-import { sortTasksChronologically } from '../utils/scheduler';
+import { sortTasksChronologically, sortRetroEventsChronologically } from '../utils/scheduler';
 import { getCategoryDefinition, getCategoryColor, STANDARD_CATEGORIES } from '../utils/categories';
 
 interface PlanningContextType {
@@ -119,7 +119,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               ...p,
               tasks: sortTasksChronologically(normalizedTasks),
               members: p.members || (p.id === 'proj-gea-2026' ? GEA_ENTREPRENEURIAT_PROJECT.members : DEFAULT_TEAM_MEMBERS),
-              events: events || []
+              events: sortRetroEventsChronologically(events || [])
             };
           });
 
@@ -544,7 +544,7 @@ const AUTH_KEY = 'rnf_auth_password_v1';
       if (p.id === activeProjectId) {
         return {
           ...p,
-          events: [...(p.events || []), newEvent]
+          events: sortRetroEventsChronologically([...(p.events || []), newEvent])
         };
       }
       return p;
@@ -558,7 +558,7 @@ const AUTH_KEY = 'rnf_auth_password_v1';
       if (p.id === activeProjectId) {
         return {
           ...p,
-          events: (p.events || []).map((e) => (e.id === updatedEvent.id ? updatedEvent : e))
+          events: sortRetroEventsChronologically((p.events || []).map((e) => (e.id === updatedEvent.id ? updatedEvent : e)))
         };
       }
       return p;

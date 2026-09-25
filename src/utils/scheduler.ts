@@ -13,7 +13,7 @@ import {
   isValid
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Task, WeekColumn } from '../types/planning';
+import { Task, WeekColumn, RetroplanningEvent } from '../types/planning';
 
 export interface CategoryClass {
   id: string;
@@ -339,4 +339,105 @@ export function getWeekNumberFromDate(dateStr: string): number {
   } catch {
     return 1;
   }
+}
+
+const FRENCH_MONTHS: Record<string, number> = {
+  janv: 0, jan: 0, janvier: 0,
+  fevr: 1, fev: 1, fevrier: 1, févr: 1, fév: 1, février: 1,
+  mars: 2, mar: 2,
+  avr: 3, avril: 3,
+  mai: 4,
+  juin: 5, jun: 5,
+  juil: 6, juill: 6, juillet: 6, jul: 6,
+  aout: 7, août: 7, aou: 7,
+  sept: 8, sep: 8, septembre: 8,
+  oct: 9, octo: 9, octobre: 9,
+  nov: 10, novembre: 10,
+  dec: 11, déc: 11, decembre: 11, décembre: 11
+};
+
+/**
+ * Convertit une chaîne de date d'événement de rétroplanning en timestamp pour le tri chronologique
+ * Gère "28-sept-26", "08-oct-26", "2026-09-28", "28/09/2026", etc.
+ */
+export function parseRetroEventDate(dateStr: string, event?: RetroplanningEvent): number {
+  if (!dateStr || !dateStr.trim()) {
+    if (event?.tasks && event.tasks.length > 0) {
+      for (const t of event.tasks) {
+        const wMatch = t.weekLabel.match(/S(\d{1,2})/i);
+        if (wMatch) {
+          const wNum = parseInt(wMatch[1], 10);
+          const year = wNum >= 24 ? 2026 : 2027;
+          return new Date(year, 0, 1 + wNum * 7).getTime();
+        }
+      }
+    }
+    return 9999999999999;
+  }
+
+  const clean = dateStr.trim().toLowerCase();
+
+  // 1. Format JJ-MMM-AA ou JJ-MMM-AAAA (ex: 28-sept-26, 08-oct-26, 06-déc-26, 22-mars-27, 15-oct-2026)
+  const regexAlpha = /^(\d{1,2})[-/ ]([a-zàâéèêëîïôùûüç]+)[-/ ](\d{2,4})$/i;
+  const matchAlpha = clean.match(regexAlpha);
+  if (matchAlpha) {
+    const day = parseInt(matchAlpha[1], 10);
+    const monthRaw = matchAlpha[2].normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    let year = parseInt(matchAlpha[3], 10);
+    if (year < 100) year += 2000;
+
+    let monthIndex = -1;
+    for (const [key, idx] of Object.entries(FRENCH_MONTHS)) {
+      const cleanKey = key.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (monthRaw.startsWith(cleanKey) || cleanKey.startsWith(monthRaw)) {
+        monthIndex = idx;
+        break;
+      }
+    }
+    if (monthIndex !== -1) {
+      return new Date(year, monthIndex, day).getTime();
+    }
+  }
+
+  // 2. Format ISO AAAA-MM-JJ
+  const isoMatch = clean.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+  if (isoMatch) {
+    const year = parseInt(isoMatch[1], 10);
+    const month = parseInt(isoMatch[2], 10) - 1;
+    const day = parseInt(isoMatch[3], 10);
+    return new Date(year, month, day).getTime();
+  }
+
+  // 3. Format JJ/MM/AAAA ou JJ/MM/AA
+  const slashMatch = clean.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{2,4})$/);
+  if (slashMatch) {
+    const day = parseInt(slashMatch[1], 10);
+    const month = parseInt(slashMatch[2], 10) - 1;
+    let year = parseInt(slashMatch[3], 10);
+    if (year < 100) year += 2000;
+    return new Date(year, month, day).getTime();
+  }
+
+  // 4. Fallback basé sur les semaines de tâches
+  if (event?.tasks && event.tasks.length > 0) {
+    for (const t of event.tasks) {
+      const wMatch = t.weekLabel.match(/S(\d{1,2})/i);
+      if (wMatch) {
+        const wNum = parseInt(wMatch[1], 10);
+        const year = wNum >= 24 ? 2026 : 2027;
+        return new Date(year, 0, 1 + wNum * 7).getTime();
+      }
+    }
+  }
+
+  return 9999999999999;
+}
+
+/**
+ * Trie une liste d'événements de rétroplanning par ordre chronologique
+ */
+export function sortRetroEventsChronologically(events: RetroplanningEvent[]): RetroplanningEvent[] {
+  return [...events].sort((a, b) => {
+    return parseRetroEventDate(a.date, a) - parseRetroEventDate(b.date, b);
+  });
 }

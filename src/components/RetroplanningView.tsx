@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { printRetroplanning, exportRetroplanningToPdf } from '../utils/pdfExport';
 import { RETRO_CATEGORIES, getCategoryStyle } from '../utils/categories';
+import { sortRetroEventsChronologically } from '../utils/scheduler';
 
 export const RetroplanningView: React.FC = () => {
   const {
@@ -35,7 +36,10 @@ export const RetroplanningView: React.FC = () => {
     deleteRetroTask
   } = usePlanning();
 
-  const events = useMemo(() => currentProject.events || [], [currentProject.events]);
+  const events = useMemo(
+    () => sortRetroEventsChronologically(currentProject.events || []),
+    [currentProject.events]
+  );
 
   // Active le mode d'impression dédié au rétroplanning
   React.useEffect(() => {
@@ -333,8 +337,8 @@ export const RetroplanningView: React.FC = () => {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-[#D97706] text-white border-b-2 border-amber-700 text-xs font-black uppercase">
-                      <th className="py-3 px-4 border-r border-amber-600 w-56">Événement</th>
-                      <th className="py-3 px-4 border-r border-amber-600 w-36 text-center">Date</th>
+                      <th className="py-3 px-4 border-r border-amber-600 w-64">Événement & Étape</th>
+                      <th className="py-3 px-4 border-r border-amber-600 w-44 text-center">Date (Chronologique)</th>
                       <th className="py-3 px-4 border-r border-amber-600 w-80">Objectif principal</th>
                       <th className="py-3 px-4 border-r border-amber-600">Contenu & Modalités</th>
                       <th className="py-3 px-3 text-center w-28 no-print">Accès</th>
@@ -355,9 +359,12 @@ export const RetroplanningView: React.FC = () => {
                         >
                           {/* Événement */}
                           <td className="py-3.5 px-4 border-r border-slate-200 font-black text-slate-900">
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2.5">
+                              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 shrink-0 shadow-2xs">
+                                #{idx + 1}
+                              </span>
                               <span
-                                className="w-3 h-3 rounded-full shrink-0 shadow-xs"
+                                className="w-3 h-3 rounded-full shrink-0 shadow-xs ring-1 ring-slate-200"
                                 style={{ backgroundColor: evt.color || '#D97706' }}
                               />
                               <button
@@ -370,8 +377,10 @@ export const RetroplanningView: React.FC = () => {
                           </td>
 
                           {/* Date */}
-                          <td className="py-3.5 px-4 border-r border-slate-200 font-bold text-slate-800 text-center whitespace-nowrap bg-amber-50/30">
-                            {evt.date}
+                          <td className="py-3.5 px-4 border-r border-slate-200 font-bold text-slate-800 text-center whitespace-nowrap bg-amber-50/20">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white text-slate-800 border border-amber-200 shadow-2xs font-extrabold text-xs">
+                              📅 {evt.date}
+                            </span>
                           </td>
 
                           {/* Objectif principal */}
