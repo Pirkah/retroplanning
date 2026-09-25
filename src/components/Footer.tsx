@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
               <Heart size={11} className="text-rose-500 fill-rose-500" />
               <span className="hidden sm:inline text-slate-300">•</span>
               <span className="bg-indigo-50 text-indigo-700 border border-indigo-200/80 px-1.5 py-0.5 rounded text-[10px] font-bold">
-                v3.2 (Impression Dédiée Gantt & Rétroplanning)
+                v3.3 (Interface Épurée & Sobre)
               </span>
             </p>
           </div>

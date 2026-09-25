@@ -26,7 +26,8 @@ import {
   Lock,
   Unlock,
   Eye,
-  Printer
+  Printer,
+  ChevronDown
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { TeamModal } from './TeamModal';
@@ -343,17 +344,9 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Boutons d'Action : Partage Équipe, Import, Export, Nouvelle Tâche */}
+        {/* Boutons d'Action Sobres : Partager, Exporter / Imprimer, Mode, Nouvelle Tâche */}
         <div className="flex items-center gap-2">
-          {/* Bouton Partage Équipe */}
-          <button
-            onClick={() => setIsShareModalOpen(true)}
-            className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-xs"
-          >
-            <Share2 size={14} className="text-emerald-600" />
-            <span>Partager à l'équipe</span>
-          </button>
-
+          {/* Input fichier caché pour l'import JSON */}
           <input
             type="file"
             ref={fileInputRef}
@@ -362,50 +355,26 @@ export const Header: React.FC = () => {
             className="hidden"
           />
 
+          {/* Bouton Partage Équipe (Sobre) */}
           <button
-            onClick={() => {
-              if (!isAuthorized) {
-                openAuthModal();
-                return;
-              }
-              fileInputRef.current?.click();
-            }}
-            className="px-2.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold transition flex items-center gap-1"
-            title="Importer un fichier JSON"
+            onClick={() => setIsShareModalOpen(true)}
+            className="px-2.5 py-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-slate-200/80 shadow-2xs"
+            title="Partager le planning avec vos collaborateurs"
           >
-            <Upload size={14} />
-            <span className="hidden sm:inline">Importer</span>
+            <Share2 size={13} className="text-slate-500" />
+            <span className="hidden sm:inline">Partager</span>
           </button>
 
-          {/* Boutons d'Impression Directs Dédiés (Gantt vs Rétroplanning) */}
-          <div className="hidden lg:flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl border border-slate-200 shadow-2xs">
-            <button
-              onClick={handlePrintGantt}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-indigo-700 bg-white hover:bg-indigo-50 shadow-xs border border-indigo-200/60"
-              title="Imprimer directement le Diagramme de Gantt en mode paysage vectoriel"
-            >
-              <Printer size={13} className="text-indigo-600" />
-              <span>Imprimer Gantt</span>
-            </button>
-
-            <button
-              onClick={handlePrintRetroplanning}
-              className="px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-blue-700 bg-white hover:bg-blue-50 shadow-xs border border-blue-200/60"
-              title="Imprimer directement la feuille de Rétroplanning Événements en mode paysage"
-            >
-              <FileSpreadsheet size={13} className="text-blue-600" />
-              <span>Imprimer Rétroplanning</span>
-            </button>
-          </div>
-
-          {/* Menu Export Détaillé */}
+          {/* Menu Unique d'Export & Impression (Gantt & Rétroplanning) */}
           <div className="relative">
             <button
               onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
-              className="px-2.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold transition flex items-center gap-1 shadow-2xs"
+              className="px-3 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs"
+              title="Centre d'impression et d'export (Gantt, Rétroplanning, PDF, PNG)"
             >
-              <Download size={14} />
-              <span className="hidden sm:inline">Exporter</span>
+              <Printer size={13} className="text-indigo-600" />
+              <span>Exporter / Imprimer</span>
+              <ChevronDown size={12} className="text-slate-400" />
             </button>
 
             {isExportMenuOpen && (
@@ -427,16 +396,13 @@ export const Header: React.FC = () => {
                   </div>
                 )}
 
-                {/* ======================================================== */}
-                {/* SECTION 1 : DIAGRAMME DE GANTT                           */}
-                {/* ======================================================== */}
+                {/* SECTION 1 : DIAGRAMME DE GANTT */}
                 <div className="mt-2 pt-2 border-t border-slate-100">
                   <div className="px-4 py-1 flex items-center gap-1.5 text-xs font-black text-indigo-950 uppercase tracking-wide bg-indigo-50/60 mx-2 rounded-lg">
                     <GanttChartSquare size={14} className="text-indigo-600" />
                     <span>1. Diagramme de Gantt</span>
                   </div>
 
-                  {/* Bouton Imprimer Gantt */}
                   <button
                     onClick={handlePrintGantt}
                     className="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
@@ -446,7 +412,7 @@ export const Header: React.FC = () => {
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-bold text-slate-800">Imprimer le Gantt</p>
+                        <p className="text-xs font-bold text-slate-800">Imprimer le Diagramme de Gantt</p>
                         <span className="text-[9px] bg-indigo-100 text-indigo-700 px-1.5 py-0.2 rounded font-extrabold uppercase">
                           Vectoriel
                         </span>
@@ -457,29 +423,22 @@ export const Header: React.FC = () => {
                     </div>
                   </button>
 
-                  {/* Bouton PDF Gantt A3 */}
                   <button
                     onClick={() => handleExportPdf('a3')}
                     disabled={!!exportStatus}
-                    className="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                    className="w-full text-left px-4 py-1.5 hover:bg-slate-50 flex items-start gap-2.5 transition group"
                   >
                     <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                       <FileText size={15} />
                     </div>
                     <div>
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-bold text-slate-800">Télécharger PDF Gantt (A3)</p>
-                        <span className="text-[9px] bg-rose-100 text-rose-700 px-1.5 py-0.2 rounded font-extrabold uppercase">
-                          HD Optimal
-                        </span>
-                      </div>
+                      <p className="text-xs font-bold text-slate-800">Télécharger PDF Gantt (A3 HD)</p>
                       <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                        Grand format paysage 420mm sans coupure de texte
+                        Grand format paysage optimal
                       </p>
                     </div>
                   </button>
 
-                  {/* Bouton PDF Gantt A4 */}
                   <button
                     onClick={() => handleExportPdf('a4')}
                     disabled={!!exportStatus}
@@ -491,12 +450,11 @@ export const Header: React.FC = () => {
                     <div>
                       <p className="text-xs font-bold text-slate-800">Télécharger PDF Gantt (A4)</p>
                       <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                        Format standard paysage compact pour impression papier
+                        Format standard pour impression
                       </p>
                     </div>
                   </button>
 
-                  {/* Bouton PNG Gantt */}
                   <button
                     onClick={handleExportPng}
                     disabled={!!exportStatus}
@@ -508,22 +466,19 @@ export const Header: React.FC = () => {
                     <div>
                       <p className="text-xs font-bold text-slate-800">Image Panoramique Gantt (PNG)</p>
                       <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                        Image panoramique intégrale haute résolution
+                        Capture intégrale HD
                       </p>
                     </div>
                   </button>
                 </div>
 
-                {/* ======================================================== */}
-                {/* SECTION 2 : RÉTROPLANNING ÉVÉNEMENTS (EXCEL)             */}
-                {/* ======================================================== */}
-                <div className="mt-3 pt-2 border-t border-slate-100">
+                {/* SECTION 2 : RÉTROPLANNING ÉVÉNEMENTS (EXCEL) */}
+                <div className="mt-2.5 pt-2 border-t border-slate-100">
                   <div className="px-4 py-1 flex items-center gap-1.5 text-xs font-black text-blue-950 uppercase tracking-wide bg-blue-50/70 mx-2 rounded-lg">
                     <FileSpreadsheet size={14} className="text-blue-600" />
                     <span>2. Rétroplanning Événements (Excel)</span>
                   </div>
 
-                  {/* Bouton Imprimer Rétroplanning */}
                   <button
                     onClick={handlePrintRetroplanning}
                     className="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
@@ -539,34 +494,27 @@ export const Header: React.FC = () => {
                         </span>
                       </div>
                       <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                        Imprime la feuille active en plein format paysage sans coupure
+                        Imprime la feuille active en plein format paysage
                       </p>
                     </div>
                   </button>
 
-                  {/* Bouton PDF Rétroplanning A3 */}
                   <button
                     onClick={() => handleExportRetroPdf('a3')}
                     disabled={!!exportStatus}
-                    className="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                    className="w-full text-left px-4 py-1.5 hover:bg-slate-50 flex items-start gap-2.5 transition group"
                   >
                     <div className="w-7 h-7 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                       <FileText size={15} />
                     </div>
                     <div>
-                      <div className="flex items-center gap-1.5">
-                        <p className="text-xs font-bold text-slate-800">Télécharger PDF Rétroplanning (A3)</p>
-                        <span className="text-[9px] bg-teal-100 text-teal-800 px-1.5 py-0.2 rounded font-extrabold uppercase">
-                          HD
-                        </span>
-                      </div>
+                      <p className="text-xs font-bold text-slate-800">Télécharger PDF Rétroplanning (A3 HD)</p>
                       <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                        Génère directement le PDF de la feuille active en haute définition
+                        Génère le PDF de la feuille active
                       </p>
                     </div>
                   </button>
 
-                  {/* Bouton PDF Rétroplanning A4 */}
                   <button
                     onClick={() => handleExportRetroPdf('a4')}
                     disabled={!!exportStatus}
@@ -583,7 +531,6 @@ export const Header: React.FC = () => {
                     </div>
                   </button>
 
-                  {/* Bouton Image PNG Rétroplanning */}
                   <button
                     onClick={handleExportRetroPng}
                     disabled={!!exportStatus}
@@ -595,16 +542,30 @@ export const Header: React.FC = () => {
                     <div>
                       <p className="text-xs font-bold text-slate-800">Image HD Rétroplanning (PNG)</p>
                       <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                        Capture image nette de la feuille actuelle
+                        Capture image nette de la feuille
                       </p>
                     </div>
                   </button>
                 </div>
 
-                {/* ======================================================== */}
-                {/* SECTION 3 : SAUVEGARDE                                   */}
-                {/* ======================================================== */}
-                <div className="border-t border-slate-100 mt-2 pt-2 px-1">
+                {/* SECTION 3 : SAUVEGARDE & RESTAURATION */}
+                <div className="border-t border-slate-100 mt-2.5 pt-2 px-1 space-y-0.5">
+                  <button
+                    onClick={() => {
+                      if (!isAuthorized) {
+                        setIsExportMenuOpen(false);
+                        openAuthModal();
+                        return;
+                      }
+                      setIsExportMenuOpen(false);
+                      fileInputRef.current?.click();
+                    }}
+                    className="w-full text-left px-3.5 py-1.5 hover:bg-slate-50 rounded-lg flex items-center gap-2 text-xs text-slate-700 transition"
+                  >
+                    <Upload size={14} className="text-slate-400" />
+                    <span>Importer un planning (JSON)</span>
+                  </button>
+
                   <button
                     onClick={() => {
                       setIsExportMenuOpen(false);
@@ -612,7 +573,7 @@ export const Header: React.FC = () => {
                     }}
                     className="w-full text-left px-3.5 py-1.5 hover:bg-slate-50 rounded-lg flex items-center gap-2 text-xs text-slate-700 transition"
                   >
-                    <FileCode size={15} className="text-slate-400" />
+                    <FileCode size={14} className="text-slate-400" />
                     <span>Sauvegarde complète du projet (JSON)</span>
                   </button>
                 </div>
@@ -620,41 +581,28 @@ export const Header: React.FC = () => {
             )}
           </div>
 
-          {/* Badge et Sélecteur Mode Lecteur / Mode Éditeur */}
+          {/* Badge & Bascule Sécurisée Mode Lecteur / Mode Éditeur (1 seul bouton épuré) */}
           {!isAuthorized ? (
-            <div className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold shadow-2xs">
-                <Eye size={14} className="text-amber-600" />
-                <span>Mode Lecteur</span>
-                <span className="text-[10px] text-amber-600 font-normal hidden lg:inline">(Lecture seule)</span>
-              </div>
-              <button
-                onClick={openAuthModal}
-                className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition shadow-xs"
-                title="Saisir le mot de passe pour passer en mode édition"
-              >
-                <Lock size={13} className="text-amber-400" />
-                <span className="hidden sm:inline">Déverrouiller</span>
-              </button>
-            </div>
+            <button
+              onClick={openAuthModal}
+              className="px-2.5 py-1.5 rounded-xl border border-amber-200 bg-amber-50/80 hover:bg-amber-100 text-amber-900 text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs"
+              title="Cliquez pour saisir le mot de passe et activer le mode édition"
+            >
+              <Lock size={13} className="text-amber-600" />
+              <span>Mode Lecteur</span>
+            </button>
           ) : (
-            <div className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-2xs">
-                <Edit3 size={14} className="text-emerald-600" />
-                <span>Mode Éditeur</span>
-                <span className="text-[10px] text-emerald-600 font-normal hidden lg:inline">(Modifications autorisées)</span>
-              </div>
-              <button
-                onClick={openAuthModal}
-                className="px-2.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-xs"
-                title="Options de sécurité ou verrouiller en mode lecteur"
-              >
-                <Lock size={13} className="text-slate-400" />
-                <span className="hidden sm:inline">Verrouiller</span>
-              </button>
-            </div>
+            <button
+              onClick={openAuthModal}
+              className="px-2.5 py-1.5 rounded-xl border border-emerald-200 bg-emerald-50/80 hover:bg-emerald-100 text-emerald-900 text-xs font-semibold transition flex items-center gap-1.5 shadow-2xs"
+              title="Mode édition actif. Cliquez pour options ou verrouiller"
+            >
+              <Unlock size={13} className="text-emerald-600" />
+              <span>Mode Éditeur</span>
+            </button>
           )}
 
+          {/* Bouton Primaire : Nouvelle Tâche */}
           <button
             onClick={() => {
               if (!isAuthorized) {
@@ -663,87 +611,83 @@ export const Header: React.FC = () => {
                 openNewTaskModal();
               }
             }}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-200 hover:shadow-indigo-300 transition flex items-center gap-2"
+            className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center gap-1.5"
           >
-            <Plus size={16} />
+            <Plus size={15} />
             <span>Ajouter une tâche</span>
           </button>
         </div>
       </div>
 
-      {/* Ligne 2 : Sélecteur de Vue & Barre de Collaborateurs */}
-      <div className="px-6 py-2.5 flex flex-wrap items-center justify-between gap-4 bg-slate-50/60">
-        {/* Sélecteur de Vue : 1er Onglet Gantt + 2ème Onglet Rétroplanning Événements */}
-        <div className="flex items-center bg-slate-200/70 p-1 rounded-xl gap-1">
-          {/* 1er Onglet : Diagramme de Gantt */}
-          <button
-            onClick={() => setViewMode('gantt')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-              viewMode === 'gantt'
-                ? 'bg-white text-indigo-700 shadow-xs font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <GanttChartSquare size={15} />
-            <span>Diagramme de Gantt</span>
-          </button>
+      {/* Ligne 2 : Navigation sobre, Filtres Collaborateurs & Recherche */}
+      <div className="px-6 py-2 flex flex-wrap items-center justify-between gap-3 bg-slate-50/70 border-b border-slate-200/60">
+        <div className="flex items-center gap-3 flex-wrap">
+          {/* Sélecteur de Vue Segmenté Minimaliste */}
+          <div className="flex items-center bg-slate-200/60 p-0.5 rounded-xl gap-0.5">
+            <button
+              onClick={() => setViewMode('gantt')}
+              className={`px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 ${
+                viewMode === 'gantt'
+                  ? 'bg-white text-indigo-700 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900 font-medium'
+              }`}
+            >
+              <GanttChartSquare size={14} />
+              <span>Gantt</span>
+            </button>
 
-          {/* 2ème Onglet : Rétroplanning Événements (style Excel) */}
-          <button
-            onClick={() => setViewMode('retroplanning')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-              viewMode === 'retroplanning'
-                ? 'bg-white text-blue-700 shadow-xs font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <FileSpreadsheet size={15} />
-            <div className="flex items-center gap-1">
-              <span>Rétroplanning Événements</span>
-              <span className="px-1.5 py-0.2 bg-blue-100 text-blue-800 rounded text-[9px] font-black uppercase">
+            <button
+              onClick={() => setViewMode('retroplanning')}
+              className={`px-3 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 ${
+                viewMode === 'retroplanning'
+                  ? 'bg-white text-blue-700 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900 font-medium'
+              }`}
+            >
+              <FileSpreadsheet size={14} />
+              <span>Rétroplanning</span>
+              <span className="px-1 py-0.2 bg-blue-100 text-blue-800 rounded text-[9px] font-black uppercase">
                 Excel
               </span>
-            </div>
-          </button>
+            </button>
+          </div>
 
-          {/* Vues complémentaires */}
-          <button
-            onClick={() => setViewMode('calendar')}
-            className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-              viewMode === 'calendar'
-                ? 'bg-white text-indigo-700 shadow-xs font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <CalendarIcon size={15} />
-            <span>Calendrier</span>
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 ${
-              viewMode === 'list'
-                ? 'bg-white text-indigo-700 shadow-xs font-bold'
-                : 'text-slate-600 hover:text-slate-900'
-            }`}
-          >
-            <ListOrdered size={15} />
-            <span>Liste</span>
-          </button>
-        </div>
+          {/* Vues complémentaires compactes */}
+          <div className="flex items-center bg-slate-200/40 p-0.5 rounded-lg">
+            <button
+              onClick={() => setViewMode('calendar')}
+              className={`p-1.5 rounded-md text-xs transition ${
+                viewMode === 'calendar' ? 'bg-white text-indigo-700 shadow-2xs font-bold' : 'text-slate-400 hover:text-slate-700'
+              }`}
+              title="Vue Calendrier"
+            >
+              <CalendarIcon size={14} />
+            </button>
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 rounded-md text-xs transition ${
+                viewMode === 'list' ? 'bg-white text-indigo-700 shadow-2xs font-bold' : 'text-slate-400 hover:text-slate-700'
+              }`}
+              title="Vue Liste"
+            >
+              <ListOrdered size={14} />
+            </button>
+          </div>
 
-        {/* Filtre Collaborateurs (Équipe) */}
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
-            <Users size={13} className="text-indigo-600" />
-            Équipe :
-          </span>
-          <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="hidden md:block h-4 w-px bg-slate-200 mx-1" />
+
+          {/* Filtre Collaborateurs (Puces sobres avec prénom) */}
+          <div className="flex items-center gap-1 flex-wrap">
+            <span className="text-[11px] font-bold text-slate-400 mr-1 hidden sm:inline">
+              Équipe :
+            </span>
+
             <button
               onClick={() => setSelectedMemberId(null)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition ${
+              className={`px-2 py-1 rounded-lg text-xs font-semibold transition ${
                 selectedMemberId === null
-                  ? 'bg-indigo-600 text-white shadow-xs'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+                  ? 'bg-indigo-600 text-white shadow-2xs'
+                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
               }`}
             >
               Tous
@@ -751,32 +695,30 @@ export const Header: React.FC = () => {
 
             {members.map((member) => {
               const isSelected = selectedMemberId === member.id;
+              const shortName = member.name.split(' ')[0]; // Prénom seul pour épurer
               return (
                 <button
                   key={member.id}
                   onClick={() => setSelectedMemberId(isSelected ? null : member.id)}
-                  style={{
-                    backgroundColor: isSelected ? member.color : '#ffffff',
-                    borderColor: member.color,
-                    color: isSelected ? '#ffffff' : '#334155'
-                  }}
-                  className={`px-2.5 py-1 rounded-lg border text-xs font-semibold transition flex items-center gap-1.5 shadow-xs ${
-                    isSelected ? 'ring-2 ring-offset-1 ring-indigo-400' : 'hover:bg-slate-50'
+                  className={`px-2 py-1 rounded-lg border text-xs font-medium transition flex items-center gap-1.5 ${
+                    isSelected
+                      ? 'bg-indigo-50 border-indigo-400 text-indigo-800 font-bold shadow-2xs'
+                      : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                   }`}
                   title={`${member.name} (${member.role})`}
                 >
                   <span
-                    className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: isSelected ? '#ffffff' : member.color }}
+                    className="w-2 h-2 rounded-full shrink-0"
+                    style={{ backgroundColor: member.color }}
                   />
-                  <span>{member.name}</span>
+                  <span>{shortName}</span>
                 </button>
               );
             })}
 
             <button
               onClick={() => setIsTeamModalOpen(true)}
-              className="px-2 py-1 bg-white border border-dashed border-slate-300 hover:border-indigo-400 text-slate-500 hover:text-indigo-600 rounded-lg text-xs font-semibold transition"
+              className="px-1.5 py-1 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-lg text-xs font-semibold transition"
               title="Gérer les membres de l'équipe"
             >
               + Gérer
@@ -784,14 +726,14 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Recherche & Filtre Couleur */}
-        <div className="flex items-center gap-3">
-          {/* Nuancier */}
-          <div className="flex items-center gap-1">
+        {/* Recherche & Filtre Couleur Sobres */}
+        <div className="flex items-center gap-2">
+          {/* Nuancier compact */}
+          <div className="hidden xl:flex items-center gap-1">
             <button
               onClick={() => setSelectedColor(null)}
-              className={`w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-[10px] font-bold transition ${
-                selectedColor === null ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600'
+              className={`w-4 h-4 rounded-full border border-slate-300 flex items-center justify-center text-[9px] font-bold transition ${
+                selectedColor === null ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-500'
               }`}
               title="Toutes les couleurs"
             >
@@ -802,22 +744,22 @@ export const Header: React.FC = () => {
                 key={preset.id}
                 onClick={() => setSelectedColor(selectedColor === preset.hex ? null : preset.hex)}
                 style={{ backgroundColor: preset.hex }}
-                className={`w-4 h-4 rounded-full transition-transform ${
-                  selectedColor === preset.hex ? 'scale-125 ring-2 ring-indigo-500 shadow-sm' : 'hover:scale-110 opacity-80'
+                className={`w-3.5 h-3.5 rounded-full transition-transform ${
+                  selectedColor === preset.hex ? 'scale-125 ring-2 ring-indigo-500 shadow-2xs' : 'hover:scale-110 opacity-75'
                 }`}
                 title={`Filtrer couleur ${preset.label}`}
               />
             ))}
           </div>
 
-          <div className="relative w-44">
-            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <div className="relative w-40 sm:w-48">
+            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
               placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-7 pr-2.5 py-1 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500"
+              className="w-full pl-7 pr-2.5 py-1 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 placeholder-slate-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
         </div>

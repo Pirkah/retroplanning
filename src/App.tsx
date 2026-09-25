@@ -23,34 +23,15 @@ const MainLayout: React.FC = () => {
     <div className="min-h-screen bg-slate-100/70 flex flex-col">
       <Header />
 
-      {/* Bandeau d'information Mode Lecteur */}
-      {!isAuthorized && (
-        <div className="bg-amber-500/10 border-b border-amber-200/80 px-6 py-2 flex items-center justify-between text-xs text-amber-900 transition-all">
-          <div className="flex items-center gap-2">
-            <Eye size={15} className="text-amber-700 shrink-0" />
-            <span>
-              <strong>Mode Lecteur actif :</strong> Vous visualisez le planning en lecture seule. Saisissez le mot de passe pour modifier les tâches.
-            </span>
-          </div>
-          <button
-            onClick={openAuthModal}
-            className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-xs shrink-0 flex items-center gap-1.5 shadow-2xs transition"
-          >
-            <Lock size={12} />
-            <span>Passer en Mode Édition</span>
-          </button>
-        </div>
-      )}
-
-      {/* Barre de synthèse & KPIs rapides */}
-      <div className="px-6 py-2 bg-white/70 border-b border-slate-200/60 backdrop-blur-xs flex flex-wrap items-center justify-between text-xs text-slate-600 gap-4">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <span className="text-slate-400 font-medium">Avancement global :</span>
-            <span className="font-bold text-slate-800">
+      {/* Barre de synthèse & KPIs sobre */}
+      <div className="px-6 py-1.5 bg-white/60 border-b border-slate-200/50 backdrop-blur-xs flex flex-wrap items-center justify-between text-[11px] text-slate-500 gap-3">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span className="text-slate-400">Avancement :</span>
+            <span className="font-bold text-slate-700">
               {totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0}%
             </span>
-            <div className="w-20 bg-slate-200 rounded-full h-2 overflow-hidden">
+            <div className="w-16 bg-slate-200 rounded-full h-1.5 overflow-hidden">
               <div
                 className="bg-emerald-500 h-full rounded-full transition-all duration-300"
                 style={{
@@ -60,22 +41,25 @@ const MainLayout: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1.5 font-medium">
-              <CheckCircle2 size={14} className="text-emerald-500" />
-              {completedTasks} terminée{completedTasks > 1 ? 's' : ''}
-            </span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <Clock size={14} className="text-blue-500" />
-              {inProgressTasks} en cours
-            </span>
-          </div>
+          <span className="text-slate-300">•</span>
+          <span className="flex items-center gap-1">
+            <CheckCircle2 size={12} className="text-emerald-500" />
+            <span><strong className="text-slate-700">{completedTasks}</strong> terminée{completedTasks > 1 ? 's' : ''}</span>
+          </span>
+
+          <span className="text-slate-300">•</span>
+          <span className="flex items-center gap-1">
+            <Clock size={12} className="text-blue-500" />
+            <span><strong className="text-slate-700">{inProgressTasks}</strong> en cours</span>
+          </span>
         </div>
 
         {nextMilestone && (
-          <div className="flex items-center gap-1.5 bg-amber-50 text-amber-800 px-2.5 py-1 rounded-lg border border-amber-200 text-[11px] font-semibold">
-            <Sparkles size={12} className="text-amber-600" />
-            <span>Prochain jalon : <strong>{nextMilestone.title}</strong> ({formatDateFr(nextMilestone.startDate, 'dd MMM')})</span>
+          <div className="flex items-center gap-1.5 text-slate-500">
+            <Sparkles size={11} className="text-amber-500 shrink-0" />
+            <span className="truncate max-w-[500px]">
+              Prochain jalon : <strong className="text-slate-700">{nextMilestone.title}</strong> ({formatDateFr(nextMilestone.startDate, 'dd MMM')})
+            </span>
           </div>
         )}
       </div>
