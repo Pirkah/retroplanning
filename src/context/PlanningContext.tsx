@@ -96,6 +96,35 @@ const ACTIVE_PROJ_KEY = 'retroplanning_active_id_v4';
 
 const PlanningContext = createContext<PlanningContextType | undefined>(undefined);
 
+const normalizeMember = (m: TeamMember): TeamMember => {
+  if (m.name.toLowerCase() === 'tetew' || m.id === 'm-tetew') {
+    return { ...m, id: 'm-theo', name: 'Théo', initials: 'TH' };
+  }
+  return m;
+};
+
+const normalizeTask = (t: Task): Task => {
+  const catDef = getCategoryDefinition(t.category || STANDARD_CATEGORIES[0].label);
+  const isTetew = t.assignee?.toLowerCase() === 'tetew' || t.assigneeId === 'm-tetew';
+  return {
+    ...t,
+    category: catDef.label,
+    color: catDef.color,
+    assignee: isTetew ? 'Théo' : t.assignee,
+    assigneeId: isTetew ? 'm-theo' : t.assigneeId
+  };
+};
+
+const normalizeRetroEvents = (events: RetroplanningEvent[]): RetroplanningEvent[] => {
+  return (events || []).map((e) => ({
+    ...e,
+    tasks: (e.tasks || []).map((t) => ({
+      ...t,
+      assignee: t.assignee?.toLowerCase() === 'tetew' ? 'Théo' : t.assignee
+    }))
+  }));
+};
+
 export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
@@ -116,20 +145,16 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               ? DEFAULT_PROJECT.tasks
               : (p.tasks || []);
 
-            const normalizedTasks = rawTasks.map((t: Task) => {
-              const catDef = getCategoryDefinition(t.category || STANDARD_CATEGORIES[0].label);
-              return {
-                ...t,
-                category: catDef.label,
-                color: catDef.color
-              };
-            });
+            const rawMembers = p.members || (p.id === 'proj-gea-2026' ? GEA_ENTREPRENEURIAT_PROJECT.members : DEFAULT_TEAM_MEMBERS);
+            const normalizedMembers = rawMembers.map(normalizeMember);
+            const normalizedTasks = rawTasks.map(normalizeTask);
+            const normalizedEvents = normalizeRetroEvents(events || []);
 
             return {
               ...p,
               tasks: sortTasksChronologically(normalizedTasks),
-              members: p.members || (p.id === 'proj-gea-2026' ? GEA_ENTREPRENEURIAT_PROJECT.members : DEFAULT_TEAM_MEMBERS),
-              events: sortRetroEventsChronologically(events || [])
+              members: normalizedMembers,
+              events: sortRetroEventsChronologically(normalizedEvents)
             };
           });
 
@@ -170,7 +195,16 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [currentUser, setCurrentUser] = useState<ConnectedUser | null>(() => {
     try {
       const saved = localStorage.getItem(USER_KEY);
-      return saved ? JSON.parse(saved) : null;
+      if (saved) {
+        const u = JSON.parse(saved);
+        if (u.name?.toLowerCase() === 'tetew' || u.id === 'm-tetew') {
+          const updated = { ...u, id: 'm-theo', name: 'Théo', initials: 'TH' };
+          try { localStorage.setItem(USER_KEY, JSON.stringify(updated)); } catch {}
+          return updated;
+        }
+        return u;
+      }
+      return null;
     } catch {
       return null;
     }
@@ -277,7 +311,12 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                     if (p.id === 'proj-rnf-2026') events = DEFAULT_PROJECT.events;
                     if (p.id === 'proj-gea-2026') events = GEA_ENTREPRENEURIAT_PROJECT.events;
                   }
-                  return { ...p, events: events || [] };
+                  return {
+                    ...p,
+                    members: (p.members || []).map(normalizeMember),
+                    tasks: (p.tasks || []).map(normalizeTask),
+                    events: normalizeRetroEvents(events || [])
+                  };
                 });
                 setProjects(refreshed);
                 if (data.payload.activeProjectId) {
@@ -286,7 +325,13 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               }
             } else if (data.type === 'STATE_UPDATED' && data.payload) {
               isBroadcastingRef.current = true;
-              setProjects(data.payload.projects);
+              const refreshed = (data.payload.projects || []).map((p: Project) => ({
+                ...p,
+                members: (p.members || []).map(normalizeMember),
+                tasks: (p.tasks || []).map(normalizeTask),
+                events: normalizeRetroEvents(p.events || [])
+              }));
+              setProjects(refreshed);
               if (data.payload.activeProjectId) {
                 setActiveProjectId(data.payload.activeProjectId);
               }

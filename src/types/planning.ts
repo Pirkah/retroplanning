@@ -94,7 +94,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
   { id: 'm-julien', name: 'Julien Nicolle', role: 'Secrétaire / Dév', color: '#6366F1', initials: 'JU' },
   { id: 'm-mathias', name: 'Mathias Samson', role: 'Événements & Partenaires', color: '#F59E0B', initials: 'MA' },
   { id: 'm-sina', name: 'Sina Abdoul Bastoi', role: 'Communication & Réseaux', color: '#10B981', initials: 'SI' },
-  { id: 'm-tetew', name: 'Tetew', role: 'Événements & Logistique', color: '#EC4899', initials: 'TE' },
+  { id: 'm-theo', name: 'Théo', role: 'Événements & Logistique', color: '#EC4899', initials: 'TH' },
 ];
 
 export interface WeekColumn {

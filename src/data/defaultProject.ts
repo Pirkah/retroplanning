@@ -414,8 +414,8 @@ export const DEFAULT_PROJECT: Project = {
       priority: 'medium',
       progress: 0,
       category: 'Administratif & Juridique',
-      assignee: 'Tetew',
-      assigneeId: 'm-tetew'
+      assignee: 'Théo',
+      assigneeId: 'm-theo'
     },
     {
       id: 'task-tab-22',
@@ -501,8 +501,8 @@ export const DEFAULT_PROJECT: Project = {
       priority: 'high',
       progress: 0,
       category: 'Logistique & Sécurité',
-      assignee: 'Tetew',
-      assigneeId: 'm-tetew'
+      assignee: 'Théo',
+      assigneeId: 'm-theo'
     },
     {
       id: 'task-gantt-5',
@@ -515,8 +515,8 @@ export const DEFAULT_PROJECT: Project = {
       priority: 'high',
       progress: 0,
       category: 'Logistique & Sécurité',
-      assignee: 'Tetew',
-      assigneeId: 'm-tetew'
+      assignee: 'Théo',
+      assigneeId: 'm-theo'
     },
     {
       id: 'task-gantt-6',
@@ -583,7 +583,7 @@ export const DEFAULT_PROJECT: Project = {
         { id: 't-adm-10', weekLabel: 'S39 (28 sept.)', category: 'Activité / Jour J', action: 'Validation de la Passation Officielle & Statuts déposés en Préfecture', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
         { id: 't-adm-11', weekLabel: 'S40', category: 'Administratif & Juridique', action: 'Appeler l’assurance SMACL pour avenant manifestation et responsabilités', assignee: 'Vianney Urbanick', status: 'todo' },
         { id: 't-adm-12', weekLabel: 'S40', category: 'Finance & Trésorerie', action: 'Effectuer la demande de permanence bancaire et de TPE (terminal carte)', assignee: 'Vianney Urbanick', status: 'todo' },
-        { id: 't-adm-13', weekLabel: 'S40', category: 'Administratif & Juridique', action: 'S’informer sur la vente d’alcool, autorisations et réglementation buvette', assignee: 'Tetew', status: 'todo' },
+        { id: 't-adm-13', weekLabel: 'S40', category: 'Administratif & Juridique', action: 'S’informer sur la vente d’alcool, autorisations et réglementation buvette', assignee: 'Théo', status: 'todo' },
         { id: 't-adm-14', weekLabel: 'S41', category: 'Finance & Trésorerie', action: 'Préparer le dossier de subvention et budget prévisionnel de l’année', assignee: 'Vianney Urbanick', status: 'todo' }
       ]
     },
@@ -638,14 +638,14 @@ export const DEFAULT_PROJECT: Project = {
         { id: 't-crs-3', weekLabel: 'S41', category: 'Communication & Médias', action: 'Création du club Strava Run & Fun et animation des défis running étudiants', assignee: 'Vianney Urbanick', status: 'completed' },
         { id: 't-crs-4', weekLabel: 'S42', category: 'Communication & Médias', action: 'Réalisation et diffusion du premier TikTok teaser pour la course solidaire', assignee: 'Sina Abdoul Bastoi', status: 'todo' },
         { id: 't-crs-5', weekLabel: 'S44', category: 'Administratif & Juridique', action: 'Dépôt officiel en mairie du dossier de manifestation sportive et voirie', assignee: 'Vianney Urbanick', status: 'todo' },
-        { id: 't-crs-6', weekLabel: 'S45', category: 'Logistique & Sécurité', action: 'Devis et convention avec l’organisme de secourisme (Croix-Rouge) et plan secours', assignee: 'Tetew', status: 'todo' },
-        { id: 't-crs-7', weekLabel: 'S50', category: 'Logistique & Sécurité', action: 'Campagne de recrutement et affectation des 40 bénévoles (signaleurs, ravitaillement)', assignee: 'Tetew', status: 'todo' },
+        { id: 't-crs-6', weekLabel: 'S45', category: 'Logistique & Sécurité', action: 'Devis et convention avec l’organisme de secourisme (Croix-Rouge) et plan secours', assignee: 'Théo', status: 'todo' },
+        { id: 't-crs-7', weekLabel: 'S50', category: 'Logistique & Sécurité', action: 'Campagne de recrutement et affectation des 40 bénévoles (signaleurs, ravitaillement)', assignee: 'Théo', status: 'todo' },
         { id: 't-crs-8', weekLabel: 'S01', category: 'Communication & Médias', action: 'Grande campagne de communication de la course sur le campus (affiches, réseaux)', assignee: 'Sina Abdoul Bastoi', status: 'todo' },
         { id: 't-crs-9', weekLabel: 'S02', category: 'Communication & Médias', action: 'Permanences d’information et stands dans le hall de l’IUT', assignee: 'Mathias Samson', status: 'todo' },
         { id: 't-crs-10', weekLabel: 'S02 (15 janv.)', category: 'Activité / Jour J', action: 'Lancement Officiel de la Billetterie en ligne HelloAsso & Inscriptions Dossards', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
         { id: 't-crs-11', weekLabel: 'S08', category: 'Fournisseurs & Commandes', action: 'Commande groupée des t-shirts coureurs, médailles, dossards et ravitaillement', assignee: 'Julien Nicolle', status: 'todo' },
         { id: 't-crs-12', weekLabel: 'S11', category: 'Logistique & Sécurité', action: 'Briefing sécurité général avec la Croix-Rouge, sécurité campus et bénévoles', assignee: 'Mathias Samson', status: 'todo' },
-        { id: 't-crs-13', weekLabel: 'S12', category: 'Logistique & Sécurité', action: 'Balisage complet du parcours de la course, montage des arches et stands', assignee: 'Tetew', status: 'todo' },
+        { id: 't-crs-13', weekLabel: 'S12', category: 'Logistique & Sécurité', action: 'Balisage complet du parcours de la course, montage des arches et stands', assignee: 'Théo', status: 'todo' },
         { id: 't-crs-14', weekLabel: 'S12 (22 mars)', category: 'Activité / Jour J', action: 'JOUR J : RUN AND FUN DAY – Grande Course Solidaire 2027 !', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
         { id: 't-crs-15', weekLabel: 'S13', category: 'Post-événement', action: 'Démontage, nettoyage éco-responsable du site, proclamation des podiums et débriefing', assignee: 'Toute l’équipe', status: 'todo' },
         { id: 't-crs-16', weekLabel: 'S14', category: 'Post-événement', action: 'Bilan comptable final de la course, diffusion de l’aftermovie vidéo et remerciements', assignee: 'Julien Nicolle', status: 'todo' }

@@ -35,11 +35,11 @@
           "initials": "SI"
         },
         {
-          "id": "m-tetew",
-          "name": "Tetew",
+          "id": "m-theo",
+          "name": "Théo",
           "role": "Événements & Logistique",
           "color": "#EC4899",
-          "initials": "TE"
+          "initials": "TH"
         }
       ],
       "tasks": [
@@ -446,8 +446,8 @@
           "priority": "medium",
           "progress": 0,
           "category": "administratif",
-          "assignee": "Tetew",
-          "assigneeId": "m-tetew"
+          "assignee": "Théo",
+          "assigneeId": "m-theo"
         },
         {
           "id": "task-tab-22",
@@ -531,8 +531,8 @@
           "priority": "high",
           "progress": 0,
           "category": "logistique",
-          "assignee": "Tetew",
-          "assigneeId": "m-tetew"
+          "assignee": "Théo",
+          "assigneeId": "m-theo"
         },
         {
           "id": "task-gantt-5",
@@ -545,8 +545,8 @@
           "priority": "high",
           "progress": 0,
           "category": "logistique",
-          "assignee": "Tetew",
-          "assigneeId": "m-tetew"
+          "assignee": "Théo",
+          "assigneeId": "m-theo"
         },
         {
           "id": "task-gantt-6",
@@ -802,7 +802,7 @@
               "weekLabel": "S40",
               "category": "Administratif",
               "action": "S’informer sur la vente d’alcool, autorisation et réglementation buvette",
-              "assignee": "Tetew",
+              "assignee": "Théo",
               "status": "todo"
             },
             {
@@ -900,7 +900,7 @@
               "weekLabel": "S45",
               "category": "Logistique",
               "action": "Balisage & contact organisme de secourisme (Croix-Rouge)",
-              "assignee": "Tetew",
+              "assignee": "Théo",
               "status": "todo"
             },
             {
@@ -935,7 +935,7 @@
               "weekLabel": "S50",
               "category": "Logistique",
               "action": "Recherche et recrutement des bénévoles (signaleurs, ravitaillement)",
-              "assignee": "Tetew",
+              "assignee": "Théo",
               "status": "todo"
             },
             {
@@ -976,7 +976,7 @@
               "weekLabel": "S12",
               "category": "Logistique",
               "action": "Balisage complet du parcours de la course et installation buvette",
-              "assignee": "Tetew",
+              "assignee": "Théo",
               "status": "todo"
             },
             {
