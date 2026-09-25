@@ -28,7 +28,10 @@ import {
   Eye,
   Printer,
   ChevronDown,
-  Menu
+  Menu,
+  Home,
+  Lightbulb,
+  MessageSquare
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { TeamModal } from './TeamModal';
@@ -647,10 +650,24 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Ligne 2 : Navigation sobre des Vues & Recherche (sans encombrement d'équipe) */}
+      {/* Ligne 2 : Navigation sobre des Espaces & Vues */}
       <div className="px-6 py-2 flex flex-wrap items-center justify-between gap-3 bg-slate-50/70 border-b border-slate-200/60">
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Sélecteur de Vue Segmenté Minimaliste */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Bouton Accueil / Hub Équipe */}
+          <button
+            onClick={() => setViewMode('home')}
+            className={`px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5 ${
+              viewMode === 'home'
+                ? 'bg-slate-900 text-white shadow-2xs font-bold'
+                : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100 font-medium'
+            }`}
+            title="Page d'accueil et hub de travail de l'équipe"
+          >
+            <Home size={14} className={viewMode === 'home' ? 'text-amber-400' : 'text-slate-500'} />
+            <span>Accueil</span>
+          </button>
+
+          {/* Sélecteur Planning Actuel (Gantt & Rétroplanning) */}
           <div className="flex items-center bg-slate-200/60 p-0.5 rounded-xl gap-0.5">
             <button
               onClick={() => setViewMode('gantt')}
@@ -659,6 +676,7 @@ export const Header: React.FC = () => {
                   ? 'bg-white text-indigo-700 shadow-2xs font-bold'
                   : 'text-slate-600 hover:text-slate-900 font-medium'
               }`}
+              title="Diagramme de Gantt avec timeline"
             >
               <GanttChartSquare size={14} />
               <span>Gantt</span>
@@ -671,6 +689,7 @@ export const Header: React.FC = () => {
                   ? 'bg-white text-blue-700 shadow-2xs font-bold'
                   : 'text-slate-600 hover:text-slate-900 font-medium'
               }`}
+              title="Rétroplanning par feuilles d'événements"
             >
               <FileSpreadsheet size={14} />
               <span>Rétroplanning</span>
@@ -680,11 +699,40 @@ export const Header: React.FC = () => {
             </button>
           </div>
 
+          {/* Nouveaux Espaces Collaboratifs : Idées & Messagerie */}
+          <div className="flex items-center bg-slate-200/50 p-0.5 rounded-xl gap-0.5">
+            <button
+              onClick={() => setViewMode('ideas')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 ${
+                viewMode === 'ideas'
+                  ? 'bg-white text-amber-800 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900 font-medium'
+              }`}
+              title="Boîte à Idées & Notes collaboratives"
+            >
+              <Lightbulb size={13} className={viewMode === 'ideas' ? 'text-amber-500' : 'text-amber-600'} />
+              <span>Idées</span>
+            </button>
+
+            <button
+              onClick={() => setViewMode('messages')}
+              className={`px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 ${
+                viewMode === 'messages'
+                  ? 'bg-white text-emerald-800 shadow-2xs font-bold'
+                  : 'text-slate-600 hover:text-slate-900 font-medium'
+              }`}
+              title="Messagerie et salons de discussion par sujets"
+            >
+              <MessageSquare size={13} className={viewMode === 'messages' ? 'text-emerald-500' : 'text-emerald-600'} />
+              <span>Messagerie</span>
+            </button>
+          </div>
+
           {/* Vues complémentaires compactes */}
           <div className="flex items-center bg-slate-200/40 p-0.5 rounded-lg">
             <button
               onClick={() => setViewMode('calendar')}
-              className={`px-2.5 py-1.5 rounded-md text-xs transition flex items-center gap-1.5 ${
+              className={`px-2 py-1.5 rounded-md text-xs transition flex items-center gap-1 ${
                 viewMode === 'calendar' ? 'bg-white text-indigo-700 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800 font-medium'
               }`}
               title="Vue Calendrier Mensuel"
@@ -694,7 +742,7 @@ export const Header: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`px-2.5 py-1.5 rounded-md text-xs transition flex items-center gap-1.5 ${
+              className={`px-2 py-1.5 rounded-md text-xs transition flex items-center gap-1 ${
                 viewMode === 'list' ? 'bg-white text-indigo-700 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800 font-medium'
               }`}
               title="Vue Liste des Tâches"

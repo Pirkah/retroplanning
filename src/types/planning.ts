@@ -64,7 +64,7 @@ export interface Project {
   events?: RetroplanningEvent[];
 }
 
-export type ViewMode = 'gantt' | 'retroplanning' | 'timeline' | 'calendar' | 'list';
+export type ViewMode = 'home' | 'gantt' | 'retroplanning' | 'timeline' | 'calendar' | 'list' | 'ideas' | 'messages';
 export type TimelineZoom = 'week' | 'day' | 'month';
 
 export interface ColorPreset {

@@ -178,7 +178,17 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return savedId || projects[0]?.id || DEFAULT_PROJECT.id;
   });
 
-  const [viewMode, setViewMode] = useState<ViewMode>('gantt');
+  const [viewMode, setViewModeState] = useState<ViewMode>(() => {
+    const saved = localStorage.getItem('rnf_view_mode_v2');
+    return (saved as ViewMode) || 'home';
+  });
+
+  const setViewMode = (mode: ViewMode) => {
+    setViewModeState(mode);
+    try {
+      localStorage.setItem('rnf_view_mode_v2', mode);
+    } catch {}
+  };
   const [zoom, setZoom] = useState<TimelineZoom>('week');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedColor, setSelectedColor] = useState<string | null>(null);

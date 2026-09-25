@@ -2,8 +2,11 @@ import React, { useEffect } from 'react';
 import { usePlanning } from '../context/PlanningContext';
 import { ViewMode } from '../types/planning';
 import {
+  Home,
   GanttChartSquare,
   FileSpreadsheet,
+  Lightbulb,
+  MessageSquare,
   Calendar as CalendarIcon,
   ListOrdered,
   X,
@@ -66,23 +69,7 @@ export const NavigationSidebar: React.FC = () => {
 
   return (
     <>
-      {/* 1. Languette flottante sur le bord gauche ("en mode onglet qui s'ouvre") */}
-      {!isSidebarOpen && (
-        <button
-          onClick={toggleSidebar}
-          className="fixed left-0 top-36 z-30 bg-white/95 hover:bg-indigo-50/95 text-slate-700 hover:text-indigo-600 border-y border-r border-slate-300 hover:border-indigo-300 shadow-md py-3 px-2 rounded-r-xl transition-all duration-200 flex flex-col items-center gap-2 group cursor-pointer"
-          title="Ouvrir le Sommaire du logiciel (Navigation rapide)"
-        >
-          <div className="w-5 h-5 rounded-md bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white flex items-center justify-center transition-colors">
-            <Layers size={13} />
-          </div>
-          <span className="text-[10px] font-black uppercase tracking-wider text-slate-600 group-hover:text-indigo-700 [writing-mode:vertical-lr] rotate-180 select-none">
-            Sommaire
-          </span>
-        </button>
-      )}
-
-      {/* 2. Toile de fond (Backdrop flouté) */}
+      {/* 1. Toile de fond (Backdrop flouté) */}
       {isSidebarOpen && (
         <div
           onClick={() => setIsSidebarOpen(false)}
@@ -91,7 +78,7 @@ export const NavigationSidebar: React.FC = () => {
         />
       )}
 
-      {/* 3. Tiroir coulissant (Drawer) */}
+      {/* 2. Tiroir coulissant (Drawer) ouvert via le bouton Sommaire du haut */}
       <aside
         className={`fixed top-0 left-0 bottom-0 w-80 sm:w-96 bg-white z-50 shadow-2xl flex flex-col border-r border-slate-200 transition-transform duration-300 ease-in-out transform ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -192,7 +179,48 @@ export const NavigationSidebar: React.FC = () => {
           {/* SECTION : NAVIGATION PRINCIPALE DES PAGES */}
           <div className="space-y-1.5">
             <div className="px-1 text-[11px] font-black uppercase tracking-wider text-slate-400">
-              Pages Principales
+              Espaces & Pages
+            </div>
+
+            {/* 0. ACCUEIL & HUB ÉQUIPE */}
+            <div
+              onClick={() => handleNavigateToView('home')}
+              className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
+                viewMode === 'home'
+                  ? 'bg-slate-900 text-white shadow-2xs font-bold border-slate-900'
+                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
+                    viewMode === 'home'
+                      ? 'bg-white/20 text-white'
+                      : 'bg-slate-100 text-slate-700 group-hover:scale-105'
+                  }`}
+                >
+                  <Home size={16} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-bold">Accueil & Hub Équipe</p>
+                    <span className={`text-[9px] px-1 py-0.2 rounded font-extrabold uppercase ${
+                      viewMode === 'home' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+                    }`}>
+                      Vue d'ensemble
+                    </span>
+                  </div>
+                  <p className={`text-[10px] ${viewMode === 'home' ? 'text-slate-300' : 'text-slate-400'}`}>
+                    Portail central de choix de modules
+                  </p>
+                </div>
+              </div>
+              <ChevronRight
+                size={16}
+                className={`transition-transform ${
+                  viewMode === 'home' ? 'text-white translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                }`}
+              />
             </div>
 
             {/* 1. DIAGRAMME DE GANTT */}
@@ -314,12 +342,86 @@ export const NavigationSidebar: React.FC = () => {
               </div>
             </div>
 
-            {/* 3. CALENDRIER */}
+            {/* 3. BOÎTE À IDÉES & NOTES */}
+            <div
+              onClick={() => handleNavigateToView('ideas')}
+              className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
+                viewMode === 'ideas'
+                  ? 'bg-amber-50/80 border-amber-300 shadow-2xs font-bold text-amber-950'
+                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
+                    viewMode === 'ideas'
+                      ? 'bg-amber-500 text-white shadow-xs'
+                      : 'bg-amber-100 text-amber-700 group-hover:scale-105'
+                  }`}
+                >
+                  <Lightbulb size={16} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-bold">3. Boîte à Idées & Notes</p>
+                    <span className="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded font-extrabold uppercase">
+                      Brainstorming
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-400">Propositions, votes et statuts</p>
+                </div>
+              </div>
+              <ChevronRight
+                size={16}
+                className={`transition-transform ${
+                  viewMode === 'ideas' ? 'text-amber-600 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                }`}
+              />
+            </div>
+
+            {/* 4. MESSAGERIE D'ÉQUIPE PAR SUJETS */}
+            <div
+              onClick={() => handleNavigateToView('messages')}
+              className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
+                viewMode === 'messages'
+                  ? 'bg-emerald-50/80 border-emerald-300 shadow-2xs font-bold text-emerald-950'
+                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
+                    viewMode === 'messages'
+                      ? 'bg-emerald-600 text-white shadow-xs'
+                      : 'bg-emerald-100 text-emerald-700 group-hover:scale-105'
+                  }`}
+                >
+                  <MessageSquare size={16} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-xs font-bold">4. Messagerie par Sujets</p>
+                    <span className="text-[9px] bg-emerald-100 text-emerald-800 px-1 py-0.2 rounded font-extrabold uppercase">
+                      Chat
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-400">Salons #général, #course, #sponsors...</p>
+                </div>
+              </div>
+              <ChevronRight
+                size={16}
+                className={`transition-transform ${
+                  viewMode === 'messages' ? 'text-emerald-600 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                }`}
+              />
+            </div>
+
+            {/* 5. CALENDRIER */}
             <div
               onClick={() => handleNavigateToView('calendar')}
               className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
                 viewMode === 'calendar'
-                  ? 'bg-indigo-50/80 border-indigo-300 shadow-2xs font-bold text-indigo-950'
+                  ? 'bg-purple-50/80 border-purple-300 shadow-2xs font-bold text-purple-950'
                   : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
               }`}
             >
@@ -327,31 +429,31 @@ export const NavigationSidebar: React.FC = () => {
                 <div
                   className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
                     viewMode === 'calendar'
-                      ? 'bg-indigo-600 text-white shadow-xs'
+                      ? 'bg-purple-600 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-600 group-hover:scale-105'
                   }`}
                 >
                   <CalendarDays size={16} />
                 </div>
                 <div>
-                  <p className="text-xs font-bold">3. Calendrier Mensuel</p>
+                  <p className="text-xs font-bold">5. Calendrier Mensuel</p>
                   <p className="text-[10px] text-slate-400">Vue chronologique globale</p>
                 </div>
               </div>
               <ChevronRight
                 size={16}
                 className={`transition-transform ${
-                  viewMode === 'calendar' ? 'text-indigo-600 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                  viewMode === 'calendar' ? 'text-purple-600 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
                 }`}
               />
             </div>
 
-            {/* 4. LISTE DES TÂCHES */}
+            {/* 6. LISTE DES TÂCHES */}
             <div
               onClick={() => handleNavigateToView('list')}
               className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
                 viewMode === 'list'
-                  ? 'bg-indigo-50/80 border-indigo-300 shadow-2xs font-bold text-indigo-950'
+                  ? 'bg-slate-100 border-slate-400 shadow-2xs font-bold text-slate-900'
                   : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
               }`}
             >
@@ -359,21 +461,21 @@ export const NavigationSidebar: React.FC = () => {
                 <div
                   className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
                     viewMode === 'list'
-                      ? 'bg-indigo-600 text-white shadow-xs'
+                      ? 'bg-slate-800 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-600 group-hover:scale-105'
                   }`}
                 >
                   <ListOrdered size={16} />
                 </div>
                 <div>
-                  <p className="text-xs font-bold">4. Liste des Tâches</p>
+                  <p className="text-xs font-bold">6. Liste des Tâches</p>
                   <p className="text-[10px] text-slate-400">Format tableau avec filtres</p>
                 </div>
               </div>
               <ChevronRight
                 size={16}
                 className={`transition-transform ${
-                  viewMode === 'list' ? 'text-indigo-600 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                  viewMode === 'list' ? 'text-slate-800 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
                 }`}
               />
             </div>

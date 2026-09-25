@@ -1,5 +1,6 @@
 import React from 'react';
 import { PlanningProvider, usePlanning } from './context/PlanningContext';
+import { WorkspaceProvider } from './context/WorkspaceContext';
 import { Header } from './components/Header';
 import { GanttChartView } from './components/GanttChartView';
 import { CalendarView } from './components/CalendarView';
@@ -9,6 +10,9 @@ import { Footer } from './components/Footer';
 import { GanttExportCanvas } from './components/GanttExportCanvas';
 import { RetroplanningView } from './components/RetroplanningView';
 import { NavigationSidebar } from './components/NavigationSidebar';
+import { HomeHubView } from './components/workspace/HomeHubView';
+import { IdeasNotesView } from './components/workspace/IdeasNotesView';
+import { TeamMessagesView } from './components/workspace/TeamMessagesView';
 import { CheckCircle2, Clock, Sparkles, Eye, Lock } from 'lucide-react';
 import { formatDateFr } from './utils/scheduler';
 
@@ -70,8 +74,11 @@ const MainLayout: React.FC = () => {
 
       {/* Conteneur principal de la vue */}
       <main id="planning-main-view" className="flex-1 p-4 md:p-6 flex flex-col overflow-hidden max-w-[1920px] w-full mx-auto">
+        {viewMode === 'home' && <HomeHubView />}
         {(viewMode === 'gantt' || viewMode === 'timeline') && <GanttChartView />}
         {viewMode === 'retroplanning' && <RetroplanningView />}
+        {viewMode === 'ideas' && <IdeasNotesView />}
+        {viewMode === 'messages' && <TeamMessagesView />}
         {viewMode === 'calendar' && <CalendarView />}
         {viewMode === 'list' && <TaskListView />}
       </main>
@@ -105,7 +112,9 @@ const MainLayout: React.FC = () => {
 export function App() {
   return (
     <PlanningProvider>
-      <MainLayout />
+      <WorkspaceProvider>
+        <MainLayout />
+      </WorkspaceProvider>
     </PlanningProvider>
   );
 }
