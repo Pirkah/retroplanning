@@ -19,150 +19,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { printRetroplanning, exportRetroplanningToPdf } from '../utils/pdfExport';
-
-// Palette de couleurs officielles pour les phases du rétroplanning (identique aux photos)
-export const RETRO_CATEGORIES: {
-  id: string;
-  label: string;
-  description: string;
-  bgBadge: string;
-  textBadge: string;
-  borderBadge: string;
-  blockColor: string;
-  textColor: string;
-}[] = [
-  {
-    id: 'preparation',
-    label: 'Préparation',
-    description: 'Travail interne de conception et cadrage',
-    bgBadge: 'bg-pink-100',
-    textBadge: 'text-pink-800',
-    borderBadge: 'border-pink-300',
-    blockColor: '#F472B6',
-    textColor: '#831843'
-  },
-  {
-    id: 'communication',
-    label: 'Communication',
-    description: 'Affiche, vidéo, réseaux sociaux',
-    bgBadge: 'bg-emerald-100',
-    textBadge: 'text-emerald-800',
-    borderBadge: 'border-emerald-300',
-    blockColor: '#34D399',
-    textColor: '#064E3B'
-  },
-  {
-    id: 'logistique',
-    label: 'Logistique',
-    description: 'Réservation salle, matériel, organisation',
-    bgBadge: 'bg-sky-100',
-    textBadge: 'text-sky-800',
-    borderBadge: 'border-sky-300',
-    blockColor: '#60A5FA',
-    textColor: '#1E3A8A'
-  },
-  {
-    id: 'partenaires',
-    label: 'Partenaires',
-    description: 'Contacts et relations avec les intervenants',
-    bgBadge: 'bg-amber-100',
-    textBadge: 'text-amber-800',
-    borderBadge: 'border-amber-300',
-    blockColor: '#FBBF24',
-    textColor: '#78350F'
-  },
-  {
-    id: 'activite',
-    label: 'Activité / Jour J',
-    description: 'Tenue de l’événement principal',
-    bgBadge: 'bg-red-100',
-    textBadge: 'text-red-800',
-    borderBadge: 'border-red-300',
-    blockColor: '#EF4444',
-    textColor: '#FFFFFF'
-  },
-  {
-    id: 'evenement',
-    label: 'Événement',
-    description: 'Animation sur place et accueil des participants',
-    bgBadge: 'bg-rose-100',
-    textBadge: 'text-rose-800',
-    borderBadge: 'border-rose-300',
-    blockColor: '#F43F5E',
-    textColor: '#FFFFFF'
-  },
-  {
-    id: 'post_evenement',
-    label: 'Post-événement',
-    description: 'Bilan, questionnaire, remerciements et débriefing',
-    bgBadge: 'bg-orange-100',
-    textBadge: 'text-orange-900',
-    borderBadge: 'border-orange-300',
-    blockColor: '#FB923C',
-    textColor: '#7C2D12'
-  },
-  {
-    id: 'administratif',
-    label: 'Administratif & Juridique',
-    description: 'Statuts, préfecture, mairie, autorisations et assurances',
-    bgBadge: 'bg-indigo-100',
-    textBadge: 'text-indigo-800',
-    borderBadge: 'border-indigo-300',
-    blockColor: '#818CF8',
-    textColor: '#312E81'
-  },
-  {
-    id: 'finance',
-    label: 'Finance & Trésorerie',
-    description: 'Banque, compte, TPE, budget prévisionnel et subventions',
-    bgBadge: 'bg-cyan-100',
-    textBadge: 'text-cyan-800',
-    borderBadge: 'border-cyan-300',
-    blockColor: '#06B6D4',
-    textColor: '#164E63'
-  },
-  {
-    id: 'fournisseurs',
-    label: 'Fournisseurs & Matériel',
-    description: 'Commandes t-shirts, ravitaillement, devis et prestataires',
-    bgBadge: 'bg-teal-100',
-    textBadge: 'text-teal-800',
-    borderBadge: 'border-teal-300',
-    blockColor: '#14B8A6',
-    textColor: '#134E4A'
-  }
-];
-
-export function getCategoryStyle(categoryName: string) {
-  const norm = categoryName.toLowerCase().replace(/[^a-z]/g, '');
-  if (norm.includes('admin') || norm.includes('jurid') || norm.includes('prefect') || norm.includes('statut')) {
-    return RETRO_CATEGORIES.find(c => c.id === 'administratif') || RETRO_CATEGORIES[0];
-  }
-  if (norm.includes('finan') || norm.includes('tresor') || norm.includes('banq') || norm.includes('budget') || norm.includes('subvent')) {
-    return RETRO_CATEGORIES.find(c => c.id === 'finance') || RETRO_CATEGORIES[0];
-  }
-  if (norm.includes('fourn') || norm.includes('tshirt') || norm.includes('matos')) {
-    return RETRO_CATEGORIES.find(c => c.id === 'fournisseurs') || RETRO_CATEGORIES[0];
-  }
-  if (norm.includes('prep') || norm.includes('concep')) return RETRO_CATEGORIES[0];
-  if (norm.includes('comm') || norm.includes('video') || norm.includes('reseau') || norm.includes('tiktok') || norm.includes('strava')) {
-    return RETRO_CATEGORIES[1];
-  }
-  if (norm.includes('logist') || norm.includes('salle') || norm.includes('balis') || norm.includes('secour') || norm.includes('benevol')) {
-    return RETRO_CATEGORIES[2];
-  }
-  if (norm.includes('parten') || norm.includes('interven') || norm.includes('bde') || norm.includes('sponsor')) {
-    return RETRO_CATEGORIES[3];
-  }
-  if (norm.includes('activ') || norm.includes('jourj') || norm.includes('billett') || norm.includes('dossard')) {
-    return RETRO_CATEGORIES[4];
-  }
-  if (norm.includes('post') || norm.includes('bilan') || norm.includes('sondage') || norm.includes('debrief')) {
-    return RETRO_CATEGORIES.find(c => c.id === 'post_evenement') || RETRO_CATEGORIES[6];
-  }
-  if (norm.includes('even') || norm.includes('assoc')) return RETRO_CATEGORIES[5];
-  return RETRO_CATEGORIES[1];
-}
+import { RETRO_CATEGORIES, getCategoryStyle } from '../utils/categories';
 
 export const RetroplanningView: React.FC = () => {
   const {
@@ -211,6 +68,7 @@ export const RetroplanningView: React.FC = () => {
   const [taskFormAssignee, setTaskFormAssignee] = useState('');
   const [taskFormStatus, setTaskFormStatus] = useState<'todo' | 'in_progress' | 'completed' | 'event'>('todo');
   const [taskFormIsEvent, setTaskFormIsEvent] = useState(false);
+  const [isCustomTaskCat, setIsCustomTaskCat] = useState(false);
 
   // Événement actif si ce n'est pas 'overview'
   const currentEvent = useMemo(() => {
@@ -315,6 +173,7 @@ export const RetroplanningView: React.FC = () => {
     setTaskFormAssignee(members[0]?.name || 'Toute l’équipe');
     setTaskFormStatus('todo');
     setTaskFormIsEvent(false);
+    setIsCustomTaskCat(false);
     setIsTaskModalOpen(true);
   };
 
@@ -330,6 +189,7 @@ export const RetroplanningView: React.FC = () => {
     setTaskFormAssignee(task.assignee);
     setTaskFormStatus(task.status);
     setTaskFormIsEvent(!!task.isEventHighlight);
+    setIsCustomTaskCat(false);
     setIsTaskModalOpen(true);
   };
 
@@ -991,17 +851,50 @@ export const RetroplanningView: React.FC = () => {
                   <label className="block text-xs font-bold text-slate-700 mb-1">
                     Catégorie :
                   </label>
-                  <select
-                    value={taskFormCategory}
-                    onChange={(e) => setTaskFormCategory(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500"
-                  >
-                    {RETRO_CATEGORIES.map((c) => (
-                      <option key={c.id} value={c.label}>
-                        {c.label}
-                      </option>
-                    ))}
-                  </select>
+                  {!isCustomTaskCat ? (
+                    <select
+                      value={taskFormCategory}
+                      onChange={(e) => {
+                        if (e.target.value === '__NEW__') {
+                          setIsCustomTaskCat(true);
+                          setTaskFormCategory('');
+                        } else {
+                          setTaskFormCategory(e.target.value);
+                        }
+                      }}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <optgroup label="Catégories existantes">
+                        {RETRO_CATEGORIES.map((c) => (
+                          <option key={c.id} value={c.label}>
+                            ● {c.label}
+                          </option>
+                        ))}
+                      </optgroup>
+                      <option value="__NEW__">+ Nouvelle catégorie...</option>
+                    </select>
+                  ) : (
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="text"
+                        autoFocus
+                        placeholder="Nouvelle catégorie..."
+                        value={taskFormCategory}
+                        onChange={(e) => setTaskFormCategory(e.target.value)}
+                        className="flex-1 px-3 py-2 border border-indigo-400 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCustomTaskCat(false);
+                          setTaskFormCategory(RETRO_CATEGORIES[0].label);
+                        }}
+                        className="px-2.5 py-2 text-[10px] bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg font-bold transition"
+                      >
+                        Liste
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 

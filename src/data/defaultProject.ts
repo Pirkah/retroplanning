@@ -1,4 +1,5 @@
 import { Project, DEFAULT_TEAM_MEMBERS } from '../types/planning';
+import { getCategoryColor } from '../utils/categories';
 
 export const DEFAULT_PROJECT: Project = {
   id: 'proj-rnf-2026',
@@ -14,11 +15,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Récupération des accès d’administration et du code source du site.',
       startDate: '2026-06-08',
       endDate: '2026-06-21',
-      color: '#16A34A', // Vert communication
+      color: '#10B981', // Communication & Médias
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'communication',
+      category: 'Communication & Médias',
       assignee: 'Julien Nicolle',
       assigneeId: 'm-julien'
     },
@@ -28,11 +29,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Tenue de l’AG avec élection du nouveau bureau.',
       startDate: '2026-07-06',
       endDate: '2026-07-19',
-      color: '#0EA5E9', // Bleu administratif
+      color: '#6366F1', // Administratif & Juridique
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'administratif',
+      category: 'Administratif & Juridique',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -42,11 +43,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Signature des procès-verbaux de passation.',
       startDate: '2026-07-13',
       endDate: '2026-07-19',
-      color: '#0EA5E9',
+      color: '#6366F1', // Administratif & Juridique
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'administratif',
+      category: 'Administratif & Juridique',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -56,11 +57,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Dépôt des statuts modifiés et déclaration officielle en préfecture.',
       startDate: '2026-07-13',
       endDate: '2026-08-02',
-      color: '#0EA5E9',
+      color: '#6366F1', // Administratif & Juridique
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'administratif',
+      category: 'Administratif & Juridique',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -70,11 +71,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Rendez-vous bancaire pour transfert de signature et mise à jour assurance.',
       startDate: '2026-08-03',
       endDate: '2026-08-23',
-      color: '#84CC16', // Vert lime finance
+      color: '#06B6D4', // Finance & Trésorerie
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'finance',
+      category: 'Finance & Trésorerie',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -84,11 +85,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Actualisation bancaire avec procuration.',
       startDate: '2026-08-03',
       endDate: '2026-08-23',
-      color: '#0EA5E9',
+      color: '#06B6D4', // Finance & Trésorerie
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'administratif',
+      category: 'Finance & Trésorerie',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -98,11 +99,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Contrat d’assurance association mis à jour.',
       startDate: '2026-08-10',
       endDate: '2026-08-23',
-      color: '#0EA5E9',
+      color: '#6366F1', // Administratif & Juridique
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'administratif',
+      category: 'Administratif & Juridique',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -112,11 +113,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Récupération des mots de passe Instagram, Facebook, TikTok.',
       startDate: '2026-08-24',
       endDate: '2026-09-06',
-      color: '#16A34A',
+      color: '#10B981', // Communication & Médias
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'communication',
+      category: 'Communication & Médias',
       assignee: 'Mathias Samson',
       assigneeId: 'm-mathias'
     },
@@ -125,14 +126,14 @@ export const DEFAULT_PROJECT: Project = {
     {
       id: 'task-tab-1',
       title: 'Appelée Gravir pour Guérir',
-      description: 'Ils sont dispo le 8 octobre.',
+      description: 'Prise de contact téléphonique avec l’association caritative (date fixée au 8 octobre).',
       startDate: '2026-09-01',
       endDate: '2026-09-07',
-      color: '#F97316', // Orange association
+      color: '#F59E0B', // Partenaires & Sponsors
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'association',
+      category: 'Partenaires & Sponsors',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -142,67 +143,67 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Brainstorming et calage de l’animation de rentrée.',
       startDate: '2026-09-01',
       endDate: '2026-09-07',
-      color: '#D946EF', // Fuchsia événements
+      color: '#F43F5E', // Événements & Animations
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'evenements',
+      category: 'Événements & Animations',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
     {
       id: 'task-tab-3',
       title: 'Envoyer un mail à DPB pour les 5 t-shirts et négocier',
-      description: 'Le site n’existe plus, je vais essayer de leur envoyer un mail.',
+      description: 'Devis et négociation t-shirts de l’équipe avec le fournisseur DPB.',
       startDate: '2026-09-07',
       endDate: '2026-09-11',
-      color: '#EAB308', // Jaune fournisseurs
+      color: '#14B8A6', // Fournisseurs & Commandes
       status: 'completed',
       priority: 'medium',
       progress: 100,
-      category: 'fournisseurs',
+      category: 'Fournisseurs & Commandes',
       assignee: 'Julien Nicolle',
       assigneeId: 'm-julien'
     },
     {
       id: 'task-tab-4',
       title: 'Carte bleue association',
-      description: 'Carte reçue le 19 septembre.',
+      description: 'Carte bancaire reçue le 19 septembre et activée.',
       startDate: '2026-09-07',
       endDate: '2026-09-11',
-      color: '#0EA5E9',
+      color: '#06B6D4', // Finance & Trésorerie
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'administratif',
+      category: 'Finance & Trésorerie',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
     {
       id: 'task-tab-5',
       title: 'Créer le club Strava et préparer la première page',
-      description: 'Lancement du club de running pour les étudiants.',
+      description: 'Lancement du club de running pour les étudiants sur Strava.',
       startDate: '2026-09-11',
       endDate: '2026-09-16',
-      color: '#8B5CF6', // Violet réseaux
+      color: '#10B981', // Communication & Médias
       status: 'completed',
       priority: 'medium',
       progress: 100,
-      category: 'réseaux sociaux',
+      category: 'Communication & Médias',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
     {
       id: 'task-tab-6',
       title: 'Demande de salle pour la remise de chèque',
-      description: 'Réservation de salle auprès de l’administration.',
+      description: 'Réservation de la salle auprès de l’administration IUT GEA.',
       startDate: '2026-09-14',
       endDate: '2026-09-18',
-      color: '#0EA5E9',
+      color: '#3B82F6', // Logistique & Sécurité
       status: 'completed',
       priority: 'high',
       progress: 100,
-      category: 'administratif',
+      category: 'Logistique & Sécurité',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -212,39 +213,39 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Invitation officielle pour la cérémonie de remise de chèque.',
       startDate: '2026-09-18',
       endDate: '2026-09-24',
-      color: '#EAB308',
+      color: '#F59E0B', // Partenaires & Sponsors
       status: 'todo',
       priority: 'medium',
       progress: 0,
-      category: 'fournisseurs',
+      category: 'Partenaires & Sponsors',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
     {
       id: 'task-tab-8',
       title: 'Aller chercher le chèque pour la remise',
-      description: 'Récupération du chèque grand format et bancaire.',
+      description: 'Récupération du chèque grand format imprimé et bancaire.',
       startDate: '2026-09-18',
       endDate: '2026-09-24',
-      color: '#0EA5E9',
+      color: '#14B8A6', // Fournisseurs & Commandes
       status: 'todo',
       priority: 'medium',
       progress: 0,
-      category: 'administratif',
+      category: 'Fournisseurs & Commandes',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
     {
       id: 'task-tab-9',
       title: 'Contact des BDE pour partenariat',
-      description: 'Prise de contact avec les autres BDE pour synergie.',
+      description: 'Prise de contact avec les autres BDE pour synergie et visibilité.',
       startDate: '2026-09-18',
       endDate: '2026-09-25',
-      color: '#38BDF8',
+      color: '#F59E0B', // Partenaires & Sponsors
       status: 'todo',
       priority: 'medium',
       progress: 0,
-      category: 'autres BDE',
+      category: 'Partenaires & Sponsors',
       assignee: 'Julien Nicolle',
       assigneeId: 'm-julien'
     },
@@ -254,11 +255,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Listing des entreprises locales, commerçants et sponsors.',
       startDate: '2026-09-18',
       endDate: '2026-09-27',
-      color: '#EAB308',
+      color: '#F59E0B', // Partenaires & Sponsors
       status: 'in_progress',
       priority: 'high',
       progress: 50,
-      category: 'partenaires',
+      category: 'Partenaires & Sponsors',
       assignee: 'Mathias Samson',
       assigneeId: 'm-mathias'
     },
@@ -268,11 +269,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Création du visuel et impression pour affichage hall.',
       startDate: '2026-09-18',
       endDate: '2026-09-25',
-      color: '#16A34A',
+      color: '#10B981', // Communication & Médias
       status: 'todo',
       priority: 'medium',
       progress: 0,
-      category: 'communication',
+      category: 'Communication & Médias',
       assignee: 'Mathias Samson',
       assigneeId: 'm-mathias'
     },
@@ -282,25 +283,25 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Arbitrage avec l’université et calendrier des courses.',
       startDate: '2026-09-18',
       endDate: '2026-09-25',
-      color: '#D946EF',
+      color: '#EC4899', // Préparation & Cadrage
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'evenements',
+      category: 'Préparation & Cadrage',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
     {
       id: 'task-tab-13',
       title: 'Parler avec ACTU pour les événements qu’on a fait',
-      description: 'Bilan et communication croisée.',
+      description: 'Bilan et communication croisée avec l’association étudiante ACTU.',
       startDate: '2026-09-21',
       endDate: '2026-09-29',
-      color: '#38BDF8',
+      color: '#F59E0B', // Partenaires & Sponsors
       status: 'in_progress',
       priority: 'medium',
       progress: 50,
-      category: 'autres BDE',
+      category: 'Partenaires & Sponsors',
       assignee: 'Julien Nicolle',
       assigneeId: 'm-julien'
     },
@@ -310,67 +311,67 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Mise à jour des mentions, dates, et intégration billetterie.',
       startDate: '2026-09-21',
       endDate: '2026-09-30',
-      color: '#6366F1',
+      color: '#10B981', // Communication & Médias
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'informatique',
+      category: 'Communication & Médias',
       assignee: 'Julien Nicolle',
       assigneeId: 'm-julien'
     },
     {
       id: 'task-tab-15',
-      title: 'Contacter la meuf de la mairie pour les autorisations',
-      description: 'Dépôt des demandes d’occupation d’espace public et voirie.',
+      title: 'Contacter la mairie pour les autorisations',
+      description: 'Dépôt des demandes d’occupation d’espace public et voirie auprès de la mairie.',
       startDate: '2026-09-21',
       endDate: '2026-09-30',
-      color: '#0EA5E9',
+      color: '#6366F1', // Administratif & Juridique
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'administratif',
+      category: 'Administratif & Juridique',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
     {
       id: 'task-tab-16',
       title: 'Rappel invitation des partenaires de l’an dernier pour remise de chèque',
-      description: 'Relance téléphonique et email.',
+      description: 'Relance téléphonique et email des mécènes.',
       startDate: '2026-09-25',
       endDate: '2026-10-01',
-      color: '#EAB308',
+      color: '#F59E0B', // Partenaires & Sponsors
       status: 'todo',
       priority: 'medium',
       progress: 0,
-      category: 'partenaires',
+      category: 'Partenaires & Sponsors',
       assignee: 'Julien Nicolle',
       assigneeId: 'm-julien'
     },
     {
       id: 'task-tab-17',
       title: 'Appeler SMACL',
-      description: 'Vérification des clauses et avenant manifestation.',
+      description: 'Vérification des clauses et avenant manifestation avec l’assureur.',
       startDate: '2026-09-23',
       endDate: '2026-09-28',
-      color: '#84CC16',
+      color: '#6366F1', // Administratif & Juridique
       status: 'todo',
       priority: 'medium',
       progress: 0,
-      category: 'banque assurance',
+      category: 'Administratif & Juridique',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
     {
       id: 'task-tab-18',
       title: 'Faire un premier TikTok',
-      description: 'Teaser vidéo de l’équipe et du projet.',
+      description: 'Teaser vidéo de l’équipe et du projet solidaire.',
       startDate: '2026-09-23',
       endDate: '2026-09-28',
-      color: '#8B5CF6',
+      color: '#10B981', // Communication & Médias
       status: 'todo',
       priority: 'medium',
       progress: 0,
-      category: 'réseaux sociaux',
+      category: 'Communication & Médias',
       assignee: 'Sina Abdoul Bastoi',
       assigneeId: 'm-sina'
     },
@@ -380,25 +381,25 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Demande auprès de la banque pour terminal de paiement électronique.',
       startDate: '2026-09-23',
       endDate: '2026-09-30',
-      color: '#0EA5E9',
+      color: '#06B6D4', // Finance & Trésorerie
       status: 'todo',
       priority: 'medium',
       progress: 0,
-      category: 'administratif',
+      category: 'Finance & Trésorerie',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
     {
       id: 'task-tab-20',
       title: 'Appeler les pompiers de l’urgence internationale',
-      description: 'Appel sans réponse et message vocal envoyé.',
+      description: 'Suivi de partenariat et rendez-vous téléphonique.',
       startDate: '2026-09-21',
       endDate: '2026-09-30',
-      color: '#EAB308',
+      color: '#F59E0B', // Partenaires & Sponsors
       status: 'in_progress',
       priority: 'medium',
       progress: 40,
-      category: 'partenaires',
+      category: 'Partenaires & Sponsors',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -408,11 +409,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Réglementation buvette et licence temporaire débit de boissons.',
       startDate: '2026-09-23',
       endDate: '2026-09-30',
-      color: '#0EA5E9',
+      color: '#6366F1', // Administratif & Juridique
       status: 'todo',
       priority: 'medium',
       progress: 0,
-      category: 'administratif',
+      category: 'Administratif & Juridique',
       assignee: 'Tetew',
       assigneeId: 'm-tetew'
     },
@@ -422,11 +423,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Rédaction du dossier, budget prévisionnel et pièces justificatives.',
       startDate: '2026-09-28',
       endDate: '2026-10-09',
-      color: '#84CC16',
+      color: '#06B6D4', // Finance & Trésorerie
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'administratif',
+      category: 'Finance & Trésorerie',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -436,11 +437,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Publication photo et remerciement des partenaires sur Instagram.',
       startDate: '2026-10-12',
       endDate: '2026-10-16',
-      color: '#8B5CF6',
+      color: '#F97316', // Post-événement
       status: 'todo',
       priority: 'medium',
       progress: 0,
-      category: 'réseaux sociaux',
+      category: 'Post-événement',
       assignee: 'Sina Abdoul Bastoi',
       assigneeId: 'm-sina'
     },
@@ -452,11 +453,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Cérémonie officielle en présence des partenaires et de la presse.',
       startDate: '2026-10-08',
       endDate: '2026-10-08',
-      color: '#F97316',
+      color: '#EF4444', // Activité / Jour J
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'association',
+      category: 'Activité / Jour J',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney',
       isMilestone: true
@@ -467,11 +468,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Campagne de prospection active auprès des sponsors.',
       startDate: '2026-10-05',
       endDate: '2026-12-06',
-      color: '#EAB308',
+      color: '#F59E0B', // Partenaires & Sponsors
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'partenaires',
+      category: 'Partenaires & Sponsors',
       assignee: 'Mathias Samson',
       assigneeId: 'm-mathias'
     },
@@ -481,11 +482,11 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Dépôt du dossier de sécurité et tracé du parcours.',
       startDate: '2026-10-26',
       endDate: '2026-11-22',
-      color: '#0EA5E9',
+      color: '#6366F1', // Administratif & Juridique
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'administratif',
+      category: 'Administratif & Juridique',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney'
     },
@@ -495,25 +496,25 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Devis poste de secours et plan de balisage de sécurité.',
       startDate: '2026-11-02',
       endDate: '2026-12-20',
-      color: '#EF4444',
+      color: '#3B82F6', // Logistique & Sécurité
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'logistique',
+      category: 'Logistique & Sécurité',
       assignee: 'Tetew',
       assigneeId: 'm-tetew'
     },
     {
       id: 'task-gantt-5',
       title: 'Recherche et recrutement des bénévoles',
-      description: 'Constitution de l’équipe de signaleurs et ravitaillement.',
+      description: 'Constitution de l’équipe de signaleurs et ravitaillement (40 bénévoles).',
       startDate: '2026-12-07',
       endDate: '2027-01-10',
-      color: '#EF4444',
+      color: '#3B82F6', // Logistique & Sécurité
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'logistique',
+      category: 'Logistique & Sécurité',
       assignee: 'Tetew',
       assigneeId: 'm-tetew'
     },
@@ -523,39 +524,39 @@ export const DEFAULT_PROJECT: Project = {
       description: 'Affiches, stands IUT et campagnes réseaux sociaux.',
       startDate: '2027-01-04',
       endDate: '2027-02-21',
-      color: '#16A34A',
+      color: '#10B981', // Communication & Médias
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'communication',
+      category: 'Communication & Médias',
       assignee: 'Sina Abdoul Bastoi',
       assigneeId: 'm-sina'
     },
     {
       id: 'task-gantt-7',
       title: 'Vente de dossards en ligne via HelloAsso',
-      description: 'Ouverture de la billetterie en ligne.',
+      description: 'Ouverture de la billetterie en ligne et communication.',
       startDate: '2027-01-11',
       endDate: '2027-02-28',
-      color: '#D946EF',
+      color: '#10B981', // Communication & Médias
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'activité',
+      category: 'Communication & Médias',
       assignee: 'Julien Nicolle',
       assigneeId: 'm-julien'
     },
     {
       id: 'task-gantt-8',
       title: 'Jalon : RUN AND FUN DAY (Jour de la Course)',
-      description: 'Grand événement de la course, animations et buvette.',
+      description: 'Grand événement de la course solidaire, animations et buvette.',
       startDate: '2027-03-22',
       endDate: '2027-03-22',
-      color: '#EF4444',
+      color: '#EF4444', // Activité / Jour J
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'evenements',
+      category: 'Activité / Jour J',
       assignee: 'Vianney Urbanick',
       assigneeId: 'm-vianney',
       isMilestone: true
@@ -563,88 +564,91 @@ export const DEFAULT_PROJECT: Project = {
   ],
   events: [
     {
-      id: 'event-rnf-remise',
-      title: 'Remise de Chèque Gravir pour Guérir & Rentrée',
-      date: '08-oct-26',
-      objective: 'Cérémonie officielle de remise de chèque à l’association Gravir pour Guérir et animation de rentrée',
-      content: 'Organisation de la cérémonie avec les partenaires et la presse, réservation de salle à l’IUT, cartons d’invitation et communication réseaux.',
-      color: '#F97316',
+      id: 'event-rnf-passation',
+      title: 'Passation & Conformité Administrative',
+      date: '28-sept-26',
+      objective: 'Transfert officiel de l’association, mise à jour bancaire, statuts préfecture et conformité juridique',
+      content: 'Élection du nouveau bureau en AG, déclaration préfecture, transmission des accès site web et réseaux sociaux, mise à jour assurances et activation carte bancaire.',
+      color: '#6366F1',
       tasks: [
-        { id: 't-rnf-1', weekLabel: 'S36', category: 'Association', action: 'Appelée Gravir pour Guérir (dispo le 8 octobre)', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-2', weekLabel: 'S36', category: 'Événement', action: 'Trouver une activité pour le 17 septembre', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-3', weekLabel: 'S37', category: 'Fournisseurs', action: 'Envoyer un mail à DPB pour les 5 t-shirts et négocier', assignee: 'Julien Nicolle', status: 'completed' },
-        { id: 't-rnf-4', weekLabel: 'S37', category: 'Administratif', action: 'Carte bleue association reçue le 19 septembre', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-5', weekLabel: 'S38', category: 'Communication', action: 'Créer le club Strava et préparer la première page', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-6', weekLabel: 'S38', category: 'Administratif', action: 'Demande de salle pour la remise de chèque à l’administration', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-7', weekLabel: 'S39', category: 'Fournisseurs', action: 'Envoyer un mail aux fournisseurs pour les inviter à la remise de chèque', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-8', weekLabel: 'S39', category: 'Administratif', action: 'Aller chercher le chèque grand format pour la remise', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-9', weekLabel: 'S39', category: 'Communication', action: 'Faire l’affiche pour le hall de GEA', assignee: 'Mathias Samson', status: 'completed' },
-        { id: 't-rnf-10', weekLabel: 'S40', category: 'Partenaires', action: 'Rappel invitation des partenaires de l’an dernier pour la remise', assignee: 'Julien Nicolle', status: 'completed' },
-        { id: 't-rnf-11', weekLabel: 'S41 (08 oct.)', category: 'Activité', action: 'Remise de chèque officielle à l’association Gravir pour Guérir – 8 octobre 2026', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 't-rnf-12', weekLabel: 'S42', category: 'Post-événement', action: 'Post et photos sur les réseaux sociaux pour la remise de chèque', assignee: 'Sina Abdoul Bastoi', status: 'todo' }
+        { id: 't-adm-1', weekLabel: 'S24', category: 'Communication & Médias', action: 'Récupération du site internet (accès administration et code source)', assignee: 'Julien Nicolle', status: 'completed' },
+        { id: 't-adm-2', weekLabel: 'S28', category: 'Administratif & Juridique', action: 'Assemblée générale pour la passation et élection du bureau', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-adm-3', weekLabel: 'S29', category: 'Administratif & Juridique', action: 'Valider la passation et signature des procès-verbaux', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-adm-4', weekLabel: 'S29', category: 'Administratif & Juridique', action: 'Passation administrative à la préfecture et statuts modifiés', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-adm-5', weekLabel: 'S32', category: 'Finance & Trésorerie', action: 'Passation banque et rendez-vous pour transfert de signature', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-adm-6', weekLabel: 'S32', category: 'Finance & Trésorerie', action: 'Changement de nom du président sur le compte bancaire', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-adm-7', weekLabel: 'S33', category: 'Administratif & Juridique', action: 'Changement de nom au niveau du contrat d’assurance association', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-adm-8', weekLabel: 'S35', category: 'Communication & Médias', action: 'Récupération des comptes réseaux sociaux de l’association (Instagram, TikTok)', assignee: 'Mathias Samson', status: 'completed' },
+        { id: 't-adm-9', weekLabel: 'S37', category: 'Finance & Trésorerie', action: 'Réception et activation de la carte bancaire de l’association', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-adm-10', weekLabel: 'S39 (28 sept.)', category: 'Activité / Jour J', action: 'Validation de la Passation Officielle & Statuts déposés en Préfecture', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 't-adm-11', weekLabel: 'S40', category: 'Administratif & Juridique', action: 'Appeler l’assurance SMACL pour avenant manifestation et responsabilités', assignee: 'Vianney Urbanick', status: 'todo' },
+        { id: 't-adm-12', weekLabel: 'S40', category: 'Finance & Trésorerie', action: 'Effectuer la demande de permanence bancaire et de TPE (terminal carte)', assignee: 'Vianney Urbanick', status: 'todo' },
+        { id: 't-adm-13', weekLabel: 'S40', category: 'Administratif & Juridique', action: 'S’informer sur la vente d’alcool, autorisations et réglementation buvette', assignee: 'Tetew', status: 'todo' },
+        { id: 't-adm-14', weekLabel: 'S41', category: 'Finance & Trésorerie', action: 'Préparer le dossier de subvention et budget prévisionnel de l’année', assignee: 'Vianney Urbanick', status: 'todo' }
       ]
     },
     {
-      id: 'event-rnf-passation',
-      title: 'Passation & Gestion Administrative',
-      date: '28-sept-26',
-      objective: 'Transfert officiel de l’association, mise à jour bancaire, statuts préfecture et conformité',
-      content: 'Élection du nouveau bureau, déclaration préfecture, transmission des accès site web et réseaux sociaux, mise à jour de l’assurance.',
-      color: '#0EA5E9',
+      id: 'event-rnf-remise',
+      title: 'Remise de Chèque Gravir pour Guérir & Rentrée',
+      date: '08-oct-26',
+      objective: 'Cérémonie officielle de remise de chèque à l’association Gravir pour Guérir et animation de rentrée étudiante',
+      content: 'Organisation de la cérémonie avec les partenaires et la presse, réservation de salle à l’IUT GEA, impression chèque géant, cartons d’invitation et diffusion sur les réseaux.',
+      color: '#F59E0B',
       tasks: [
-        { id: 't-adm-1', weekLabel: 'S24', category: 'Communication', action: 'Récupération du site internet (accès administration et code source)', assignee: 'Julien Nicolle', status: 'completed' },
-        { id: 't-adm-2', weekLabel: 'S28', category: 'Administratif', action: 'Assemblée générale pour la passation et élection du bureau', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-3', weekLabel: 'S29', category: 'Administratif', action: 'Valider la passation et signature des procès-verbaux', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-4', weekLabel: 'S29', category: 'Administratif', action: 'Passation administrative à la préfecture et statuts modifiés', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-5', weekLabel: 'S32', category: 'Finance', action: 'Passation banque et assurance (rendez-vous bancaire)', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-6', weekLabel: 'S32', category: 'Finance', action: 'Changement de nom du président sur le compte bancaire', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-7', weekLabel: 'S33', category: 'Administratif', action: 'Changement de nom au niveau du contrat d’assurance', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-8', weekLabel: 'S35', category: 'Communication', action: 'Récupération des comptes réseaux sociaux de l’association', assignee: 'Mathias Samson', status: 'completed' },
-        { id: 't-adm-8b', weekLabel: 'S39 (28 sept.)', category: 'Activité', action: 'Validation de la Passation Officielle & Statuts déposés en Préfecture', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 't-adm-9', weekLabel: 'S40', category: 'Finance', action: 'Appeler SMACL pour avenant manifestation et responsabilités', assignee: 'Vianney Urbanick', status: 'todo' },
-        { id: 't-adm-10', weekLabel: 'S40', category: 'Administratif', action: 'Effectuer la demande de permanence et de TPE (terminal carte)', assignee: 'Vianney Urbanick', status: 'todo' },
-        { id: 't-adm-11', weekLabel: 'S40', category: 'Administratif', action: 'S’informer sur la vente d’alcool, autorisation et réglementation buvette', assignee: 'Tetew', status: 'todo' },
-        { id: 't-adm-12', weekLabel: 'S41', category: 'Finance', action: 'Préparer le dossier de subvention et budget prévisionnel', assignee: 'Vianney Urbanick', status: 'todo' }
+        { id: 't-rnf-1', weekLabel: 'S36', category: 'Partenaires & Sponsors', action: 'Prise de contact téléphonique avec l’association Gravir pour Guérir (dispo le 8 octobre)', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-rnf-2', weekLabel: 'S36', category: 'Événements & Animations', action: 'Conception et calage de l’activité d’animation étudiante du 17 septembre', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-rnf-3', weekLabel: 'S38', category: 'Logistique & Sécurité', action: 'Demande de salle pour la remise de chèque auprès de l’administration IUT GEA', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-rnf-4', weekLabel: 'S39', category: 'Fournisseurs & Commandes', action: 'Commande et récupération du chèque grand format cartonné pour la remise', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-rnf-5', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Envoyer un mail aux fournisseurs et partenaires pour les inviter à la remise', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-rnf-6', weekLabel: 'S39', category: 'Communication & Médias', action: 'Création et pose de l’affiche annonçant l’événement dans le hall de GEA', assignee: 'Mathias Samson', status: 'completed' },
+        { id: 't-rnf-7', weekLabel: 'S40', category: 'Partenaires & Sponsors', action: 'Relance et rappel d’invitation des partenaires et mécènes de l’an dernier', assignee: 'Julien Nicolle', status: 'completed' },
+        { id: 't-rnf-8', weekLabel: 'S41 (08 oct.)', category: 'Activité / Jour J', action: 'Cérémonie officielle de remise de chèque à Gravir pour Guérir – 8 octobre 2026', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 't-rnf-9', weekLabel: 'S42', category: 'Post-événement', action: 'Publication des photos et remerciements aux partenaires sur les réseaux sociaux', assignee: 'Sina Abdoul Bastoi', status: 'todo' }
       ]
     },
     {
       id: 'event-rnf-partenaires',
-      title: 'Partenaires & Sponsors de la Course',
+      title: 'Partenaires, Sponsors & Synergies Inter-BDE',
       date: '06-déc-26',
-      objective: 'Recherche de fonds, synergie avec les autres BDE, partenariats commerçants et mécènes',
-      content: 'Prospection active des sponsors locaux, signature des conventions de mécénat, relations presse et démarches administratives mairie.',
-      color: '#EAB308',
+      objective: 'Recherche active de sponsors, conventions de mécénat pour la course, et partenariats associatifs étudiants',
+      content: 'Prospection active des sponsors locaux, signature des conventions de mécénat, relations avec les BDE du campus et commande dotations partenaires.',
+      color: '#F59E0B',
       tasks: [
-        { id: 't-part-1', weekLabel: 'S39', category: 'Partenaires', action: 'Contact des BDE pour partenariat et synergie inter-promos', assignee: 'Julien Nicolle', status: 'in_progress' },
-        { id: 't-part-2', weekLabel: 'S39', category: 'Partenaires', action: 'Rédiger la liste des partenaires potentiels à contacter (sponsors)', assignee: 'Mathias Samson', status: 'in_progress' },
-        { id: 't-part-3', weekLabel: 'S39', category: 'Partenaires', action: 'Parler avec ACTU pour les événements passés et communication croisée', assignee: 'Julien Nicolle', status: 'in_progress' },
-        { id: 't-part-4', weekLabel: 'S39', category: 'Communication', action: 'Renouveler le site internet de la course (mentions, design)', assignee: 'Julien Nicolle', status: 'todo' },
-        { id: 't-part-5', weekLabel: 'S39', category: 'Administratif', action: 'Contacter la mairie pour les autorisations d’occupation', assignee: 'Vianney Urbanick', status: 'todo' },
-        { id: 't-part-6', weekLabel: 'S40', category: 'Communication', action: 'Faire un premier TikTok de présentation de l’équipe', assignee: 'Sina Abdoul Bastoi', status: 'todo' },
-        { id: 't-part-7', weekLabel: 'S40', category: 'Partenaires', action: 'Appeler les pompiers de l’urgence internationale (suivi partenariat)', assignee: 'Vianney Urbanick', status: 'in_progress' },
-        { id: 't-part-8', weekLabel: 'S41', category: 'Partenaires', action: 'Démarchages actifs pour la recherche de partenaires et sponsors', assignee: 'Mathias Samson', status: 'in_progress' },
-        { id: 't-part-9', weekLabel: 'S44', category: 'Administratif', action: 'Demande officielle de manifestation sportive à la mairie', assignee: 'Vianney Urbanick', status: 'todo' },
-        { id: 't-part-10', weekLabel: 'S45', category: 'Logistique', action: 'Balisage & contact organisme de secourisme (Croix-Rouge)', assignee: 'Tetew', status: 'todo' },
-        { id: 't-part-11', weekLabel: 'S49 (06 déc.)', category: 'Activité', action: 'Clôture de la Campagne de Sponsoring & Budgets validés', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true }
+        { id: 't-part-1', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Constitution et rédaction de la liste des partenaires et sponsors potentiels', assignee: 'Mathias Samson', status: 'in_progress' },
+        { id: 't-part-2', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Contact des autres BDE pour partenariat et synergie inter-promos', assignee: 'Julien Nicolle', status: 'in_progress' },
+        { id: 't-part-3', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Échange avec l’association ACTU pour actions communes et retours d’expérience', assignee: 'Julien Nicolle', status: 'in_progress' },
+        { id: 't-part-4', weekLabel: 'S40', category: 'Partenaires & Sponsors', action: 'Prise de contact avec les Pompiers de l’Urgence Internationale (PUI) pour mécénat', assignee: 'Vianney Urbanick', status: 'in_progress' },
+        { id: 't-part-5', weekLabel: 'S41', category: 'Partenaires & Sponsors', action: 'Démarchages actifs, rendez-vous physiques et présentation du dossier sponsoring', assignee: 'Mathias Samson', status: 'in_progress' },
+        { id: 't-part-6', weekLabel: 'S43', category: 'Fournisseurs & Commandes', action: 'Devis et négociation avec DPB pour les t-shirts sponsors et de l’équipe', assignee: 'Julien Nicolle', status: 'in_progress' },
+        { id: 't-part-7', weekLabel: 'S46', category: 'Partenaires & Sponsors', action: 'Finalisation et signature des conventions de partenariat et mécénat', assignee: 'Mathias Samson', status: 'todo' },
+        { id: 't-part-8', weekLabel: 'S49 (06 déc.)', category: 'Activité / Jour J', action: 'Clôture de la Campagne de Sponsoring & Budgets Partenaires validés', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 't-part-9', weekLabel: 'S50', category: 'Post-événement', action: 'Envoi des attestations de mécénat, factures acquittées et récapitulatif comptable', assignee: 'Vianney Urbanick', status: 'todo' }
       ]
     },
     {
       id: 'event-rnf-course',
       title: 'Grande Course Solidaire Run & Fun 2027',
       date: '22-mars-27',
-      objective: 'Organisation complète, billetterie, sécurité et déroulement de la course solidaire',
-      content: 'Recrutement des bénévoles, vente de dossards en ligne via HelloAsso, communication sur le campus, balisage du parcours et gestion du jour J.',
+      objective: 'Organisation complète, billetterie, sécurité, communication et déroulement de la course solidaire',
+      content: 'Recrutement des bénévoles, vente de dossards en ligne via HelloAsso, communication sur le campus, balisage du parcours, secours Croix-Rouge et gestion du jour J.',
       color: '#EF4444',
       tasks: [
-        { id: 't-crs-1', weekLabel: 'S39', category: 'Événement', action: 'Choisir une date officielle pour la course solidaire', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-crs-2', weekLabel: 'S50', category: 'Logistique', action: 'Recherche et recrutement des bénévoles (signaleurs, ravitaillement)', assignee: 'Tetew', status: 'todo' },
-        { id: 't-crs-3', weekLabel: 'S01', category: 'Communication', action: 'Communication de la course, affichage campus et réseaux', assignee: 'Sina Abdoul Bastoi', status: 'todo' },
-        { id: 't-crs-4', weekLabel: 'S02', category: 'Communication', action: 'Vente de dossards en ligne via HelloAsso et stands IUT', assignee: 'Julien Nicolle', status: 'todo' },
-        { id: 't-crs-5', weekLabel: 'S02 (15 janv.)', category: 'Activité', action: 'Lancement Officiel de la Billetterie & Inscriptions Dossards', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 't-crs-6', weekLabel: 'S11', category: 'Logistique', action: 'Briefing sécurité avec la Croix-Rouge et l’ensemble des bénévoles', assignee: 'Mathias Samson', status: 'todo' },
-        { id: 't-crs-7', weekLabel: 'S12', category: 'Logistique', action: 'Balisage complet du parcours de la course et installation buvette', assignee: 'Tetew', status: 'todo' },
-        { id: 't-crs-8', weekLabel: 'S12 (22 mars)', category: 'Activité', action: 'JOUR J : RUN AND FUN DAY – Grande Course Solidaire 2027 !', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 't-crs-9', weekLabel: 'S13', category: 'Post-événement', action: 'Démontage, nettoyage du site, bilan des chronos et débriefing général', assignee: 'Toute l’équipe', status: 'todo' }
+        { id: 't-crs-1', weekLabel: 'S39', category: 'Préparation & Cadrage', action: 'Choisir et acter la date définitive de la course avec l’université', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-crs-2', weekLabel: 'S40', category: 'Communication & Médias', action: 'Renouveler et moderniser le site internet de la course (mentions, billetterie)', assignee: 'Julien Nicolle', status: 'todo' },
+        { id: 't-crs-3', weekLabel: 'S41', category: 'Communication & Médias', action: 'Création du club Strava Run & Fun et animation des défis running étudiants', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-crs-4', weekLabel: 'S42', category: 'Communication & Médias', action: 'Réalisation et diffusion du premier TikTok teaser pour la course solidaire', assignee: 'Sina Abdoul Bastoi', status: 'todo' },
+        { id: 't-crs-5', weekLabel: 'S44', category: 'Administratif & Juridique', action: 'Dépôt officiel en mairie du dossier de manifestation sportive et voirie', assignee: 'Vianney Urbanick', status: 'todo' },
+        { id: 't-crs-6', weekLabel: 'S45', category: 'Logistique & Sécurité', action: 'Devis et convention avec l’organisme de secourisme (Croix-Rouge) et plan secours', assignee: 'Tetew', status: 'todo' },
+        { id: 't-crs-7', weekLabel: 'S50', category: 'Logistique & Sécurité', action: 'Campagne de recrutement et affectation des 40 bénévoles (signaleurs, ravitaillement)', assignee: 'Tetew', status: 'todo' },
+        { id: 't-crs-8', weekLabel: 'S01', category: 'Communication & Médias', action: 'Grande campagne de communication de la course sur le campus (affiches, réseaux)', assignee: 'Sina Abdoul Bastoi', status: 'todo' },
+        { id: 't-crs-9', weekLabel: 'S02', category: 'Communication & Médias', action: 'Permanences d’information et stands dans le hall de l’IUT', assignee: 'Mathias Samson', status: 'todo' },
+        { id: 't-crs-10', weekLabel: 'S02 (15 janv.)', category: 'Activité / Jour J', action: 'Lancement Officiel de la Billetterie en ligne HelloAsso & Inscriptions Dossards', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 't-crs-11', weekLabel: 'S08', category: 'Fournisseurs & Commandes', action: 'Commande groupée des t-shirts coureurs, médailles, dossards et ravitaillement', assignee: 'Julien Nicolle', status: 'todo' },
+        { id: 't-crs-12', weekLabel: 'S11', category: 'Logistique & Sécurité', action: 'Briefing sécurité général avec la Croix-Rouge, sécurité campus et bénévoles', assignee: 'Mathias Samson', status: 'todo' },
+        { id: 't-crs-13', weekLabel: 'S12', category: 'Logistique & Sécurité', action: 'Balisage complet du parcours de la course, montage des arches et stands', assignee: 'Tetew', status: 'todo' },
+        { id: 't-crs-14', weekLabel: 'S12 (22 mars)', category: 'Activité / Jour J', action: 'JOUR J : RUN AND FUN DAY – Grande Course Solidaire 2027 !', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 't-crs-15', weekLabel: 'S13', category: 'Post-événement', action: 'Démontage, nettoyage éco-responsable du site, proclamation des podiums et débriefing', assignee: 'Toute l’équipe', status: 'todo' },
+        { id: 't-crs-16', weekLabel: 'S14', category: 'Post-événement', action: 'Bilan comptable final de la course, diffusion de l’aftermovie vidéo et remerciements', assignee: 'Julien Nicolle', status: 'todo' }
       ]
     }
   ]
@@ -669,11 +673,11 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
       title: 'Escape Game Entrepreneuriat',
       startDate: '2026-09-21',
       endDate: '2026-10-23',
-      color: '#10B981',
+      color: '#EF4444', // Activité / Jour J
       status: 'in_progress',
       priority: 'high',
       progress: 40,
-      category: 'activité',
+      category: 'Activité / Jour J',
       assignee: 'Toute l’équipe'
     },
     {
@@ -681,11 +685,11 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
       title: 'Simulation d’entreprise',
       startDate: '2026-10-12',
       endDate: '2026-11-06',
-      color: '#3B82F6',
+      color: '#EF4444', // Activité / Jour J
       status: 'todo',
       priority: 'high',
       progress: 10,
-      category: 'activité',
+      category: 'Activité / Jour J',
       assignee: 'Toute l’équipe'
     },
     {
@@ -693,11 +697,11 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
       title: 'Conférence PÉPITE & Étudiants',
       startDate: '2026-11-23',
       endDate: '2027-01-08',
-      color: '#8B5CF6',
+      color: '#EF4444', // Activité / Jour J
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'activité',
+      category: 'Activité / Jour J',
       assignee: 'Toute l’équipe'
     },
     {
@@ -705,11 +709,11 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
       title: 'Grand Dîner Entrepreneurial',
       startDate: '2027-01-18',
       endDate: '2027-03-12',
-      color: '#F59E0B',
+      color: '#EF4444', // Activité / Jour J
       status: 'todo',
       priority: 'high',
       progress: 0,
-      category: 'activité',
+      category: 'Activité / Jour J',
       assignee: 'Toute l’équipe'
     }
   ],
@@ -725,7 +729,7 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
         {
           id: 'gea-eg-1',
           weekLabel: 'S39',
-          category: 'Communication',
+          category: 'Communication & Médias',
           action: 'Créer le formulaire d’inscription en ligne. Si impossible de le rendre obligatoire.',
           assignee: 'Laurine COGHE',
           status: 'todo'
@@ -733,7 +737,7 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
         {
           id: 'gea-eg-2',
           weekLabel: 'S40',
-          category: 'Communication',
+          category: 'Communication & Médias',
           action: 'Réaliser une vidéo de promotion (Reel)',
           assignee: 'Nolann MAZEAU',
           status: 'todo'
@@ -741,7 +745,7 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
         {
           id: 'gea-eg-3',
           weekLabel: 'S40',
-          category: 'Logistique',
+          category: 'Communication & Médias',
           action: 'Intervenir dans les cours de BUT 1 pour présenter l’atelier',
           assignee: 'Alexandre VARIERAS',
           status: 'todo'
@@ -749,7 +753,7 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
         {
           id: 'gea-eg-4',
           weekLabel: 'S41',
-          category: 'Logistique',
+          category: 'Logistique & Sécurité',
           action: 'Contrôler les inscriptions et relancer si nécessaire',
           assignee: 'Paul De SEZE',
           status: 'todo'
@@ -757,15 +761,15 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
         {
           id: 'gea-eg-5',
           weekLabel: 'S41',
-          category: 'Logistique',
-          action: 'Préparer l’activité entrepreneurial',
+          category: 'Préparation & Cadrage',
+          action: 'Préparer l’activité entrepreneuriale et les énigmes',
           assignee: 'David MEIRA',
           status: 'todo'
         },
         {
           id: 'gea-eg-6',
           weekLabel: 'S42',
-          category: 'Logistique',
+          category: 'Logistique & Sécurité',
           action: 'Organiser l’ouverture de la salle et le matériel',
           assignee: 'Laurine COGHE',
           status: 'todo'
@@ -773,7 +777,7 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
         {
           id: 'gea-eg-7',
           weekLabel: 'S42 (12 oct.)',
-          category: 'Activité',
+          category: 'Activité / Jour J',
           action: 'Escape Game – Jeudi 22 octobre 2026, 2H',
           assignee: 'Toute l’équipe',
           status: 'event',
@@ -782,7 +786,7 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
         {
           id: 'gea-eg-8',
           weekLabel: 'S42 (12 oct.)',
-          category: 'Événement',
+          category: 'Post-événement',
           action: 'Envoyer un sondage de satisfaction aux participants',
           assignee: 'Nora RIVET',
           status: 'todo'
@@ -805,12 +809,12 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
       content: 'Simulation de compétition de gestion d’entreprise pour initier les BUT 1',
       color: '#3B82F6',
       tasks: [
-        { id: 'gea-sim-1', weekLabel: 'S42', category: 'Préparation', action: 'Définition des règles et du scénario d’application', assignee: 'Nora RIVET', status: 'todo' },
-        { id: 'gea-sim-2', weekLabel: 'S43', category: 'Communication', action: 'Affiche, vidéo, réseaux sociaux et teasing', assignee: 'Nolann MAZEAU', status: 'todo' },
-        { id: 'gea-sim-3', weekLabel: 'S44', category: 'Logistique', action: 'Réservation salle informatique et matériel', assignee: 'Alexandre VARIERAS', status: 'todo' },
-        { id: 'gea-sim-4', weekLabel: 'S44', category: 'Logistique', action: 'Installation des logiciels de simulation et tests techniques', assignee: 'David MEIRA', status: 'todo' },
-        { id: 'gea-sim-5', weekLabel: 'S45 (05 nov.)', category: 'Activité', action: 'Simulation Entreprise – Jeudi 5 novembre 2026', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 'gea-sim-6', weekLabel: 'S45', category: 'Événement', action: 'Analyse des résultats et remise des classements', assignee: 'Paul De SEZE', status: 'todo' },
+        { id: 'gea-sim-1', weekLabel: 'S42', category: 'Préparation & Cadrage', action: 'Définition des règles et du scénario d’application', assignee: 'Nora RIVET', status: 'todo' },
+        { id: 'gea-sim-2', weekLabel: 'S43', category: 'Communication & Médias', action: 'Affiche, vidéo, réseaux sociaux et teasing', assignee: 'Nolann MAZEAU', status: 'todo' },
+        { id: 'gea-sim-3', weekLabel: 'S44', category: 'Logistique & Sécurité', action: 'Réservation salle informatique et matériel', assignee: 'Alexandre VARIERAS', status: 'todo' },
+        { id: 'gea-sim-4', weekLabel: 'S44', category: 'Logistique & Sécurité', action: 'Installation des logiciels de simulation et tests techniques', assignee: 'David MEIRA', status: 'todo' },
+        { id: 'gea-sim-5', weekLabel: 'S45 (05 nov.)', category: 'Activité / Jour J', action: 'Simulation Entreprise – Jeudi 5 novembre 2026', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 'gea-sim-6', weekLabel: 'S45', category: 'Événements & Animations', action: 'Analyse des résultats et remise des classements', assignee: 'Paul De SEZE', status: 'todo' },
         { id: 'gea-sim-7', weekLabel: 'S46', category: 'Post-événement', action: 'Questionnaire satisfaction et bilan pédagogique', assignee: 'Laurine COGHE', status: 'todo' }
       ]
     },
@@ -822,12 +826,12 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
       content: 'Table ronde interactive en partenariat PÉPITE. Témoignages d’étudiants-entrepreneurs présentation des avantages du Statut National d’Étudiant-Entrepreneur (SNEE), des aides disponibles, et session de Questions/Réponses',
       color: '#8B5CF6',
       tasks: [
-        { id: 'gea-conf-1', weekLabel: 'S48', category: 'Partenaires', action: 'Prise de contact avec les référents PÉPITE et intervenants', assignee: 'Nora RIVET', status: 'todo' },
-        { id: 'gea-conf-2', weekLabel: 'S49', category: 'Partenaires', action: 'Cadrage des thématiques et des témoignages d’étudiants', assignee: 'David MEIRA', status: 'todo' },
-        { id: 'gea-conf-3', weekLabel: 'S50', category: 'Logistique', action: 'Réservation amphi et matériel audiovisuel (micros, vidéo)', assignee: 'Alexandre VARIERAS', status: 'todo' },
-        { id: 'gea-conf-4', weekLabel: 'S51', category: 'Communication', action: 'Diffusion des affiches et campagne réseaux sociaux', assignee: 'Nolann MAZEAU', status: 'todo' },
-        { id: 'gea-conf-5', weekLabel: 'S01 (07 janv.)', category: 'Activité', action: 'Conférence PÉPITE & Étudiants Entrepreneurs – 7 janvier 2027', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 'gea-conf-6', weekLabel: 'S01', category: 'Événement', action: 'Session Questions/Réponses et cocktail networking', assignee: 'Toute l’équipe', status: 'todo' },
+        { id: 'gea-conf-1', weekLabel: 'S48', category: 'Partenaires & Sponsors', action: 'Prise de contact avec les référents PÉPITE et intervenants', assignee: 'Nora RIVET', status: 'todo' },
+        { id: 'gea-conf-2', weekLabel: 'S49', category: 'Partenaires & Sponsors', action: 'Cadrage des thématiques et des témoignages d’étudiants', assignee: 'David MEIRA', status: 'todo' },
+        { id: 'gea-conf-3', weekLabel: 'S50', category: 'Logistique & Sécurité', action: 'Réservation amphi et matériel audiovisuel (micros, vidéo)', assignee: 'Alexandre VARIERAS', status: 'todo' },
+        { id: 'gea-conf-4', weekLabel: 'S51', category: 'Communication & Médias', action: 'Diffusion des affiches et campagne réseaux sociaux', assignee: 'Nolann MAZEAU', status: 'todo' },
+        { id: 'gea-conf-5', weekLabel: 'S01 (07 janv.)', category: 'Activité / Jour J', action: 'Conférence PÉPITE & Étudiants Entrepreneurs – 7 janvier 2027', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 'gea-conf-6', weekLabel: 'S01', category: 'Événements & Animations', action: 'Session Questions/Réponses et cocktail networking', assignee: 'Toute l’équipe', status: 'todo' },
         { id: 'gea-conf-7', weekLabel: 'S02', category: 'Post-événement', action: 'Remerciements intervenants et synthèse écrite', assignee: 'Paul De SEZE', status: 'todo' }
       ]
     },
@@ -839,12 +843,12 @@ export const GEA_ENTREPRENEURIAT_PROJECT: Project = {
       content: 'Un moment convivial autour d’un dîner, dédié au partage d’expériences professionnelles, permettant d’échanger avec différents professionnels, de découvrir de nouveaux parcours et secteurs d’activité, d’élargir son réseau, de partager des conseils et de rencontrer de nouvelles personnes afin de créer de potentielles opportunités professionnelles.',
       color: '#F59E0B',
       tasks: [
-        { id: 'gea-din-1', weekLabel: 'S04', category: 'Partenaires', action: 'Partenariat avec galumni et coordination avec Pépite', assignee: 'Nora RIVET', status: 'todo' },
-        { id: 'gea-din-2', weekLabel: 'S05', category: 'Logistique', action: 'Recherche de salle et devis traiteur pour le dîner', assignee: 'Alexandre VARIERAS', status: 'todo' },
-        { id: 'gea-din-3', weekLabel: 'S06', category: 'Partenaires', action: 'Envoi des invitations aux entrepreneurs et confirmation intervenants', assignee: 'David MEIRA', status: 'todo' },
-        { id: 'gea-din-4', weekLabel: 'S07', category: 'Communication', action: 'Ouverture des inscriptions étudiants et communication', assignee: 'Nolann MAZEAU', status: 'todo' },
-        { id: 'gea-din-5', weekLabel: 'S09', category: 'Logistique', action: 'Clôture inscriptions et finalisation plan de table', assignee: 'Laurine COGHE', status: 'todo' },
-        { id: 'gea-din-6', weekLabel: 'S10 (11 mars)', category: 'Activité', action: 'Grand Dîner Entrepreneurial – Jeudi 11 mars 2027', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
+        { id: 'gea-din-1', weekLabel: 'S04', category: 'Partenaires & Sponsors', action: 'Partenariat avec galumni et coordination avec Pépite', assignee: 'Nora RIVET', status: 'todo' },
+        { id: 'gea-din-2', weekLabel: 'S05', category: 'Logistique & Sécurité', action: 'Recherche de salle et devis traiteur pour le dîner', assignee: 'Alexandre VARIERAS', status: 'todo' },
+        { id: 'gea-din-3', weekLabel: 'S06', category: 'Partenaires & Sponsors', action: 'Envoi des invitations aux entrepreneurs et confirmation intervenants', assignee: 'David MEIRA', status: 'todo' },
+        { id: 'gea-din-4', weekLabel: 'S07', category: 'Communication & Médias', action: 'Ouverture des inscriptions étudiants et communication', assignee: 'Nolann MAZEAU', status: 'todo' },
+        { id: 'gea-din-5', weekLabel: 'S09', category: 'Logistique & Sécurité', action: 'Clôture inscriptions et finalisation plan de table', assignee: 'Laurine COGHE', status: 'todo' },
+        { id: 'gea-din-6', weekLabel: 'S10 (11 mars)', category: 'Activité / Jour J', action: 'Grand Dîner Entrepreneurial – Jeudi 11 mars 2027', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
         { id: 'gea-din-7', weekLabel: 'S11', category: 'Post-événement', action: 'Album photo, remerciements et débriefing général', assignee: 'Paul De SEZE', status: 'todo' }
       ]
     }

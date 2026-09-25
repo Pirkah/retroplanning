@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { usePlanning } from '../context/PlanningContext';
 import { Task, TaskPriority, TaskStatus, COLOR_PRESETS } from '../types/planning';
 import {
@@ -13,8 +13,29 @@ import {
   parseISO
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { X, Calendar, Flag, Tag, CheckCircle2, Clock, Trash2, Palette, Sparkles, UserCheck, CalendarDays, Lock, Unlock } from 'lucide-react';
+import {
+  X,
+  Calendar,
+  Flag,
+  Tag,
+  CheckCircle2,
+  Clock,
+  Trash2,
+  Palette,
+  Sparkles,
+  UserCheck,
+  CalendarDays,
+  Lock,
+  Unlock,
+  ChevronDown
+} from 'lucide-react';
 import { getDurationDays } from '../utils/scheduler';
+import {
+  getAvailableCategories,
+  getCategoryColor,
+  getCategoryDefinition,
+  STANDARD_CATEGORIES
+} from '../utils/categories';
 
 export const TaskModal: React.FC = () => {
   const {
@@ -26,6 +47,7 @@ export const TaskModal: React.FC = () => {
     updateTask,
     deleteTask,
     members,
+    currentProject,
     isAuthorized,
     openAuthModal
   } = usePlanning();
@@ -46,35 +68,65 @@ export const TaskModal: React.FC = () => {
   const [isMilestone, setIsMilestone] = useState(false);
   const [inputMode, setInputMode] = useState<'weeks' | 'days'>('weeks');
 
+  const availableCategories = useMemo(() => {
+    return getAvailableCategories(currentProject?.tasks, currentProject?.events);
+  }, [currentProject?.tasks, currentProject?.events]);
+
+  const [isCustomCategoryMode, setIsCustomCategoryMode] = useState(false);
+
   useEffect(() => {
     if (editingTask) {
       setTitle(editingTask.title);
       setDescription(editingTask.description || '');
       setStartDate(editingTask.startDate);
       setEndDate(editingTask.endDate || editingTask.startDate);
-      setColor(editingTask.color || '#6366F1');
+      const initialCat = editingTask.category || STANDARD_CATEGORIES[0].label;
+      const initialColor = editingTask.color || getCategoryColor(initialCat);
+      setColor(initialColor);
       setStatus(editingTask.status);
       setPriority(editingTask.priority);
       setProgress(editingTask.progress ?? 0);
-      setCategory(editingTask.category || '');
+      setCategory(initialCat);
       setAssigneeId(editingTask.assigneeId || '');
       setIsMilestone(!!editingTask.isMilestone);
+      setIsCustomCategoryMode(false);
     } else {
       const baseDate = defaultDateForNewTask || todayStr;
       const baseMonday = startOfISOWeek(parseISO(baseDate));
+      const defaultCat = STANDARD_CATEGORIES[0].label;
       setTitle('');
       setDescription('');
       setStartDate(format(baseMonday, 'yyyy-MM-dd'));
       setEndDate(format(endOfISOWeek(baseMonday), 'yyyy-MM-dd'));
-      setColor('#6366F1');
+      setCategory(defaultCat);
+      setColor(getCategoryColor(defaultCat));
       setStatus('todo');
       setPriority('medium');
       setProgress(0);
-      setCategory('');
       setAssigneeId(members[0]?.id || '');
       setIsMilestone(false);
+      setIsCustomCategoryMode(false);
     }
-  }, [editingTask, defaultDateForNewTask, isTaskModalOpen]);
+  }, [editingTask, defaultDateForNewTask, isTaskModalOpen, currentProject]);
+
+  const handleCategorySelect = (selectedVal: string) => {
+    if (selectedVal === '__NEW__') {
+      setIsCustomCategoryMode(true);
+      setCategory('');
+      return;
+    }
+    setIsCustomCategoryMode(false);
+    setCategory(selectedVal);
+    const autoColor = getCategoryColor(selectedVal);
+    setColor(autoColor);
+  };
+
+  const handleCustomCategoryChange = (customVal: string) => {
+    setCategory(customVal);
+    if (customVal.trim()) {
+      setColor(getCategoryColor(customVal));
+    }
+  };
 
   if (!isTaskModalOpen) return null;
 
@@ -375,43 +427,135 @@ export const TaskModal: React.FC = () => {
             </div>
           </div>
 
-          {/* Couleur de la tâche */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
-                <Palette size={14} className="text-indigo-600" />
-                Couleur de la tâche sur le Gantt
+          {/* Pôle / Catégorie & Couleur automatique */}
+          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                <Tag size={14} className="text-indigo-600" />
+                Pôle / Catégorie
               </label>
-              <div className="flex items-center gap-1.5 text-xs text-slate-500">
-                <span>Libre :</span>
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  className="w-6 h-6 rounded cursor-pointer border-0 bg-transparent"
+              <div className="flex items-center gap-2">
+                <span
+                  className="w-3.5 h-3.5 rounded-full shadow-xs shrink-0 ring-1 ring-slate-300"
+                  style={{ backgroundColor: color }}
                 />
+                <span className="text-[11px] font-bold text-slate-600">
+                  Couleur : <span className="font-mono text-indigo-700">{color}</span>
+                </span>
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-2.5">
-              {COLOR_PRESETS.map((preset) => (
+            {!isCustomCategoryMode ? (
+              <div className="space-y-2">
+                <div className="relative">
+                  <select
+                    value={category}
+                    onChange={(e) => handleCategorySelect(e.target.value)}
+                    className="w-full pl-3.5 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-xs appearance-none cursor-pointer"
+                  >
+                    <optgroup label="Catégories existantes">
+                      {availableCategories.map((c) => (
+                        <option key={c.label} value={c.label}>
+                          ● {c.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                    <option value="__NEW__">
+                      + Ajouter une nouvelle catégorie personnalisée...
+                    </option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                    <ChevronDown size={15} />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                  <span className="flex items-center gap-1 text-slate-600">
+                    💡 La couleur s'applique automatiquement selon la catégorie sélectionnée.
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomCategoryMode(true);
+                      setCategory('');
+                    }}
+                    className="text-indigo-600 hover:text-indigo-800 font-bold hover:underline"
+                  >
+                    + Nouvelle catégorie
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    autoFocus
+                    placeholder="Saisissez le nom de la nouvelle catégorie..."
+                    value={category}
+                    onChange={(e) => handleCustomCategoryChange(e.target.value)}
+                    className="flex-1 px-3.5 py-2.5 bg-white border border-indigo-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomCategoryMode(false);
+                      if (!category.trim() && availableCategories[0]) {
+                        handleCategorySelect(availableCategories[0].label);
+                      }
+                    }}
+                    className="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition shrink-0"
+                  >
+                    Choisir dans la liste
+                  </button>
+                </div>
+                <p className="text-[11px] text-slate-500">
+                  La couleur sera calculée et attribuée automatiquement à cette catégorie.
+                </p>
+              </div>
+            )}
+
+            {/* Nuancier de réglage facultatif */}
+            <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Palette size={13} className="text-slate-400" />
+                <span className="text-[11px] font-semibold text-slate-600">
+                  Nuance :
+                </span>
+                <div className="flex items-center gap-1.5">
+                  {COLOR_PRESETS.slice(0, 6).map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => setColor(preset.hex)}
+                      className={`w-4 h-4 rounded-full transition-transform ${
+                        color.toLowerCase() === preset.hex.toLowerCase()
+                          ? 'scale-125 ring-2 ring-indigo-500 shadow-2xs'
+                          : 'hover:scale-110 opacity-75'
+                      }`}
+                      style={{ backgroundColor: preset.hex }}
+                      title={preset.label}
+                    />
+                  ))}
+                  <input
+                    type="color"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                    className="w-4 h-4 rounded cursor-pointer border-0 bg-transparent"
+                    title="Choisir librement"
+                  />
+                </div>
+              </div>
+
+              {category && color !== getCategoryColor(category) && (
                 <button
-                  key={preset.id}
                   type="button"
-                  onClick={() => setColor(preset.hex)}
-                  title={preset.label}
-                  className={`w-7 h-7 rounded-full transition-transform flex items-center justify-center ${
-                    color.toLowerCase() === preset.hex.toLowerCase()
-                      ? 'scale-115 ring-2 ring-offset-2 ring-indigo-500 shadow-md'
-                      : 'hover:scale-110 opacity-90'
-                  }`}
-                  style={{ backgroundColor: preset.hex }}
+                  onClick={() => setColor(getCategoryColor(category))}
+                  className="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold hover:underline"
                 >
-                  {color.toLowerCase() === preset.hex.toLowerCase() && (
-                    <div className="w-2 h-2 rounded-full bg-white shadow" />
-                  )}
+                  Rétablir couleur catégorie
                 </button>
-              ))}
+              )}
             </div>
           </div>
 
@@ -480,20 +624,6 @@ export const TaskModal: React.FC = () => {
             />
           </div>
 
-          {/* Pôle / Catégorie */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-              <Tag size={13} className="text-indigo-600" />
-              Pôle / Catégorie
-            </label>
-            <input
-              type="text"
-              placeholder="Ex: Stratégie, Design, Dév, Marketing..."
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
 
           {/* Description */}
           <div>

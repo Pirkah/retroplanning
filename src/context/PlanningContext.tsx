@@ -11,6 +11,7 @@ import {
 } from '../types/planning';
 import { DEFAULT_PROJECT, GEA_ENTREPRENEURIAT_PROJECT } from '../data/defaultProject';
 import { sortTasksChronologically } from '../utils/scheduler';
+import { getCategoryDefinition, getCategoryColor, STANDARD_CATEGORIES } from '../utils/categories';
 
 interface PlanningContextType {
   projects: Project[];
@@ -80,27 +81,43 @@ interface PlanningContextType {
   importProjectJson: (content: string) => boolean;
 }
 
-const STORAGE_KEY = 'retroplanning_projects_v3';
-const ACTIVE_PROJ_KEY = 'retroplanning_active_id_v3';
+const STORAGE_KEY = 'retroplanning_projects_v4';
+const ACTIVE_PROJ_KEY = 'retroplanning_active_id_v4';
 
 const PlanningContext = createContext<PlanningContextType | undefined>(undefined);
 
 export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
+      const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('retroplanning_projects_v3');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
           const loaded = parsed.map((p) => {
             let events = p.events;
-            if (!events || events.length === 0 || (p.id === 'proj-rnf-2026' && events.length < 4)) {
+            // Pour le projet principal R&F, charger les événements avec la classification propre
+            if (!events || events.length === 0 || p.id === 'proj-rnf-2026') {
               if (p.id === 'proj-rnf-2026') events = DEFAULT_PROJECT.events;
               if (p.id === 'proj-gea-2026') events = GEA_ENTREPRENEURIAT_PROJECT.events;
             }
+
+            // Normalisation des tâches : assignation systématique de la couleur officielle de leur catégorie
+            const rawTasks = (p.id === 'proj-rnf-2026' && (!p.tasks || p.tasks.length <= DEFAULT_PROJECT.tasks.length))
+              ? DEFAULT_PROJECT.tasks
+              : (p.tasks || []);
+
+            const normalizedTasks = rawTasks.map((t: Task) => {
+              const catDef = getCategoryDefinition(t.category || STANDARD_CATEGORIES[0].label);
+              return {
+                ...t,
+                category: catDef.label,
+                color: catDef.color
+              };
+            });
+
             return {
               ...p,
-              tasks: sortTasksChronologically(p.tasks || []),
+              tasks: sortTasksChronologically(normalizedTasks),
               members: p.members || (p.id === 'proj-gea-2026' ? GEA_ENTREPRENEURIAT_PROJECT.members : DEFAULT_TEAM_MEMBERS),
               events: events || []
             };
@@ -109,6 +126,9 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           if (!loaded.some((p: Project) => p.id === 'proj-gea-2026')) {
             loaded.push(GEA_ENTREPRENEURIAT_PROJECT);
           }
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
+          } catch {}
           return loaded;
         }
       }
@@ -382,16 +402,25 @@ const AUTH_KEY = 'rnf_auth_password_v1';
   };
 
   const addTask = (taskData: Omit<Task, 'id'>) => {
+    const catDef = getCategoryDefinition(taskData.category || STANDARD_CATEGORIES[0].label);
     const newTask: Task = {
       ...taskData,
+      category: catDef.label,
+      color: taskData.color || catDef.color,
       id: 'task_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7)
     };
     updateCurrentProjectTasks((prev) => [...prev, newTask]);
   };
 
   const updateTask = (updatedTask: Task) => {
+    const catDef = getCategoryDefinition(updatedTask.category || STANDARD_CATEGORIES[0].label);
+    const normalizedTask: Task = {
+      ...updatedTask,
+      category: catDef.label,
+      color: updatedTask.color || catDef.color
+    };
     updateCurrentProjectTasks((prev) =>
-      prev.map((t) => (t.id === updatedTask.id ? updatedTask : t))
+      prev.map((t) => (t.id === normalizedTask.id ? normalizedTask : t))
     );
   };
 
