@@ -29,15 +29,24 @@ export interface ChatMessageReaction {
   users: string[];
 }
 
+export interface ChatMessageReply {
+  id: string;
+  authorName: string;
+  content: string;
+}
+
 export interface ChatMessage {
   id: string;
   channelId: string;
+  authorId?: string;
   authorName: string;
   authorInitials: string;
   authorColor: string;
   content: string;
   timestamp: string;
   reactions?: ChatMessageReaction[];
+  replyTo?: ChatMessageReply;
+  clientSessionId?: string;
 }
 
 export interface ChatChannel {

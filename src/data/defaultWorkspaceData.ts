@@ -38,6 +38,7 @@ export const DEFAULT_MESSAGES: ChatMessage[] = [
   {
     id: 'msg-1',
     channelId: 'c-general',
+    authorId: 'm-vianney',
     authorName: 'Vianney Urbanick',
     authorInitials: 'VI',
     authorColor: '#3B82F6',
@@ -51,11 +52,17 @@ export const DEFAULT_MESSAGES: ChatMessage[] = [
   {
     id: 'msg-2',
     channelId: 'c-general',
+    authorId: 'm-julien',
     authorName: 'Julien Nicolle',
     authorInitials: 'JU',
     authorColor: '#6366F1',
     content: 'Superbe initiative ! Tout est bien carré. J’ai mis à jour les dates du rétroplanning et l’export A3 fonctionne impeccablement.',
     timestamp: '2026-09-22T10:15:00Z',
+    replyTo: {
+      id: 'msg-1',
+      authorName: 'Vianney Urbanick',
+      content: 'Salut l’équipe ! Bienvenue sur notre espace collaboratif R&F 2026...'
+    },
     reactions: [
       { emoji: '🚀', count: 4, users: ['Vianney Urbanick', 'Mathias Samson', 'Sina Abdoul Bastoi', 'Théo'] }
     ]
@@ -63,6 +70,7 @@ export const DEFAULT_MESSAGES: ChatMessage[] = [
   {
     id: 'msg-3',
     channelId: 'c-general',
+    authorId: 'm-mathias',
     authorName: 'Mathias Samson',
     authorInitials: 'MA',
     authorColor: '#F59E0B',
@@ -75,6 +83,7 @@ export const DEFAULT_MESSAGES: ChatMessage[] = [
   {
     id: 'msg-4',
     channelId: 'c-course',
+    authorId: 'm-theo',
     authorName: 'Théo',
     authorInitials: 'TH',
     authorColor: '#EC4899',
@@ -87,11 +96,17 @@ export const DEFAULT_MESSAGES: ChatMessage[] = [
   {
     id: 'msg-5',
     channelId: 'c-course',
+    authorId: 'm-vianney',
     authorName: 'Vianney Urbanick',
     authorInitials: 'VI',
     authorColor: '#3B82F6',
     content: 'Top Théo ! On validera le tracé définitif avec la mairie au moment du dépôt de dossier en S44.',
     timestamp: '2026-09-23T15:05:00Z',
+    replyTo: {
+      id: 'msg-4',
+      authorName: 'Théo',
+      content: 'J’ai commencé à tracer la proposition de boucle pour le parcours de 5 km et 10 km...'
+    },
     reactions: [
       { emoji: '👍', count: 2, users: ['Théo', 'Julien Nicolle'] }
     ]
@@ -99,6 +114,7 @@ export const DEFAULT_MESSAGES: ChatMessage[] = [
   {
     id: 'msg-6',
     channelId: 'c-communication',
+    authorId: 'm-sina',
     authorName: 'Sina Abdoul Bastoi',
     authorInitials: 'SI',
     authorColor: '#10B981',
