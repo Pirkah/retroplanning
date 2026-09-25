@@ -28,6 +28,23 @@
   background: #94a3b8;
 }
 
+/* Custom scrollbars pour le mode sombre */
+.dark {
+  color-scheme: dark;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
 /* Règles d'impression pour l'export vectoriel navigateur */
 @media print {
   @page {

@@ -138,55 +138,55 @@ export const GanttChartView: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-white border border-slate-200/90 rounded-2xl shadow-sm overflow-hidden select-none">
+    <div className="flex-1 flex flex-col bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden select-none">
       {/* Barre d'outils du Gantt */}
-      <div className="px-5 py-3 border-b border-slate-100 bg-slate-50/70 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="px-5 py-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 flex flex-wrap items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 text-slate-800 font-bold">
-            <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-pulse" />
+          <div className="flex items-center gap-2 text-slate-800 dark:text-slate-100 font-bold">
+            <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 dark:bg-indigo-400 animate-pulse" />
             <span>Diagramme de Gantt par Semaines</span>
           </div>
 
-          <span className="text-slate-300">|</span>
+          <span className="text-slate-300 dark:text-slate-700">|</span>
 
           {/* Bouton de bascule de tri par classe (comme dans le diagramme) */}
           <button
             onClick={() => setGroupByClass(!groupByClass)}
             className={`px-3 py-1.5 rounded-lg border text-xs font-semibold transition flex items-center gap-1.5 shadow-xs ${
               groupByClass
-                ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
-                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-100'
+                ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-300 dark:border-indigo-700 text-indigo-700 dark:text-indigo-300'
+                : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
             }`}
             title="Trier et regrouper par classe/catégorie comme dans le diagramme"
           >
-            <Layers size={14} className={groupByClass ? 'text-indigo-600' : 'text-slate-400'} />
+            <Layers size={14} className={groupByClass ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'} />
             <span>{groupByClass ? 'Trié par Classe (Diagramme)' : 'Tri Chronologique pur'}</span>
           </button>
 
-          <span className="text-slate-400 text-[11px]">
+          <span className="text-slate-400 dark:text-slate-500 text-[11px]">
             ({filteredTasks.length} tâches)
           </span>
         </div>
 
         <div className="flex items-center gap-3">
           {/* Zoom d'échelle */}
-          <div className="flex items-center gap-1.5 bg-slate-200/60 p-0.5 rounded-lg text-slate-600 font-medium text-[11px]">
-            <span className="px-2 text-slate-400">Échelle :</span>
+          <div className="flex items-center gap-1.5 bg-slate-200/60 dark:bg-slate-800 p-0.5 rounded-lg text-slate-600 dark:text-slate-300 font-medium text-[11px]">
+            <span className="px-2 text-slate-400 dark:text-slate-500">Échelle :</span>
             <button
               onClick={() => setColumnWidth(90)}
-              className={`px-2 py-0.5 rounded-md transition ${columnWidth === 90 ? 'bg-white text-indigo-700 shadow-xs font-bold' : 'hover:text-slate-900'}`}
+              className={`px-2 py-0.5 rounded-md transition ${columnWidth === 90 ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold' : 'hover:text-slate-900 dark:hover:text-white'}`}
             >
               Compact
             </button>
             <button
               onClick={() => setColumnWidth(130)}
-              className={`px-2 py-0.5 rounded-md transition ${columnWidth === 130 ? 'bg-white text-indigo-700 shadow-xs font-bold' : 'hover:text-slate-900'}`}
+              className={`px-2 py-0.5 rounded-md transition ${columnWidth === 130 ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold' : 'hover:text-slate-900 dark:hover:text-white'}`}
             >
               Standard
             </button>
             <button
               onClick={() => setColumnWidth(180)}
-              className={`px-2 py-0.5 rounded-md transition ${columnWidth === 180 ? 'bg-white text-indigo-700 shadow-xs font-bold' : 'hover:text-slate-900'}`}
+              className={`px-2 py-0.5 rounded-md transition ${columnWidth === 180 ? 'bg-white dark:bg-slate-700 text-indigo-700 dark:text-indigo-300 shadow-xs font-bold' : 'hover:text-slate-900 dark:hover:text-white'}`}
             >
               Large
             </button>
@@ -194,18 +194,18 @@ export const GanttChartView: React.FC = () => {
 
           <button
             onClick={scrollToCurrentWeek}
-            className="px-3 py-1.5 bg-white border border-slate-200 hover:border-indigo-400 hover:text-indigo-600 rounded-lg text-slate-700 font-semibold transition shadow-xs flex items-center gap-1.5"
+            className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-400 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg font-semibold transition shadow-xs flex items-center gap-1.5"
           >
             <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
             Semaine en cours
           </button>
 
-          <div className="h-4 w-px bg-slate-200 no-print" />
+          <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 no-print" />
 
           {/* Boutons d'impression et d'export spécifiques au Gantt */}
           <button
             onClick={handlePrintGantt}
-            className="px-3 py-1.5 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-2xs no-print"
+            className="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-2xs no-print"
             title="Imprimer ce Diagramme de Gantt en mode paysage vectoriel"
           >
             <Printer size={13} />
@@ -215,7 +215,7 @@ export const GanttChartView: React.FC = () => {
           <button
             onClick={handleExportPdfA3}
             disabled={isExporting}
-            className="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-600 rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow-2xs no-print"
+            className="px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow-2xs no-print"
             title="Télécharger le diagramme complet en PDF A3 Paysage HD"
           >
             {isExporting ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
@@ -235,14 +235,14 @@ export const GanttChartView: React.FC = () => {
           className="relative min-w-full"
         >
           {/* EN-TÊTE FIXE DES SEMAINES */}
-          <div className="sticky top-0 z-30 flex bg-white border-b border-slate-200 shadow-xs">
+          <div className="sticky top-0 z-30 flex bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-xs">
             {/* Volet gauche en-tête */}
             <div
               style={{ width: `${leftPanelWidth}px` }}
-              className="sticky left-0 z-40 bg-slate-50/95 border-r border-slate-200 px-4 py-3 flex items-center justify-between backdrop-blur-xs"
+              className="sticky left-0 z-40 bg-slate-50/95 dark:bg-slate-900/95 border-r border-slate-200 dark:border-slate-800 px-4 py-3 flex items-center justify-between backdrop-blur-xs"
             >
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   Classes & Tâches
                 </span>
               </div>
@@ -254,7 +254,7 @@ export const GanttChartView: React.FC = () => {
                     openNewTaskModal();
                   }
                 }}
-                className="p-1 hover:bg-indigo-50 text-indigo-600 rounded-lg transition"
+                className="p-1 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-lg transition"
                 title="Ajouter une tâche"
               >
                 <Plus size={16} />
@@ -275,17 +275,17 @@ export const GanttChartView: React.FC = () => {
                       openNewTaskModal(format(col.start, 'yyyy-MM-dd'));
                     }
                   }}
-                  className={`h-[68px] px-2 py-2 flex flex-col justify-between border-r border-slate-200 text-center cursor-pointer transition-colors group ${
+                  className={`h-[68px] px-2 py-2 flex flex-col justify-between border-r border-slate-200 dark:border-slate-800 text-center cursor-pointer transition-colors group ${
                     col.isCurrentWeek
-                      ? 'bg-rose-50/70 border-rose-300 ring-1 ring-inset ring-rose-300'
-                      : 'hover:bg-indigo-50/40 bg-slate-50/40'
+                      ? 'bg-rose-50/70 dark:bg-rose-950/40 border-rose-300 dark:border-rose-800 ring-1 ring-inset ring-rose-300 dark:ring-rose-800'
+                      : 'hover:bg-indigo-50/40 dark:hover:bg-indigo-950/30 bg-slate-50/40 dark:bg-slate-900/40'
                   }`}
                   title={isAuthorized ? `Cliquer pour ajouter une tâche en ${col.label}` : `Cliquer pour déverrouiller l'édition`}
                 >
                   <div className="flex items-center justify-center gap-1.5">
                     <span
                       className={`text-xs font-bold ${
-                        col.isCurrentWeek ? 'text-rose-600' : 'text-slate-800'
+                        col.isCurrentWeek ? 'text-rose-600 dark:text-rose-400' : 'text-slate-800 dark:text-slate-200'
                       }`}
                     >
                       {col.shortLabel}
@@ -296,7 +296,7 @@ export const GanttChartView: React.FC = () => {
                       </span>
                     )}
                   </div>
-                  <span className="text-[10px] text-slate-400 font-medium truncate">
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium truncate">
                     {col.dateRangeLabel}
                   </span>
                 </div>
@@ -315,8 +315,8 @@ export const GanttChartView: React.FC = () => {
                 <div
                   key={`bg-${col.year}-${col.weekNumber}`}
                   style={{ width: `${columnWidth}px` }}
-                  className={`h-full border-r border-slate-100 ${
-                    col.isCurrentWeek ? 'bg-rose-50/20' : ''
+                  className={`h-full border-r border-slate-100 dark:border-slate-800/60 ${
+                    col.isCurrentWeek ? 'bg-rose-50/20 dark:bg-rose-950/20' : ''
                   }`}
                 />
               ))}
@@ -324,7 +324,7 @@ export const GanttChartView: React.FC = () => {
 
             {/* Groupes de tâches par classe */}
             {taskGroups.length === 0 ? (
-              <div className="py-20 text-center text-slate-400">
+              <div className="py-20 text-center text-slate-400 dark:text-slate-500">
                 <p className="text-sm font-semibold">Aucune tâche trouvée</p>
               </div>
             ) : (
@@ -335,24 +335,24 @@ export const GanttChartView: React.FC = () => {
                   <div key={group.categoryClass.id} className="relative">
                     {/* EN-TÊTE DE LA CLASSE (Style Diagramme) */}
                     {groupByClass && (
-                      <div className="sticky top-[68px] z-25 flex items-center border-y border-slate-200/80 bg-slate-100/90 backdrop-blur-xs">
+                      <div className="sticky top-[68px] z-25 flex items-center border-y border-slate-200/80 dark:border-slate-800 bg-slate-100/90 dark:bg-slate-850/90 backdrop-blur-xs">
                         {/* Volet gauche en-tête de classe */}
                         <div
                           style={{ width: `${leftPanelWidth}px` }}
                           onClick={() => toggleCollapse(group.categoryClass.id)}
-                          className="sticky left-0 z-35 h-9 px-4 flex items-center justify-between cursor-pointer border-r border-slate-200 bg-slate-100/95"
+                          className="sticky left-0 z-35 h-9 px-4 flex items-center justify-between cursor-pointer border-r border-slate-200 dark:border-slate-800 bg-slate-100/95 dark:bg-slate-850/95"
                         >
                           <div className="flex items-center gap-2">
-                            {isCollapsed ? <ChevronRight size={15} /> : <ChevronDown size={15} />}
+                            {isCollapsed ? <ChevronRight size={15} className="dark:text-slate-400" /> : <ChevronDown size={15} className="dark:text-slate-400" />}
                             <span
                               className="w-3 h-3 rounded-full flex-shrink-0"
                               style={{ backgroundColor: group.categoryClass.color }}
                             />
-                            <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                            <span className="text-xs font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider">
                               {group.categoryClass.label}
                             </span>
                           </div>
-                          <span className="text-[11px] font-bold text-slate-500 bg-white/80 px-2 py-0.5 rounded-full border border-slate-200">
+                          <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-white/80 dark:bg-slate-800/80 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
                             {group.tasks.length}
                           </span>
                         </div>
@@ -365,7 +365,7 @@ export const GanttChartView: React.FC = () => {
                             borderLeft: `4px solid ${group.categoryClass.color}`
                           }}
                         >
-                          <span className="text-[11px] font-semibold text-slate-400 italic">
+                          <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 italic">
                             Section {group.categoryClass.label}
                           </span>
                         </div>
@@ -385,16 +385,16 @@ export const GanttChartView: React.FC = () => {
                             onMouseEnter={() => setHoveredTaskId(task.id)}
                             onMouseLeave={() => setHoveredTaskId(null)}
                             style={{ height: `${rowHeight}px` }}
-                            className={`flex items-center border-b border-slate-100 transition-colors ${
-                              isHovered ? 'bg-slate-50/90' : taskIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/30'
+                            className={`flex items-center border-b border-slate-100 dark:border-slate-800/80 transition-colors ${
+                              isHovered ? 'bg-slate-50/90 dark:bg-slate-800/60' : taskIdx % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/30 dark:bg-slate-900/50'
                             }`}
                           >
                             {/* Volet gauche collant : Détails de la tâche */}
                             <div
                               style={{ width: `${leftPanelWidth}px` }}
                               onClick={() => openEditTaskModal(task)}
-                              className={`sticky left-0 z-20 h-full border-r border-slate-200 px-4 flex items-center justify-between cursor-pointer transition-colors ${
-                                isHovered ? 'bg-slate-50' : taskIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/90'
+                              className={`sticky left-0 z-20 h-full border-r border-slate-200 dark:border-slate-800 px-4 flex items-center justify-between cursor-pointer transition-colors ${
+                                isHovered ? 'bg-slate-50 dark:bg-slate-800/70' : taskIdx % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/90 dark:bg-slate-900/80'
                               }`}
                             >
                               <div className="flex items-center gap-2.5 min-w-0 flex-1 pr-2">
@@ -403,7 +403,7 @@ export const GanttChartView: React.FC = () => {
                                   style={{ backgroundColor: task.color }}
                                 />
                                 <div className="min-w-0 flex-1">
-                                  <p className="text-xs font-semibold text-slate-800 truncate group-hover:text-indigo-600">
+                                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                                     {task.title}
                                   </p>
                                 </div>
@@ -421,7 +421,7 @@ export const GanttChartView: React.FC = () => {
                                   </div>
                                 )}
 
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
                                   {pos.startWeekLabel} {pos.startWeekLabel !== pos.endWeekLabel ? `→ ${pos.endWeekLabel}` : ''}
                                 </span>
                               </div>

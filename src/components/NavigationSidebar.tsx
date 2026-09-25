@@ -80,27 +80,27 @@ export const NavigationSidebar: React.FC = () => {
 
       {/* 2. Tiroir coulissant (Drawer) ouvert via le bouton Sommaire du haut */}
       <aside
-        className={`fixed top-0 left-0 bottom-0 w-80 sm:w-96 bg-white z-50 shadow-2xl flex flex-col border-r border-slate-200 transition-transform duration-300 ease-in-out transform ${
+        className={`fixed top-0 left-0 bottom-0 w-80 sm:w-96 bg-white dark:bg-slate-900 z-50 shadow-2xl flex flex-col border-r border-slate-200 dark:border-slate-800 transition-transform duration-300 ease-in-out transform ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         aria-label="Sommaire et navigation de l'application"
       >
         {/* En-tête du sommaire */}
-        <div className="p-4 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
+        <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/80 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-xs">
               <Layers size={18} />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-slate-900 tracking-tight">
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
                 Sommaire du Logiciel
               </h2>
-              <p className="text-[11px] text-slate-500">Navigation rapide entre les pages</p>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Navigation rapide entre les pages</p>
             </div>
           </div>
           <button
             onClick={() => setIsSidebarOpen(false)}
-            className="p-1.5 hover:bg-slate-200/60 text-slate-400 hover:text-slate-700 rounded-lg transition"
+            className="p-1.5 hover:bg-slate-200/60 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-lg transition"
             title="Fermer le sommaire"
           >
             <X size={18} />
@@ -110,18 +110,18 @@ export const NavigationSidebar: React.FC = () => {
         {/* Corps déroulant */}
         <div className="flex-1 overflow-y-auto p-4 space-y-5 custom-scrollbar">
           {/* CARTE : Statut de connexion de l'utilisateur */}
-          <div className="rounded-2xl border p-3.5 bg-slate-50/70 border-slate-200/80">
+          <div className="rounded-2xl border p-3.5 bg-slate-50/70 dark:bg-slate-800/60 border-slate-200/80 dark:border-slate-700">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 Session active
               </span>
               {isAuthorized ? (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   Connecté
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">
                   <Lock size={9} />
                   Lecture seule
                 </span>
@@ -138,10 +138,10 @@ export const NavigationSidebar: React.FC = () => {
                     {currentUser.initials || currentUser.name.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-slate-900 truncate">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
                       {currentUser.name}
                     </p>
-                    <p className="text-[10px] text-slate-500 truncate">
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
                       {currentUser.role || 'Éditeur'}
                     </p>
                   </div>
@@ -149,7 +149,7 @@ export const NavigationSidebar: React.FC = () => {
 
                 <button
                   onClick={() => openAuthModal()}
-                  className="px-2 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-[10px] font-semibold transition shrink-0"
+                  className="px-2 py-1 bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 rounded-lg text-[10px] font-semibold transition shrink-0"
                   title="Gérer la session ou se déconnecter"
                 >
                   Gérer
@@ -157,13 +157,13 @@ export const NavigationSidebar: React.FC = () => {
               </div>
             ) : (
               <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 text-slate-600">
-                  <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
+                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                  <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400">
                     <Lock size={14} />
                   </div>
                   <div>
-                    <p className="text-xs font-bold text-slate-800">Non connecté</p>
-                    <p className="text-[10px] text-slate-400">Mode lecture seule</p>
+                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200">Non connecté</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500">Mode lecture seule</p>
                   </div>
                 </div>
                 <button
@@ -178,7 +178,7 @@ export const NavigationSidebar: React.FC = () => {
 
           {/* SECTION : NAVIGATION PRINCIPALE DES PAGES */}
           <div className="space-y-1.5">
-            <div className="px-1 text-[11px] font-black uppercase tracking-wider text-slate-400">
+            <div className="px-1 text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
               Espaces & Pages
             </div>
 
@@ -187,8 +187,8 @@ export const NavigationSidebar: React.FC = () => {
               onClick={() => handleNavigateToView('home')}
               className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
                 viewMode === 'home'
-                  ? 'bg-slate-900 text-white shadow-2xs font-bold border-slate-900'
-                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+                  ? 'bg-slate-900 dark:bg-indigo-600 text-white shadow-2xs font-bold border-slate-900 dark:border-indigo-600'
+                  : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -196,7 +196,7 @@ export const NavigationSidebar: React.FC = () => {
                   className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
                     viewMode === 'home'
                       ? 'bg-white/20 text-white'
-                      : 'bg-slate-100 text-slate-700 group-hover:scale-105'
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 group-hover:scale-105'
                   }`}
                 >
                   <Home size={16} />
@@ -205,12 +205,12 @@ export const NavigationSidebar: React.FC = () => {
                   <div className="flex items-center gap-1.5">
                     <p className="text-xs font-bold">Accueil & Hub Équipe</p>
                     <span className={`text-[9px] px-1 py-0.2 rounded font-extrabold uppercase ${
-                      viewMode === 'home' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+                      viewMode === 'home' ? 'bg-white/20 text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
                     }`}>
                       Vue d'ensemble
                     </span>
                   </div>
-                  <p className={`text-[10px] ${viewMode === 'home' ? 'text-slate-300' : 'text-slate-400'}`}>
+                  <p className={`text-[10px] ${viewMode === 'home' ? 'text-slate-300 dark:text-indigo-100' : 'text-slate-400 dark:text-slate-400'}`}>
                     Portail central de choix de modules
                   </p>
                 </div>
@@ -218,7 +218,7 @@ export const NavigationSidebar: React.FC = () => {
               <ChevronRight
                 size={16}
                 className={`transition-transform ${
-                  viewMode === 'home' ? 'text-white translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                  viewMode === 'home' ? 'text-white translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
                 }`}
               />
             </div>
@@ -228,8 +228,8 @@ export const NavigationSidebar: React.FC = () => {
               onClick={() => handleNavigateToView('gantt')}
               className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
                 viewMode === 'gantt'
-                  ? 'bg-indigo-50/80 border-indigo-300 shadow-2xs font-bold text-indigo-950'
-                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+                  ? 'bg-indigo-50/80 dark:bg-indigo-950/50 border-indigo-300 dark:border-indigo-700 shadow-2xs font-bold text-indigo-950 dark:text-indigo-200'
+                  : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -237,7 +237,7 @@ export const NavigationSidebar: React.FC = () => {
                   className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
                     viewMode === 'gantt'
                       ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'bg-indigo-100 text-indigo-700 group-hover:scale-105'
+                      : 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 group-hover:scale-105'
                   }`}
                 >
                   <GanttChartSquare size={16} />
@@ -245,11 +245,11 @@ export const NavigationSidebar: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-1.5">
                     <p className="text-xs font-bold">1. Diagramme de Gantt</p>
-                    <span className="text-[9px] bg-indigo-100 text-indigo-700 px-1 py-0.2 rounded font-extrabold uppercase">
+                    <span className="text-[9px] bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 px-1 py-0.2 rounded font-extrabold uppercase">
                       Timeline
                     </span>
                   </div>
-                  <p className="text-[10px] text-slate-400">
+                  <p className="text-[10px] text-slate-400 dark:text-slate-400">
                     {currentProject.tasks.length} tâche(s) avec barres colorées
                   </p>
                 </div>
@@ -257,7 +257,7 @@ export const NavigationSidebar: React.FC = () => {
               <ChevronRight
                 size={16}
                 className={`transition-transform ${
-                  viewMode === 'gantt' ? 'text-indigo-600 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                  viewMode === 'gantt' ? 'text-indigo-600 dark:text-indigo-400 translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
                 }`}
               />
             </div>
@@ -268,8 +268,8 @@ export const NavigationSidebar: React.FC = () => {
                 onClick={() => handleNavigateToRetroTab('overview')}
                 className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
                   viewMode === 'retroplanning' && retroActiveTab === 'overview'
-                    ? 'bg-blue-50/80 border-blue-300 shadow-2xs font-bold text-blue-950'
-                    : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+                    ? 'bg-blue-50/80 dark:bg-blue-950/50 border-blue-300 dark:border-blue-700 shadow-2xs font-bold text-blue-950 dark:text-blue-200'
+                    : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -277,7 +277,7 @@ export const NavigationSidebar: React.FC = () => {
                     className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
                       viewMode === 'retroplanning'
                         ? 'bg-blue-600 text-white shadow-xs'
-                        : 'bg-blue-100 text-blue-700 group-hover:scale-105'
+                        : 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 group-hover:scale-105'
                     }`}
                   >
                     <FileSpreadsheet size={16} />
@@ -285,11 +285,11 @@ export const NavigationSidebar: React.FC = () => {
                   <div>
                     <div className="flex items-center gap-1.5">
                       <p className="text-xs font-bold">2. Rétroplanning</p>
-                      <span className="text-[9px] bg-blue-100 text-blue-800 px-1 py-0.2 rounded font-extrabold uppercase">
+                      <span className="text-[9px] bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-1 py-0.2 rounded font-extrabold uppercase">
                         Excel
                       </span>
                     </div>
-                    <p className="text-[10px] text-slate-400">
+                    <p className="text-[10px] text-slate-400 dark:text-slate-400">
                       Vue d'ensemble + feuilles par événement
                     </p>
                   </div>
@@ -297,23 +297,23 @@ export const NavigationSidebar: React.FC = () => {
                 <ChevronRight
                   size={16}
                   className={`transition-transform ${
-                    viewMode === 'retroplanning' ? 'text-blue-600 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                    viewMode === 'retroplanning' ? 'text-blue-600 dark:text-blue-400 translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
                   }`}
                 />
               </div>
 
               {/* Sous-pages de Rétroplanning (Arborescence élégante) */}
-              <div className="ml-5 pl-3 border-l-2 border-slate-200/80 space-y-1 py-1">
+              <div className="ml-5 pl-3 border-l-2 border-slate-200/80 dark:border-slate-700 space-y-1 py-1">
                 <button
                   onClick={() => handleNavigateToRetroTab('overview')}
                   className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition flex items-center justify-between ${
                     viewMode === 'retroplanning' && retroActiveTab === 'overview'
-                      ? 'bg-blue-100/70 text-blue-900 font-bold'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      ? 'bg-blue-100/70 dark:bg-blue-900/60 text-blue-900 dark:text-blue-200 font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
                   }`}
                 >
                   <span className="truncate">📋 Vue d'ensemble (Récapitulatif)</span>
-                  <span className="text-[10px] text-slate-400">
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500">
                     {events.length} évts
                   </span>
                 </button>
@@ -326,14 +326,14 @@ export const NavigationSidebar: React.FC = () => {
                       onClick={() => handleNavigateToRetroTab(evt.id)}
                       className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition flex items-center justify-between group ${
                         isActive
-                          ? 'bg-blue-100/70 text-blue-900 font-bold'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                          ? 'bg-blue-100/70 dark:bg-blue-900/60 text-blue-900 dark:text-blue-200 font-bold'
+                          : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
                       }`}
                     >
                       <span className="truncate">
                         #{idx + 1} {evt.title}
                       </span>
-                      <span className="text-[10px] text-slate-400 group-hover:text-slate-600 shrink-0 ml-1">
+                      <span className="text-[10px] text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 shrink-0 ml-1">
                         {evt.date}
                       </span>
                     </button>
@@ -347,8 +347,8 @@ export const NavigationSidebar: React.FC = () => {
               onClick={() => handleNavigateToView('ideas')}
               className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
                 viewMode === 'ideas'
-                  ? 'bg-amber-50/80 border-amber-300 shadow-2xs font-bold text-amber-950'
-                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+                  ? 'bg-amber-50/80 dark:bg-amber-950/50 border-amber-300 dark:border-amber-700 shadow-2xs font-bold text-amber-950 dark:text-amber-200'
+                  : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -356,7 +356,7 @@ export const NavigationSidebar: React.FC = () => {
                   className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
                     viewMode === 'ideas'
                       ? 'bg-amber-500 text-white shadow-xs'
-                      : 'bg-amber-100 text-amber-700 group-hover:scale-105'
+                      : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 group-hover:scale-105'
                   }`}
                 >
                   <Lightbulb size={16} />
@@ -364,17 +364,17 @@ export const NavigationSidebar: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-1.5">
                     <p className="text-xs font-bold">3. Boîte à Idées & Notes</p>
-                    <span className="text-[9px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded font-extrabold uppercase">
+                    <span className="text-[9px] bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-1 py-0.2 rounded font-extrabold uppercase">
                       Brainstorming
                     </span>
                   </div>
-                  <p className="text-[10px] text-slate-400">Propositions, votes et statuts</p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-400">Propositions, votes et statuts</p>
                 </div>
               </div>
               <ChevronRight
                 size={16}
                 className={`transition-transform ${
-                  viewMode === 'ideas' ? 'text-amber-600 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                  viewMode === 'ideas' ? 'text-amber-600 dark:text-amber-400 translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
                 }`}
               />
             </div>
@@ -384,8 +384,8 @@ export const NavigationSidebar: React.FC = () => {
               onClick={() => handleNavigateToView('messages')}
               className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
                 viewMode === 'messages'
-                  ? 'bg-emerald-50/80 border-emerald-300 shadow-2xs font-bold text-emerald-950'
-                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+                  ? 'bg-emerald-50/80 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-700 shadow-2xs font-bold text-emerald-950 dark:text-emerald-200'
+                  : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -393,7 +393,7 @@ export const NavigationSidebar: React.FC = () => {
                   className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
                     viewMode === 'messages'
                       ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'bg-emerald-100 text-emerald-700 group-hover:scale-105'
+                      : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 group-hover:scale-105'
                   }`}
                 >
                   <MessageSquare size={16} />
@@ -401,17 +401,17 @@ export const NavigationSidebar: React.FC = () => {
                 <div>
                   <div className="flex items-center gap-1.5">
                     <p className="text-xs font-bold">4. Messagerie par Sujets</p>
-                    <span className="text-[9px] bg-emerald-100 text-emerald-800 px-1 py-0.2 rounded font-extrabold uppercase">
+                    <span className="text-[9px] bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-1 py-0.2 rounded font-extrabold uppercase">
                       Chat
                     </span>
                   </div>
-                  <p className="text-[10px] text-slate-400">Salons #général, #course, #sponsors...</p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-400">Salons #général, #course, #sponsors...</p>
                 </div>
               </div>
               <ChevronRight
                 size={16}
                 className={`transition-transform ${
-                  viewMode === 'messages' ? 'text-emerald-600 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                  viewMode === 'messages' ? 'text-emerald-600 dark:text-emerald-400 translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
                 }`}
               />
             </div>
@@ -421,8 +421,8 @@ export const NavigationSidebar: React.FC = () => {
               onClick={() => handleNavigateToView('calendar')}
               className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
                 viewMode === 'calendar'
-                  ? 'bg-purple-50/80 border-purple-300 shadow-2xs font-bold text-purple-950'
-                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+                  ? 'bg-purple-50/80 dark:bg-purple-950/50 border-purple-300 dark:border-purple-700 shadow-2xs font-bold text-purple-950 dark:text-purple-200'
+                  : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -430,20 +430,20 @@ export const NavigationSidebar: React.FC = () => {
                   className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
                     viewMode === 'calendar'
                       ? 'bg-purple-600 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-600 group-hover:scale-105'
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:scale-105'
                   }`}
                 >
                   <CalendarDays size={16} />
                 </div>
                 <div>
                   <p className="text-xs font-bold">5. Calendrier Mensuel</p>
-                  <p className="text-[10px] text-slate-400">Vue chronologique globale</p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-400">Vue chronologique globale</p>
                 </div>
               </div>
               <ChevronRight
                 size={16}
                 className={`transition-transform ${
-                  viewMode === 'calendar' ? 'text-purple-600 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                  viewMode === 'calendar' ? 'text-purple-600 dark:text-purple-400 translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
                 }`}
               />
             </div>
@@ -453,39 +453,39 @@ export const NavigationSidebar: React.FC = () => {
               onClick={() => handleNavigateToView('list')}
               className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
                 viewMode === 'list'
-                  ? 'bg-slate-100 border-slate-400 shadow-2xs font-bold text-slate-900'
-                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-800'
+                  ? 'bg-slate-100 dark:bg-slate-700 border-slate-400 dark:border-slate-600 shadow-2xs font-bold text-slate-900 dark:text-white'
+                  : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
               }`}
             >
               <div className="flex items-center gap-3">
                 <div
                   className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
                     viewMode === 'list'
-                      ? 'bg-slate-800 text-white shadow-xs'
-                      : 'bg-slate-100 text-slate-600 group-hover:scale-105'
+                      ? 'bg-slate-800 dark:bg-slate-600 text-white shadow-xs'
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:scale-105'
                   }`}
                 >
                   <ListOrdered size={16} />
                 </div>
                 <div>
                   <p className="text-xs font-bold">6. Liste des Tâches</p>
-                  <p className="text-[10px] text-slate-400">Format tableau avec filtres</p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-400">Format tableau avec filtres</p>
                 </div>
               </div>
               <ChevronRight
                 size={16}
                 className={`transition-transform ${
-                  viewMode === 'list' ? 'text-slate-800 translate-x-0.5' : 'text-slate-300 group-hover:text-slate-500'
+                  viewMode === 'list' ? 'text-slate-800 dark:text-slate-200 translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
                 }`}
               />
             </div>
           </div>
 
           {/* SECTION : SÉLECTEUR DE PLANNING / PROJET */}
-          <div className="space-y-1.5 pt-2 border-t border-slate-100">
-            <div className="px-1 text-[11px] font-black uppercase tracking-wider text-slate-400 flex items-center justify-between">
+          <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div className="px-1 text-[11px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center justify-between">
               <span>Plannings disponibles</span>
-              <span className="text-[10px] font-normal text-slate-400">({projects.length})</span>
+              <span className="text-[10px] font-normal text-slate-400 dark:text-slate-500">({projects.length})</span>
             </div>
 
             <div className="space-y-1">
@@ -500,15 +500,15 @@ export const NavigationSidebar: React.FC = () => {
                     }}
                     className={`w-full text-left px-3 py-2 rounded-xl border text-xs transition flex items-center justify-between ${
                       isCurrent
-                        ? 'bg-indigo-50/80 border-indigo-300 text-indigo-900 font-bold shadow-2xs'
-                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                        ? 'bg-indigo-50/80 dark:bg-indigo-950/60 border-indigo-300 dark:border-indigo-700 text-indigo-900 dark:text-indigo-200 font-bold shadow-2xs'
+                        : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800'
                     }`}
                   >
                     <div className="flex items-center gap-2 truncate">
-                      <FolderKanban size={14} className={isCurrent ? 'text-indigo-600' : 'text-slate-400'} />
+                      <FolderKanban size={14} className={isCurrent ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400'} />
                       <span className="truncate">{proj.name}</span>
                     </div>
-                    <span className="text-[10px] text-slate-400 ml-2 shrink-0">
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 ml-2 shrink-0">
                       {proj.tasks.length} t.
                     </span>
                   </button>
@@ -519,7 +519,7 @@ export const NavigationSidebar: React.FC = () => {
         </div>
 
         {/* Pied du tiroir */}
-        <div className="p-3 border-t border-slate-100 bg-slate-50/70 text-center text-[10px] text-slate-400">
+        <div className="p-3 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/80 text-center text-[10px] text-slate-400 dark:text-slate-500">
           Rétroplanning R&F 2026 • Système Collaboratif
         </div>
       </aside>

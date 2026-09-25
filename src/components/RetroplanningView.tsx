@@ -259,7 +259,7 @@ export const RetroplanningView: React.FC = () => {
   };
 
   return (
-    <div id="retroplanning-sheet-target" className="flex-1 flex flex-col bg-slate-50 min-h-full">
+    <div id="retroplanning-sheet-target" className="flex-1 flex flex-col bg-slate-50 dark:bg-slate-950 min-h-full">
       {/* 1. GRAND BANDEAU TITRE OFFICIEL STYLE EXCEL (PHOTO 1 & 2) */}
       <div className="bg-[#0F2756] text-white px-6 py-3.5 shadow-md border-b-2 border-indigo-900 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -289,7 +289,7 @@ export const RetroplanningView: React.FC = () => {
           <button
             onClick={handleDownloadPdf}
             disabled={isExportingPdf}
-            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs border border-emerald-400/40"
+            className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs border border-emerald-400/40"
             title="Télécharger directement la feuille de rétroplanning en PDF Paysage HD"
           >
             {isExportingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
@@ -299,13 +299,13 @@ export const RetroplanningView: React.FC = () => {
       </div>
 
       {/* 2. BANDEAU D'ÉQUIPE (PHOTO 1 & 2) */}
-      <div className="bg-[#DBEAFE] text-[#1E3A8A] px-6 py-2 border-b border-blue-200 flex items-center justify-between text-xs font-bold">
+      <div className="bg-[#DBEAFE] dark:bg-blue-950/70 text-[#1E3A8A] dark:text-blue-200 px-6 py-2 border-b border-blue-200 dark:border-blue-900/60 flex items-center justify-between text-xs font-bold">
         <div className="flex items-center gap-2 truncate">
-          <Users size={14} className="text-blue-700 shrink-0" />
-          <span className="shrink-0 uppercase font-black tracking-wide text-blue-900">Équipe :</span>
+          <Users size={14} className="text-blue-700 dark:text-blue-400 shrink-0" />
+          <span className="shrink-0 uppercase font-black tracking-wide text-blue-900 dark:text-blue-100">Équipe :</span>
           <span className="truncate">{teamBannerString}</span>
         </div>
-        <span className="text-[11px] text-blue-700 bg-white/70 px-2 py-0.5 rounded border border-blue-300 font-extrabold shrink-0">
+        <span className="text-[11px] text-blue-700 dark:text-blue-300 bg-white/70 dark:bg-blue-900/60 px-2 py-0.5 rounded border border-blue-300 dark:border-blue-800 font-extrabold shrink-0">
           {events.length} Événement{events.length > 1 ? 's' : ''}
         </span>
       </div>
@@ -318,7 +318,7 @@ export const RetroplanningView: React.FC = () => {
           /* ========================================================================= */
           <div className="max-w-[1700px] mx-auto space-y-6 animate-fadeIn">
             {/* Tableau principal des événements */}
-            <div className="bg-white rounded-xl border-2 border-slate-300 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-xl border-2 border-slate-300 dark:border-slate-800 shadow-sm overflow-hidden">
               <div className="bg-amber-600 px-4 py-2.5 flex items-center justify-between text-white">
                 <div className="flex items-center gap-2">
                   <Calendar size={18} />
@@ -346,10 +346,10 @@ export const RetroplanningView: React.FC = () => {
                       <th className="py-3 px-3 text-center w-28 no-print">Accès</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-200 text-xs">
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
                     {events.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="py-8 text-center text-slate-400 font-bold">
+                        <td colSpan={5} className="py-8 text-center text-slate-400 dark:text-slate-500 font-bold">
                           Aucun événement configuré. Cliquez sur « Ajouter un événement ».
                         </td>
                       </tr>
@@ -357,21 +357,21 @@ export const RetroplanningView: React.FC = () => {
                       events.map((evt, idx) => (
                         <tr
                           key={evt.id}
-                          className={`hover:bg-amber-50/60 transition ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'}`}
+                          className={`hover:bg-amber-50/60 dark:hover:bg-slate-800/80 transition ${idx % 2 === 0 ? 'bg-white dark:bg-slate-900' : 'bg-slate-50/60 dark:bg-slate-850/60'}`}
                         >
                           {/* Événement */}
-                          <td className="py-3.5 px-4 border-r border-slate-200 font-black text-slate-900">
+                          <td className="py-3.5 px-4 border-r border-slate-200 dark:border-slate-800 font-black text-slate-900 dark:text-slate-100">
                             <div className="flex items-center gap-2.5">
-                              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 shrink-0 shadow-2xs">
+                              <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-800/80 shrink-0 shadow-2xs">
                                 #{idx + 1}
                               </span>
                               <span
-                                className="w-3 h-3 rounded-full shrink-0 shadow-xs ring-1 ring-slate-200"
+                                className="w-3 h-3 rounded-full shrink-0 shadow-xs ring-1 ring-slate-200 dark:ring-slate-700"
                                 style={{ backgroundColor: evt.color || '#D97706' }}
                               />
                               <button
                                 onClick={() => setActiveTab(evt.id)}
-                                className="text-left font-black text-indigo-700 hover:text-indigo-900 hover:underline leading-snug"
+                                className="text-left font-black text-indigo-700 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 hover:underline leading-snug"
                               >
                                 {evt.title}
                               </button>
@@ -379,19 +379,19 @@ export const RetroplanningView: React.FC = () => {
                           </td>
 
                           {/* Date */}
-                          <td className="py-3.5 px-4 border-r border-slate-200 font-bold text-slate-800 text-center whitespace-nowrap bg-amber-50/20">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white text-slate-800 border border-amber-200 shadow-2xs font-extrabold text-xs">
+                          <td className="py-3.5 px-4 border-r border-slate-200 dark:border-slate-800 font-bold text-slate-800 dark:text-slate-200 text-center whitespace-nowrap bg-amber-50/20 dark:bg-amber-950/20">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-amber-200 dark:border-amber-800/60 shadow-2xs font-extrabold text-xs">
                               📅 {evt.date}
                             </span>
                           </td>
 
                           {/* Objectif principal */}
-                          <td className="py-3.5 px-4 border-r border-slate-200 font-semibold text-slate-800 leading-relaxed">
+                          <td className="py-3.5 px-4 border-r border-slate-200 dark:border-slate-800 font-semibold text-slate-800 dark:text-slate-200 leading-relaxed">
                             {evt.objective}
                           </td>
 
                           {/* Contenu */}
-                          <td className="py-3.5 px-4 border-r border-slate-200 text-slate-600 leading-relaxed font-normal">
+                          <td className="py-3.5 px-4 border-r border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                             {evt.content}
                           </td>
 
@@ -400,14 +400,14 @@ export const RetroplanningView: React.FC = () => {
                             <div className="flex items-center justify-center gap-1">
                               <button
                                 onClick={() => setActiveTab(evt.id)}
-                                className="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg transition"
+                                className="p-1.5 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 rounded-lg transition"
                                 title="Ouvrir la feuille de rétroplanning"
                               >
                                 <ChevronRight size={16} />
                               </button>
                               <button
                                 onClick={() => handleOpenEditEvent(evt)}
-                                className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition"
+                                className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
                                 title="Modifier les infos"
                               >
                                 <Edit3 size={14} />
@@ -415,7 +415,7 @@ export const RetroplanningView: React.FC = () => {
                               {events.length > 1 && (
                                 <button
                                   onClick={() => handleDeleteEvent(evt.id, evt.title)}
-                                  className="p-1.5 text-rose-400 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition"
+                                  className="p-1.5 text-rose-400 dark:text-rose-500 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition"
                                   title="Supprimer"
                                 >
                                   <Trash2 size={14} />
@@ -432,21 +432,21 @@ export const RetroplanningView: React.FC = () => {
             </div>
 
             {/* Section LÉGENDE DES PHASES (PHOTO 1) */}
-            <div className="bg-white rounded-xl border-2 border-slate-300 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-xl border-2 border-slate-300 dark:border-slate-800 shadow-sm overflow-hidden">
               <div className="bg-[#0F2756] text-white px-4 py-2 font-black text-xs uppercase tracking-wider text-center">
                 LÉGENDE OFFICIELLE DES COULEURS ET DES PHASES
               </div>
-              <div className="divide-y divide-slate-200 text-xs">
+              <div className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
                 {RETRO_CATEGORIES.map((cat) => (
                   <div key={cat.id} className="flex flex-col sm:flex-row items-start sm:items-center">
                     <div
                       style={{ backgroundColor: `${cat.blockColor}25`, borderLeft: `6px solid ${cat.blockColor}` }}
-                      className="w-full sm:w-60 py-2.5 px-4 font-black text-slate-900 shrink-0 flex items-center gap-2 border-r border-slate-200"
+                      className="w-full sm:w-60 py-2.5 px-4 font-black text-slate-900 dark:text-slate-100 shrink-0 flex items-center gap-2 border-r border-slate-200 dark:border-slate-800"
                     >
                       <span className="w-3.5 h-3.5 rounded-full shadow-xs shrink-0" style={{ backgroundColor: cat.blockColor }} />
                       <span>{cat.label}</span>
                     </div>
-                    <div className="py-2.5 px-4 text-slate-600 font-medium leading-normal flex-1">
+                    <div className="py-2.5 px-4 text-slate-600 dark:text-slate-300 font-medium leading-normal flex-1">
                       {cat.description}
                     </div>
                   </div>
@@ -461,18 +461,18 @@ export const RetroplanningView: React.FC = () => {
           currentEvent && (
             <div className="max-w-[1850px] mx-auto space-y-4 animate-fadeIn">
               {/* En-tête de synthèse de l'événement */}
-              <div className="bg-white p-4 rounded-xl border-2 border-slate-300 shadow-xs flex flex-wrap items-center justify-between gap-4">
+              <div className="bg-white dark:bg-slate-900 p-4 rounded-xl border-2 border-slate-300 dark:border-slate-800 shadow-xs flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-3">
                     <span className="w-4 h-4 rounded-full" style={{ backgroundColor: currentEvent.color || '#3B82F6' }} />
-                    <h3 className="text-xl font-black text-slate-900 tracking-tight">
+                    <h3 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">
                       Rétroplanning détaillé : {currentEvent.title}
                     </h3>
-                    <span className="bg-amber-100 text-amber-900 border border-amber-300 px-2.5 py-0.5 rounded-full text-xs font-black">
+                    <span className="bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-200 border border-amber-300 dark:border-amber-800/80 px-2.5 py-0.5 rounded-full text-xs font-black">
                       📅 Date : {currentEvent.date}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 font-medium mt-1">
+                  <p className="text-xs text-slate-600 dark:text-slate-400 font-medium mt-1">
                     🎯 <strong>Objectif :</strong> {currentEvent.objective}
                   </p>
                 </div>
@@ -487,7 +487,7 @@ export const RetroplanningView: React.FC = () => {
                   </button>
                   <button
                     onClick={() => handleOpenEditEvent(currentEvent)}
-                    className="px-3 py-2 border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                    className="px-3 py-2 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
                   >
                     <Edit3 size={14} />
                     <span>Modifier l’événement</span>
@@ -496,34 +496,34 @@ export const RetroplanningView: React.FC = () => {
               </div>
 
               {/* GRILLE RÉTROPLANNING HAUTE FIDÉLITÉ (PHOTO 2) */}
-              <div className="bg-white rounded-xl border-2 border-slate-300 shadow-sm overflow-hidden">
+              <div className="bg-white dark:bg-slate-900 rounded-xl border-2 border-slate-300 dark:border-slate-800 shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse min-w-[1200px]">
                     <thead>
-                      <tr className="bg-slate-100 border-b-2 border-slate-300 text-xs font-black text-slate-800 uppercase">
-                        <th className="py-2.5 px-3 border-r border-slate-300 w-32 text-center">Semaine</th>
-                        <th className="py-2.5 px-3 border-r border-slate-300 w-36 text-center">Catégorie</th>
-                        <th className="py-2.5 px-4 border-r border-slate-300 w-96">Action / Tâche</th>
+                      <tr className="bg-slate-100 dark:bg-slate-850 border-b-2 border-slate-300 dark:border-slate-800 text-xs font-black text-slate-800 dark:text-slate-200 uppercase">
+                        <th className="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 w-32 text-center">Semaine</th>
+                        <th className="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 w-36 text-center">Catégorie</th>
+                        <th className="py-2.5 px-4 border-r border-slate-300 dark:border-slate-700 w-96">Action / Tâche</th>
                         {/* Colonnes de timeline pour chaque semaine de l'événement */}
                         {eventWeeks.map((w) => (
                           <th
                             key={w}
-                            className="py-2.5 px-2 border-r border-slate-300 text-center font-black text-[11px] min-w-[70px] bg-slate-200/80"
+                            className="py-2.5 px-2 border-r border-slate-300 dark:border-slate-700 text-center font-black text-[11px] min-w-[70px] bg-slate-200/80 dark:bg-slate-800 text-slate-800 dark:text-slate-200"
                           >
                             {w}
                           </th>
                         ))}
-                        <th className="py-2.5 px-3 border-r border-slate-300 w-40 text-center">Responsable</th>
-                        <th className="py-2.5 px-3 border-r border-slate-300 w-28 text-center">Statut</th>
+                        <th className="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 w-40 text-center">Responsable</th>
+                        <th className="py-2.5 px-3 border-r border-slate-300 dark:border-slate-700 w-28 text-center">Statut</th>
                         <th className="py-2.5 px-2 text-center w-20 no-print">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200 text-xs">
+                    <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs">
                       {currentEvent.tasks.length === 0 ? (
                         <tr>
                           <td
                             colSpan={5 + eventWeeks.length}
-                            className="py-10 text-center text-slate-400 font-bold"
+                            className="py-10 text-center text-slate-400 dark:text-slate-500 font-bold"
                           >
                             Aucune action pour cet événement. Cliquez sur « Ajouter une action ».
                           </td>
@@ -539,7 +539,7 @@ export const RetroplanningView: React.FC = () => {
                               className={`transition ${
                                 isEventRow
                                   ? 'bg-red-600 text-white font-black hover:bg-red-700'
-                                  : 'hover:bg-slate-50 bg-white'
+                                  : 'hover:bg-slate-50 dark:hover:bg-slate-850 bg-white dark:bg-slate-900'
                               }`}
                             >
                               {/* 1. Semaine */}
@@ -547,7 +547,7 @@ export const RetroplanningView: React.FC = () => {
                                 className={`py-3 px-3 border-r text-center font-black whitespace-nowrap ${
                                   isEventRow
                                     ? 'border-red-500 text-white text-xs'
-                                    : 'border-slate-200 text-slate-800 bg-slate-50/60'
+                                    : 'border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 bg-slate-50/60 dark:bg-slate-850/60'
                                 }`}
                               >
                                 {task.weekLabel}
@@ -556,7 +556,7 @@ export const RetroplanningView: React.FC = () => {
                               {/* 2. Catégorie */}
                               <td
                                 className={`py-3 px-3 border-r text-center font-bold ${
-                                  isEventRow ? 'border-red-500 text-white' : 'border-slate-200 text-slate-700'
+                                  isEventRow ? 'border-red-500 text-white' : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300'
                                 }`}
                               >
                                 <span
@@ -571,7 +571,7 @@ export const RetroplanningView: React.FC = () => {
                               {/* 3. Action */}
                               <td
                                 className={`py-3 px-4 border-r font-bold leading-snug ${
-                                  isEventRow ? 'border-red-500 text-white text-sm' : 'border-slate-200 text-slate-900'
+                                  isEventRow ? 'border-red-500 text-white text-sm' : 'border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100'
                                 }`}
                               >
                                 <div className="flex items-center gap-2">
@@ -590,7 +590,7 @@ export const RetroplanningView: React.FC = () => {
                                   <td
                                     key={w}
                                     className={`py-3 px-1 border-r text-center relative ${
-                                      isEventRow ? 'border-red-500 bg-red-600' : 'border-slate-200'
+                                      isEventRow ? 'border-red-500 bg-red-600' : 'border-slate-200 dark:border-slate-800'
                                     }`}
                                   >
                                     {isEventRow ? (
@@ -613,7 +613,7 @@ export const RetroplanningView: React.FC = () => {
                               {/* 5. Responsable */}
                               <td
                                 className={`py-3 px-3 border-r text-center font-black ${
-                                  isEventRow ? 'border-red-500 text-white' : 'border-slate-200 text-slate-800'
+                                  isEventRow ? 'border-red-500 text-white' : 'border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200'
                                 }`}
                               >
                                 {task.assignee}
@@ -622,7 +622,7 @@ export const RetroplanningView: React.FC = () => {
                               {/* 6. Statut */}
                               <td
                                 className={`py-3 px-3 border-r text-center ${
-                                  isEventRow ? 'border-red-500' : 'border-slate-200'
+                                  isEventRow ? 'border-red-500' : 'border-slate-200 dark:border-slate-800'
                                 }`}
                               >
                                 <span
@@ -654,7 +654,7 @@ export const RetroplanningView: React.FC = () => {
                                     className={`p-1 rounded ${
                                       isEventRow
                                         ? 'text-white hover:bg-red-700'
-                                        : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+                                        : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
                                     }`}
                                     title="Modifier cette action"
                                   >
@@ -665,7 +665,7 @@ export const RetroplanningView: React.FC = () => {
                                     className={`p-1 rounded ${
                                       isEventRow
                                         ? 'text-white hover:bg-red-700'
-                                        : 'text-rose-400 hover:text-rose-700 hover:bg-rose-50'
+                                        : 'text-rose-400 dark:text-rose-500 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40'
                                     }`}
                                     title="Supprimer"
                                   >
@@ -687,8 +687,8 @@ export const RetroplanningView: React.FC = () => {
       </div>
 
       {/* 4. BARRE D'ONGLETS BASSE STYLE FEUILLES EXCEL (PHOTO 1 & 2) */}
-      <div className="bg-slate-200 border-t-2 border-slate-300 px-4 py-1.5 flex items-center gap-1 overflow-x-auto shadow-inner no-print">
-        <span className="text-[11px] font-black uppercase text-slate-500 mr-2 shrink-0">
+      <div className="bg-slate-200 dark:bg-slate-900 border-t-2 border-slate-300 dark:border-slate-800 px-4 py-1.5 flex items-center gap-1 overflow-x-auto shadow-inner no-print">
+        <span className="text-[11px] font-black uppercase text-slate-500 dark:text-slate-400 mr-2 shrink-0">
           Feuilles :
         </span>
 
@@ -697,8 +697,8 @@ export const RetroplanningView: React.FC = () => {
           onClick={() => setActiveTab('overview')}
           className={`px-4 py-1.5 rounded-t-lg text-xs font-black transition flex items-center gap-1.5 shrink-0 border-t-2 ${
             activeTab === 'overview'
-              ? 'bg-white text-indigo-700 border-indigo-600 shadow-xs'
-              : 'bg-slate-100/90 text-slate-600 hover:bg-white hover:text-slate-900 border-transparent'
+              ? 'bg-white dark:bg-slate-850 text-indigo-700 dark:text-indigo-400 border-indigo-600 dark:border-indigo-500 shadow-xs'
+              : 'bg-slate-100/90 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white border-transparent'
           }`}
         >
           <FileText size={13} />
@@ -712,8 +712,8 @@ export const RetroplanningView: React.FC = () => {
             onClick={() => setActiveTab(evt.id)}
             className={`px-4 py-1.5 rounded-t-lg text-xs font-black transition flex items-center gap-1.5 shrink-0 border-t-2 ${
               activeTab === evt.id
-                ? 'bg-white text-blue-700 border-blue-600 shadow-xs'
-                : 'bg-slate-100/90 text-slate-600 hover:bg-white hover:text-slate-900 border-transparent'
+                ? 'bg-white dark:bg-slate-850 text-blue-700 dark:text-blue-400 border-blue-600 dark:border-blue-500 shadow-xs'
+                : 'bg-slate-100/90 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white border-transparent'
             }`}
           >
             <span
@@ -727,7 +727,7 @@ export const RetroplanningView: React.FC = () => {
         {/* Bouton pour créer une nouvelle feuille d'événement */}
         <button
           onClick={handleOpenNewEvent}
-          className="px-3 py-1.5 text-xs font-black text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition flex items-center gap-1 shrink-0 ml-1"
+          className="px-3 py-1.5 text-xs font-black text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-lg transition flex items-center gap-1 shrink-0 ml-1"
           title="Ajouter un nouvel événement"
         >
           <Plus size={14} />
@@ -738,14 +738,14 @@ export const RetroplanningView: React.FC = () => {
       {/* MODALE : CRÉATION / MODIFICATION D'ÉVÉNEMENT */}
       {isEventModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg p-6 space-y-4">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-base font-black text-slate-900">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-lg p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-base font-black text-slate-900 dark:text-white">
                 {editingEvent ? 'Modifier l’événement' : 'Ajouter un événement (Feuille de rétroplanning)'}
               </h3>
               <button
                 onClick={() => setIsEventModalOpen(false)}
-                className="p-1 hover:bg-slate-100 rounded-lg text-slate-400"
+                className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 dark:text-slate-500"
               >
                 <X size={18} />
               </button>
@@ -753,7 +753,7 @@ export const RetroplanningView: React.FC = () => {
 
             <form onSubmit={handleSaveEvent} className="space-y-3.5">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                   Nom de l'événement :
                 </label>
                 <input
@@ -762,12 +762,12 @@ export const RetroplanningView: React.FC = () => {
                   placeholder="Ex: Escape Game, Simulation entreprise..."
                   value={eventFormTitle}
                   onChange={(e) => setEventFormTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                   Date de l'événement :
                 </label>
                 <input
@@ -776,12 +776,12 @@ export const RetroplanningView: React.FC = () => {
                   placeholder="Ex: 15-oct-26, 05-nov-26..."
                   value={eventFormDate}
                   onChange={(e) => setEventFormDate(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                   Objectif principal :
                 </label>
                 <input
@@ -789,12 +789,12 @@ export const RetroplanningView: React.FC = () => {
                   placeholder="Ex: Initiation aux notions de l'entreprenariat pour les BUT 1"
                   value={eventFormObjective}
                   onChange={(e) => setEventFormObjective(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                   Contenu détaillé & Modalités :
                 </label>
                 <textarea
@@ -802,15 +802,15 @@ export const RetroplanningView: React.FC = () => {
                   placeholder="Ex: Mise en avant des notions... Possibilité de le mettre obligatoire sur l'emploi du temps..."
                   value={eventFormContent}
                   onChange={(e) => setEventFormContent(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs text-slate-800 focus:ring-2 focus:ring-indigo-500 leading-relaxed"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 leading-relaxed"
                 />
               </div>
 
-              <div className="border-t pt-3 flex justify-end gap-2">
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-3 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsEventModalOpen(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold"
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold"
                 >
                   Annuler
                 </button>
@@ -829,14 +829,14 @@ export const RetroplanningView: React.FC = () => {
       {/* MODALE : CRÉATION / MODIFICATION D'UNE TÂCHE RÉTROPLANNING */}
       {isTaskModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg p-6 space-y-4">
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="text-base font-black text-slate-900">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-lg p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <h3 className="text-base font-black text-slate-900 dark:text-white">
                 {editingTask ? 'Modifier l’action' : 'Ajouter une action au rétroplanning'}
               </h3>
               <button
                 onClick={() => setIsTaskModalOpen(false)}
-                className="p-1 hover:bg-slate-100 rounded-lg text-slate-400"
+                className="p-1 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-400 dark:text-slate-500"
               >
                 <X size={18} />
               </button>
@@ -845,7 +845,7 @@ export const RetroplanningView: React.FC = () => {
             <form onSubmit={handleSaveTask} className="space-y-3.5">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                     Semaine :
                   </label>
                   <input
@@ -854,12 +854,12 @@ export const RetroplanningView: React.FC = () => {
                     placeholder="Ex: S39, S40, S42 (12 oct.)..."
                     value={taskFormWeek}
                     onChange={(e) => setTaskFormWeek(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                     Catégorie :
                   </label>
                   {!isCustomTaskCat ? (
@@ -873,16 +873,16 @@ export const RetroplanningView: React.FC = () => {
                           setTaskFormCategory(e.target.value);
                         }
                       }}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"
                     >
-                      <optgroup label="Catégories existantes">
+                      <optgroup label="Catégories existantes" className="dark:bg-slate-800">
                         {RETRO_CATEGORIES.map((c) => (
-                          <option key={c.id} value={c.label}>
+                          <option key={c.id} value={c.label} className="dark:bg-slate-800">
                             ● {c.label}
                           </option>
                         ))}
                       </optgroup>
-                      <option value="__NEW__">+ Nouvelle catégorie...</option>
+                      <option value="__NEW__" className="dark:bg-slate-800">+ Nouvelle catégorie...</option>
                     </select>
                   ) : (
                     <div className="flex items-center gap-1.5">
@@ -892,7 +892,7 @@ export const RetroplanningView: React.FC = () => {
                         placeholder="Nouvelle catégorie..."
                         value={taskFormCategory}
                         onChange={(e) => setTaskFormCategory(e.target.value)}
-                        className="flex-1 px-3 py-2 border border-indigo-400 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                        className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-indigo-400 dark:border-indigo-600 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"
                       />
                       <button
                         type="button"
@@ -900,7 +900,7 @@ export const RetroplanningView: React.FC = () => {
                           setIsCustomTaskCat(false);
                           setTaskFormCategory(RETRO_CATEGORIES[0].label);
                         }}
-                        className="px-2.5 py-2 text-[10px] bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg font-bold transition"
+                        className="px-2.5 py-2 text-[10px] bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-bold transition"
                       >
                         Liste
                       </button>
@@ -910,7 +910,7 @@ export const RetroplanningView: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                   Action / Descriptif :
                 </label>
                 <textarea
@@ -919,13 +919,13 @@ export const RetroplanningView: React.FC = () => {
                   placeholder="Ex: Créer le formulaire d'inscription en ligne..."
                   value={taskFormAction}
                   onChange={(e) => setTaskFormAction(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs text-slate-800 focus:ring-2 focus:ring-indigo-500 leading-snug"
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 leading-snug"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                     Responsable :
                   </label>
                   <input
@@ -933,29 +933,29 @@ export const RetroplanningView: React.FC = () => {
                     placeholder="Ex: Laurine COGHE, Toute l'équipe..."
                     value={taskFormAssignee}
                     onChange={(e) => setTaskFormAssignee(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                     Statut :
                   </label>
                   <select
                     value={taskFormStatus}
                     onChange={(e) => setTaskFormStatus(e.target.value as any)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"
                   >
-                    <option value="todo">À faire</option>
-                    <option value="in_progress">En cours</option>
-                    <option value="completed">Terminé (Fait)</option>
-                    <option value="event">EVENT</option>
+                    <option value="todo" className="dark:bg-slate-800">À faire</option>
+                    <option value="in_progress" className="dark:bg-slate-800">En cours</option>
+                    <option value="completed" className="dark:bg-slate-800">Terminé (Fait)</option>
+                    <option value="event" className="dark:bg-slate-800">EVENT</option>
                   </select>
                 </div>
               </div>
 
               {/* Option ligne Jour J */}
-              <div className="bg-red-50 border border-red-200 p-3 rounded-xl flex items-center gap-3">
+              <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/60 p-3 rounded-xl flex items-center gap-3">
                 <input
                   type="checkbox"
                   id="is-event-checkbox"
@@ -963,16 +963,16 @@ export const RetroplanningView: React.FC = () => {
                   onChange={(e) => setTaskFormIsEvent(e.target.checked)}
                   className="w-4 h-4 text-red-600 rounded focus:ring-red-500"
                 />
-                <label htmlFor="is-event-checkbox" className="text-xs font-bold text-red-900 cursor-pointer">
+                <label htmlFor="is-event-checkbox" className="text-xs font-bold text-red-900 dark:text-red-300 cursor-pointer">
                   Marquer comme événement Jour J (Ligne rouge vif traversante)
                 </label>
               </div>
 
-              <div className="border-t pt-3 flex justify-end gap-2">
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-3 flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setIsTaskModalOpen(false)}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold"
+                  className="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-semibold"
                 >
                   Annuler
                 </button>

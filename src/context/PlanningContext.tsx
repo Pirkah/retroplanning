@@ -36,6 +36,11 @@ interface PlanningContextType {
   retroActiveTab: string;
   setRetroActiveTab: (tab: string) => void;
 
+  // Thème Sombre / Clair
+  theme: 'light' | 'dark';
+  setTheme: (theme: 'light' | 'dark') => void;
+  toggleTheme: () => void;
+
   // Temps réel & Équipe
   onlineCount: number;
   isWebSocketConnected: boolean;
@@ -224,6 +229,33 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [retroActiveTab, setRetroActiveTab] = useState<string>('overview');
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+
+  // Thème Sombre / Clair
+  const THEME_KEY = 'rnf_theme_v1';
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === 'dark' || saved === 'light') return saved;
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    } catch {
+      return 'light';
+    }
+  });
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {}
+  }, [theme]);
 
   // États Sécurité & Mode Édition
   const [authPassword, setAuthPassword] = useState<string>(() => {
@@ -806,6 +838,9 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         isSidebarOpen,
         setIsSidebarOpen,
         toggleSidebar,
+        theme,
+        setTheme,
+        toggleTheme,
         retroActiveTab,
         setRetroActiveTab,
         onlineCount,

@@ -6,27 +6,27 @@ export const Footer: React.FC = () => {
   const xUrl = 'https://x.com/Pirkah';
 
   return (
-    <footer className="mt-auto border-t border-slate-200/90 bg-white/80 backdrop-blur-md py-4 px-6 shadow-xs">
+    <footer className="mt-auto border-t border-slate-200/90 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md py-4 px-6 shadow-xs">
       <div className="max-w-[1920px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
         {/* Présentation / Auteur */}
         <div className="flex items-center gap-3 text-center sm:text-left">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-slate-800 flex items-center justify-center text-white shadow-sm ring-1 ring-slate-200 shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-slate-900 via-indigo-950 to-slate-800 dark:from-slate-800 dark:via-indigo-900 dark:to-slate-700 flex items-center justify-center text-white shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 shrink-0">
             <Sparkles size={18} className="text-amber-400" />
           </div>
           <div>
-            <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-slate-800 font-bold">
+            <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs text-slate-800 dark:text-slate-100 font-bold">
               <span>Créé par Julien</span>
-              <span className="text-indigo-600 font-extrabold">(@Pirkah)</span>
-              <span className="hidden md:inline text-slate-300">•</span>
-              <span className="hidden md:inline font-normal text-slate-500">
+              <span className="text-indigo-600 dark:text-indigo-400 font-extrabold">(@Pirkah)</span>
+              <span className="hidden md:inline text-slate-300 dark:text-slate-600">•</span>
+              <span className="hidden md:inline font-normal text-slate-500 dark:text-slate-400">
                 Outils web, bots d'automatisation & gestion de projet
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 mt-0.5 flex items-center justify-center sm:justify-start gap-1">
+            <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5 flex items-center justify-center sm:justify-start gap-1">
               <span>Fait avec passion pour le projet Run & Fun</span>
               <Heart size={11} className="text-rose-500 fill-rose-500" />
-              <span className="hidden sm:inline text-slate-300">•</span>
-              <span className="bg-indigo-50 text-indigo-700 border border-indigo-200/80 px-1.5 py-0.5 rounded text-[10px] font-bold">
+              <span className="hidden sm:inline text-slate-300 dark:text-slate-600">•</span>
+              <span className="bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/60 px-1.5 py-0.5 rounded text-[10px] font-bold">
                 v3.4 (Catégories Intelligentes & Couleurs Auto)
               </span>
             </p>

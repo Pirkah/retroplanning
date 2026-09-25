@@ -205,23 +205,23 @@ export const TaskModal: React.FC = () => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-fadeIn">
       <div 
-        className="bg-white rounded-2xl shadow-2xl border border-slate-100 w-full max-w-xl max-h-[92vh] flex flex-col overflow-hidden transform transition-all"
+        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800 w-full max-w-xl max-h-[92vh] flex flex-col overflow-hidden transform transition-all"
         onClick={(e) => e.stopPropagation()}
       >
         {/* En-tête */}
-        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white">
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between bg-gradient-to-r from-slate-50 to-white dark:from-slate-900 dark:to-slate-850">
           <div className="flex items-center gap-2.5">
             <span
-              className="w-4 h-4 rounded-full shadow-sm ring-2 ring-white"
+              className="w-4 h-4 rounded-full shadow-sm ring-2 ring-white dark:ring-slate-800"
               style={{ backgroundColor: color }}
             />
-            <h2 className="text-lg font-bold text-slate-800">
+            <h2 className="text-lg font-bold text-slate-800 dark:text-white">
               {editingTask ? 'Modifier la tâche' : 'Ajouter une tâche au rétroplanning'}
             </h2>
           </div>
           <button
             onClick={closeTaskModal}
-            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition"
+            className="p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
           >
             <X size={20} />
           </button>
@@ -230,9 +230,9 @@ export const TaskModal: React.FC = () => {
         {/* Formulaire */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5 custom-scrollbar">
           {!isAuthorized && (
-            <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between text-xs text-amber-800">
+            <div className="p-3.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 rounded-xl flex items-center justify-between text-xs text-amber-800 dark:text-amber-200">
               <div className="flex items-center gap-2">
-                <Lock size={16} className="text-amber-600 shrink-0" />
+                <Lock size={16} className="text-amber-600 dark:text-amber-400 shrink-0" />
                 <span>
                   <strong>Mode consultation :</strong> Saisissez le mot de passe équipe pour modifier cette tâche.
                 </span>
@@ -253,7 +253,7 @@ export const TaskModal: React.FC = () => {
           <fieldset disabled={!isAuthorized} className="space-y-5">
             {/* Titre */}
             <div>
-              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 Intitulé de la tâche <span className="text-rose-500">*</span>
               </label>
             <input
@@ -263,14 +263,14 @@ export const TaskModal: React.FC = () => {
               placeholder="Ex: Cadrage, Validation des maquettes, Dév Backend..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white text-base transition font-medium"
+              className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800 text-base transition font-medium"
             />
           </div>
 
           {/* Attribution Collaborateur (Équipe) */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-              <UserCheck size={14} className="text-indigo-600" />
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <UserCheck size={14} className="text-indigo-600 dark:text-indigo-400" />
               Responsable de la tâche
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -280,8 +280,8 @@ export const TaskModal: React.FC = () => {
                   onClick={() => setAssigneeId(member.id)}
                   className={`px-3 py-2 rounded-xl border flex items-center gap-2 cursor-pointer transition ${
                     assigneeId === member.id
-                      ? 'border-indigo-500 bg-indigo-50/50 shadow-xs'
-                      : 'border-slate-200 hover:border-slate-300 bg-slate-50/50'
+                      ? 'border-indigo-500 bg-indigo-50/50 dark:bg-indigo-950/40 shadow-xs'
+                      : 'border-slate-200 dark:border-slate-700/80 hover:border-slate-300 dark:hover:border-slate-600 bg-slate-50/50 dark:bg-slate-800/40'
                   }`}
                 >
                   <div
@@ -291,8 +291,8 @@ export const TaskModal: React.FC = () => {
                     {member.initials}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold text-slate-800 truncate">{member.name}</p>
-                    <p className="text-[10px] text-slate-400 truncate">{member.role}</p>
+                    <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{member.name}</p>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">{member.role}</p>
                   </div>
                 </div>
               ))}
@@ -300,17 +300,17 @@ export const TaskModal: React.FC = () => {
           </div>
 
           {/* Choix des Semaines ou Dates */}
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/70 space-y-3">
+          <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200/70 dark:border-slate-700/80 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                  <CalendarDays size={14} className="text-indigo-600" />
+                <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <CalendarDays size={14} className="text-indigo-600 dark:text-indigo-400" />
                   Période (Semaines S1 à S52)
                 </span>
               </div>
 
               <div className="flex items-center gap-3">
-                <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-600">
+                <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-medium text-slate-600 dark:text-slate-300">
                   <input
                     type="checkbox"
                     checked={isMilestone}
@@ -318,24 +318,24 @@ export const TaskModal: React.FC = () => {
                       setIsMilestone(e.target.checked);
                       if (e.target.checked) setEndDate(startDate);
                     }}
-                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    className="rounded border-slate-300 dark:border-slate-600 text-indigo-600 focus:ring-indigo-500"
                   />
                   <span>Jalon unique (◆)</span>
                 </label>
 
                 {/* Bascule mode semaines / jours */}
-                <div className="bg-slate-200/80 p-0.5 rounded-lg flex text-[10px] font-bold">
+                <div className="bg-slate-200/80 dark:bg-slate-700/80 p-0.5 rounded-lg flex text-[10px] font-bold">
                   <button
                     type="button"
                     onClick={() => setInputMode('weeks')}
-                    className={`px-2 py-0.5 rounded ${inputMode === 'weeks' ? 'bg-white text-indigo-600 shadow-xs' : 'text-slate-600'}`}
+                    className={`px-2 py-0.5 rounded ${inputMode === 'weeks' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
                   >
                     Par Semaines
                   </button>
                   <button
                     type="button"
                     onClick={() => setInputMode('days')}
-                    className={`px-2 py-0.5 rounded ${inputMode === 'days' ? 'bg-white text-indigo-600 shadow-xs' : 'text-slate-600'}`}
+                    className={`px-2 py-0.5 rounded ${inputMode === 'days' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-xs' : 'text-slate-600 dark:text-slate-400'}`}
                   >
                     Par Jours
                   </button>
@@ -346,13 +346,13 @@ export const TaskModal: React.FC = () => {
             {inputMode === 'weeks' ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-500 mb-1">
+                  <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
                     Semaine de début
                   </label>
                   <select
                     value={startWeekNum}
                     onChange={(e) => handleStartWeekSelect(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                   >
                     {weekOptions.map((opt) => (
                       <option key={`start-${opt.week}`} value={opt.week}>
@@ -364,13 +364,13 @@ export const TaskModal: React.FC = () => {
 
                 {!isMilestone ? (
                   <div>
-                    <label className="block text-xs font-medium text-slate-500 mb-1">
+                    <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
                       Semaine de fin
                     </label>
                     <select
                       value={endWeekNum}
                       onChange={(e) => handleEndWeekSelect(Number(e.target.value))}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                     >
                       {weekOptions.filter((o) => o.week >= startWeekNum).map((opt) => (
                         <option key={`end-${opt.week}`} value={opt.week}>
@@ -380,7 +380,7 @@ export const TaskModal: React.FC = () => {
                     </select>
                   </div>
                 ) : (
-                  <div className="flex items-center text-xs text-amber-700 bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
+                  <div className="flex items-center text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-3 py-2 rounded-lg border border-amber-200 dark:border-amber-800/60">
                     <Sparkles size={14} className="mr-1.5 flex-shrink-0" />
                     Jalon clé sur la Semaine {startWeekNum}
                   </div>
@@ -389,7 +389,7 @@ export const TaskModal: React.FC = () => {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-slate-500 mb-1">Date exacte de début</label>
+                  <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Date exacte de début</label>
                   <input
                     type="date"
                     required
@@ -400,47 +400,47 @@ export const TaskModal: React.FC = () => {
                         setEndDate(e.target.value);
                       }
                     }}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
                 {!isMilestone && (
                   <div>
-                    <label className="block text-xs text-slate-500 mb-1">Date exacte de fin</label>
+                    <label className="block text-xs text-slate-500 dark:text-slate-400 mb-1">Date exacte de fin</label>
                     <input
                       type="date"
                       required
                       min={startDate}
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 focus:ring-2 focus:ring-indigo-500"
+                      className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500"
                     />
                   </div>
                 )}
               </div>
             )}
 
-            <div className="text-xs text-slate-500 flex items-center justify-between pt-1">
+            <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center justify-between pt-1">
               <span>
-                Durée : <strong className="text-indigo-600 font-bold">{durationWeeks} semaine{durationWeeks > 1 ? 's' : ''}</strong> ({durationDays} jours)
+                Durée : <strong className="text-indigo-600 dark:text-indigo-400 font-bold">{durationWeeks} semaine{durationWeeks > 1 ? 's' : ''}</strong> ({durationDays} jours)
               </span>
-              <span className="text-[11px] text-slate-400">Ordonné automatiquement sur la ligne Gantt</span>
+              <span className="text-[11px] text-slate-400 dark:text-slate-500">Ordonné automatiquement sur la ligne Gantt</span>
             </div>
           </div>
 
           {/* Pôle / Catégorie & Couleur automatique */}
-          <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
+          <div className="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/80 space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Tag size={14} className="text-indigo-600" />
+              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                <Tag size={14} className="text-indigo-600 dark:text-indigo-400" />
                 Pôle / Catégorie
               </label>
               <div className="flex items-center gap-2">
                 <span
-                  className="w-3.5 h-3.5 rounded-full shadow-xs shrink-0 ring-1 ring-slate-300"
+                  className="w-3.5 h-3.5 rounded-full shadow-xs shrink-0 ring-1 ring-slate-300 dark:ring-slate-600"
                   style={{ backgroundColor: color }}
                 />
-                <span className="text-[11px] font-bold text-slate-600">
-                  Couleur : <span className="font-mono text-indigo-700">{color}</span>
+                <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                  Couleur : <span className="font-mono text-indigo-700 dark:text-indigo-400">{color}</span>
                 </span>
               </div>
             </div>
@@ -451,16 +451,16 @@ export const TaskModal: React.FC = () => {
                   <select
                     value={category}
                     onChange={(e) => handleCategorySelect(e.target.value)}
-                    className="w-full pl-3.5 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-xs appearance-none cursor-pointer"
+                    className="w-full pl-3.5 pr-10 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-xs appearance-none cursor-pointer"
                   >
-                    <optgroup label="Catégories existantes">
+                    <optgroup label="Catégories existantes" className="dark:bg-slate-800 dark:text-white">
                       {availableCategories.map((c) => (
-                        <option key={c.label} value={c.label}>
+                        <option key={c.label} value={c.label} className="dark:bg-slate-800 dark:text-white">
                           ● {c.label}
                         </option>
                       ))}
                     </optgroup>
-                    <option value="__NEW__">
+                    <option value="__NEW__" className="dark:bg-slate-800 dark:text-white">
                       + Ajouter une nouvelle catégorie personnalisée...
                     </option>
                   </select>
@@ -469,8 +469,8 @@ export const TaskModal: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
-                  <span className="flex items-center gap-1 text-slate-600">
+                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 pt-0.5">
+                  <span className="flex items-center gap-1 text-slate-600 dark:text-slate-400">
                     💡 La couleur s'applique automatiquement selon la catégorie sélectionnée.
                   </span>
                   <button
@@ -479,7 +479,7 @@ export const TaskModal: React.FC = () => {
                       setIsCustomCategoryMode(true);
                       setCategory('');
                     }}
-                    className="text-indigo-600 hover:text-indigo-800 font-bold hover:underline"
+                    className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-bold hover:underline"
                   >
                     + Nouvelle catégorie
                   </button>
@@ -494,7 +494,7 @@ export const TaskModal: React.FC = () => {
                     placeholder="Saisissez le nom de la nouvelle catégorie..."
                     value={category}
                     onChange={(e) => handleCustomCategoryChange(e.target.value)}
-                    className="flex-1 px-3.5 py-2.5 bg-white border border-indigo-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs"
+                    className="flex-1 px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-indigo-300 dark:border-indigo-600 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs"
                   />
                   <button
                     type="button"
@@ -504,22 +504,22 @@ export const TaskModal: React.FC = () => {
                         handleCategorySelect(availableCategories[0].label);
                       }
                     }}
-                    className="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl text-xs font-bold transition shrink-0"
+                    className="px-3 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition shrink-0"
                   >
                     Choisir dans la liste
                   </button>
                 </div>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
                   La couleur sera calculée et attribuée automatiquement à cette catégorie.
                 </p>
               </div>
             )}
 
             {/* Nuancier de réglage facultatif */}
-            <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between">
+            <div className="pt-2 border-t border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Palette size={13} className="text-slate-400" />
-                <span className="text-[11px] font-semibold text-slate-600">
+                <Palette size={13} className="text-slate-400 dark:text-slate-500" />
+                <span className="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
                   Nuance :
                 </span>
                 <div className="flex items-center gap-1.5">
@@ -551,7 +551,7 @@ export const TaskModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setColor(getCategoryColor(category))}
-                  className="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold hover:underline"
+                  className="text-[10px] text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 font-bold hover:underline"
                 >
                   Rétablir couleur catégorie
                 </button>
@@ -562,8 +562,8 @@ export const TaskModal: React.FC = () => {
           {/* Statut & Priorité */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                <CheckCircle2 size={13} className="text-indigo-600" />
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                <CheckCircle2 size={13} className="text-indigo-600 dark:text-indigo-400" />
                 Statut
               </label>
               <select
@@ -574,28 +574,28 @@ export const TaskModal: React.FC = () => {
                   if (newStat === 'completed') setProgress(100);
                   if (newStat === 'todo' && progress === 100) setProgress(0);
                 }}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="todo">📋 À faire</option>
-                <option value="in_progress">⚡ En cours</option>
-                <option value="completed">✅ Terminé</option>
-                <option value="blocked">⚠️ Bloqué</option>
+                <option value="todo" className="dark:bg-slate-800">📋 À faire</option>
+                <option value="in_progress" className="dark:bg-slate-800">⚡ En cours</option>
+                <option value="completed" className="dark:bg-slate-800">✅ Terminé</option>
+                <option value="blocked" className="dark:bg-slate-800">⚠️ Bloqué</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                <Flag size={13} className="text-indigo-600" />
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                <Flag size={13} className="text-indigo-600 dark:text-indigo-400" />
                 Priorité
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as TaskPriority)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="low">Basse</option>
-                <option value="medium">Moyenne</option>
-                <option value="high">Haute / Urgente</option>
+                <option value="low" className="dark:bg-slate-800">Basse</option>
+                <option value="medium" className="dark:bg-slate-800">Moyenne</option>
+                <option value="high" className="dark:bg-slate-800">Haute / Urgente</option>
               </select>
             </div>
           </div>
@@ -603,8 +603,8 @@ export const TaskModal: React.FC = () => {
           {/* Progression */}
           <div>
             <div className="flex items-center justify-between text-xs mb-1">
-              <span className="font-semibold text-slate-600 uppercase tracking-wider flex items-center gap-1">
-                <Clock size={13} className="text-indigo-600" />
+              <span className="font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1">
+                <Clock size={13} className="text-indigo-600 dark:text-indigo-400" />
                 Avancement ({progress}%)
               </span>
             </div>
@@ -620,14 +620,14 @@ export const TaskModal: React.FC = () => {
                 if (val === 100) setStatus('completed');
                 else if (val > 0 && status === 'todo') setStatus('in_progress');
               }}
-              className="w-full accent-indigo-600 h-2 bg-slate-200 rounded-lg cursor-pointer"
+              className="w-full accent-indigo-600 h-2 bg-slate-200 dark:bg-slate-700 rounded-lg cursor-pointer"
             />
           </div>
 
 
           {/* Description */}
           <div>
-            <label className="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">
               Notes & Livrables
             </label>
             <textarea
@@ -635,25 +635,25 @@ export const TaskModal: React.FC = () => {
               placeholder="Détails, consignes ou spécifications..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500"
             />
           </div>
         </fieldset>
       </form>
 
         {/* Pied de page modal */}
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
           {!isAuthorized ? (
             <>
-              <div className="flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
-                <Lock size={13} className="text-amber-600" />
+              <div className="flex items-center gap-1.5 text-xs text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-amber-900/60">
+                <Lock size={13} className="text-amber-600 dark:text-amber-400" />
                 <span>Lecture seule</span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={closeTaskModal}
-                  className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold transition"
+                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-xs font-semibold transition"
                 >
                   Fermer
                 </button>
@@ -663,7 +663,7 @@ export const TaskModal: React.FC = () => {
                     closeTaskModal();
                     openAuthModal();
                   }}
-                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-200 hover:shadow-amber-300 transition flex items-center gap-1.5"
+                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-200 dark:shadow-none hover:shadow-amber-300 transition flex items-center gap-1.5"
                 >
                   <Unlock size={14} />
                   Déverrouiller pour modifier
@@ -681,7 +681,7 @@ export const TaskModal: React.FC = () => {
                       closeTaskModal();
                     }
                   }}
-                  className="px-3 py-2 text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
+                  className="px-3 py-2 text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition"
                 >
                   <Trash2 size={15} />
                   Supprimer
@@ -694,13 +694,13 @@ export const TaskModal: React.FC = () => {
                 <button
                   type="button"
                   onClick={closeTaskModal}
-                  className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold transition"
+                  className="px-4 py-2 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-xs font-semibold transition"
                 >
                   Annuler
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-200 hover:shadow-indigo-300 transition"
+                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-200 dark:shadow-none hover:shadow-indigo-300 transition"
                 >
                   {editingTask ? 'Mettre à jour' : 'Ajouter au rétroplanning'}
                 </button>
