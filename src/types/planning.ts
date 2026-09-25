@@ -90,11 +90,11 @@ export const COLOR_PRESETS: ColorPreset[] = [
 ];
 
 export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
-  { id: 'm-vianney', name: 'Vianney Urbanick', role: 'Président / Admin', color: '#3B82F6', initials: 'VI' },
-  { id: 'm-julien', name: 'Julien Nicolle', role: 'Secrétaire / Dév', color: '#6366F1', initials: 'JU' },
-  { id: 'm-mathias', name: 'Mathias Samson', role: 'Événements & Partenaires', color: '#F59E0B', initials: 'MA' },
-  { id: 'm-sina', name: 'Sina Abdoul Bastoi', role: 'Communication & Réseaux', color: '#10B981', initials: 'SI' },
-  { id: 'm-theo', name: 'Théo', role: 'Événements & Logistique', color: '#EC4899', initials: 'TH' },
+  { id: 'm-vianney', name: 'Vianney Urbanick', role: 'Président', color: '#3B82F6', initials: 'VI' },
+  { id: 'm-julien', name: 'Julien Nicolle', role: 'Vice-président', color: '#6366F1', initials: 'JU' },
+  { id: 'm-theo', name: 'Théo', role: 'Chargé de communication interne', color: '#EC4899', initials: 'TH' },
+  { id: 'm-mathias', name: 'Mathias Samson', role: 'Chargé de communication externe', color: '#F59E0B', initials: 'MA' },
+  { id: 'm-sina', name: 'Sina Abdoul Bastoi', role: 'Chargé de communication externe', color: '#10B981', initials: 'SI' },
 ];
 
 export interface WeekColumn {

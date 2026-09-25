@@ -102,10 +102,47 @@ const ACTIVE_PROJ_KEY = 'retroplanning_active_id_v4';
 const PlanningContext = createContext<PlanningContextType | undefined>(undefined);
 
 const normalizeMember = (m: TeamMember): TeamMember => {
-  if (m.name.toLowerCase() === 'tetew' || m.id === 'm-tetew') {
-    return { ...m, id: 'm-theo', name: 'Théo', initials: 'TH' };
+  let updated = { ...m };
+  if (updated.name.toLowerCase() === 'tetew' || updated.id === 'm-tetew') {
+    updated = { ...updated, id: 'm-theo', name: 'Théo', initials: 'TH' };
   }
-  return m;
+  const id = (updated.id || '').toLowerCase();
+  const name = (updated.name || '').toLowerCase();
+
+  if (id === 'm-vianney' || name.includes('vianney')) {
+    updated.role = 'Président';
+  } else if (id === 'm-julien' || name.includes('julien')) {
+    updated.role = 'Vice-président';
+  } else if (id === 'm-theo' || name.includes('théo') || name.includes('theo')) {
+    updated.role = 'Chargé de communication interne';
+  } else if (id === 'm-mathias' || name.includes('mathias')) {
+    updated.role = 'Chargé de communication externe';
+  } else if (id === 'm-sina' || name.includes('sina')) {
+    updated.role = 'Chargé de communication externe';
+  }
+  return updated;
+};
+
+const normalizeConnectedUser = (u: ConnectedUser): ConnectedUser => {
+  let updated = { ...u };
+  if (updated.name?.toLowerCase() === 'tetew' || updated.id === 'm-tetew') {
+    updated = { ...updated, id: 'm-theo', name: 'Théo', initials: 'TH' };
+  }
+  const id = (updated.id || '').toLowerCase();
+  const name = (updated.name || '').toLowerCase();
+
+  if (id === 'm-vianney' || name.includes('vianney')) {
+    updated.role = 'Président';
+  } else if (id === 'm-julien' || name.includes('julien')) {
+    updated.role = 'Vice-président';
+  } else if (id === 'm-theo' || name.includes('théo') || name.includes('theo')) {
+    updated.role = 'Chargé de communication interne';
+  } else if (id === 'm-mathias' || name.includes('mathias')) {
+    updated.role = 'Chargé de communication externe';
+  } else if (id === 'm-sina' || name.includes('sina')) {
+    updated.role = 'Chargé de communication externe';
+  }
+  return updated;
 };
 
 const normalizeTask = (t: Task): Task => {
@@ -212,18 +249,32 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const saved = localStorage.getItem(USER_KEY);
       if (saved) {
         const u = JSON.parse(saved);
-        if (u.name?.toLowerCase() === 'tetew' || u.id === 'm-tetew') {
-          const updated = { ...u, id: 'm-theo', name: 'Théo', initials: 'TH' };
-          try { localStorage.setItem(USER_KEY, JSON.stringify(updated)); } catch {}
-          return updated;
-        }
-        return u;
+        const normalized = normalizeConnectedUser(u);
+        try { localStorage.setItem(USER_KEY, JSON.stringify(normalized)); } catch {}
+        return normalized;
       }
       return null;
     } catch {
       return null;
     }
   });
+
+  // Assurer la cohérence du profil connecté avec les rôles officiels
+  useEffect(() => {
+    if (currentUser) {
+      const normalized = normalizeConnectedUser(currentUser);
+      if (
+        normalized.role !== currentUser.role ||
+        normalized.name !== currentUser.name ||
+        normalized.id !== currentUser.id
+      ) {
+        setCurrentUser(normalized);
+        try {
+          localStorage.setItem(USER_KEY, JSON.stringify(normalized));
+        } catch {}
+      }
+    }
+  }, [currentUser]);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [retroActiveTab, setRetroActiveTab] = useState<string>('overview');
@@ -441,7 +492,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const applyUser = () => {
       if (user) {
         const completeUser: ConnectedUser = {
-          ...user,
+          ...normalizeConnectedUser(user),
           loggedInAt: new Date().toISOString()
         };
         setCurrentUser(completeUser);
