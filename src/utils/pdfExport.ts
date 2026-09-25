@@ -130,9 +130,108 @@ export async function exportGanttToPng(
 }
 
 /**
- * Ouvre la boîte de dialogue d'impression native du navigateur
+ * Ouvre la boîte de dialogue d'impression native configurée spécifiquement pour le Diagramme de Gantt
  * Permet à l'utilisateur sur Mac de faire "Enregistrer au format PDF" directement en vectoriel
  */
 export function printGantt(): void {
+  document.body.classList.remove('print-mode-retroplanning', 'print-retroplanning');
+  document.body.classList.add('print-mode-gantt');
   window.print();
+}
+
+/**
+ * Ouvre la boîte de dialogue d'impression native configurée spécifiquement pour le Rétroplanning Événements (Excel)
+ */
+export function printRetroplanning(): void {
+  document.body.classList.remove('print-mode-gantt');
+  document.body.classList.add('print-mode-retroplanning', 'print-retroplanning');
+  window.print();
+}
+
+export interface ExportRetroOptions {
+  projectName: string;
+  eventTitle?: string;
+  format?: 'a3' | 'a4';
+  onProgress?: (message: string) => void;
+}
+
+/**
+ * Exporte la feuille de rétroplanning actuelle en PDF Paysage Haute Définition
+ */
+export async function exportRetroplanningToPdf(options: ExportRetroOptions): Promise<void> {
+  const { projectName, eventTitle = 'Vue_d_ensemble', format = 'a3', onProgress } = options;
+  const element = document.getElementById('retroplanning-sheet-target');
+  if (!element) {
+    throw new Error('Élément de rétroplanning introuvable (#retroplanning-sheet-target).');
+  }
+
+  onProgress?.('Capture haute résolution de la feuille de rétroplanning...');
+  await new Promise((resolve) => setTimeout(resolve, 150));
+
+  const canvas = await html2canvas(element, {
+    scale: 2.0,
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    logging: false,
+    ignoreElements: (el) => el.classList.contains('no-print')
+  });
+
+  onProgress?.('Génération du fichier PDF paysage...');
+  const targetWidthMm = format === 'a3' ? 420 : 297;
+  const targetHeightMm = Math.round((targetWidthMm * canvas.height) / canvas.width);
+  const imgData = canvas.toDataURL('image/png');
+
+  const pdf = new jsPDF({
+    orientation: 'landscape',
+    unit: 'mm',
+    format: [targetWidthMm, targetHeightMm]
+  });
+
+  pdf.addImage(imgData, 'PNG', 0, 0, targetWidthMm, targetHeightMm, undefined, 'FAST');
+  const cleanTitle = (eventTitle || projectName)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
+  pdf.save(`${cleanTitle}_retroplanning_${format.toUpperCase()}.pdf`);
+}
+
+/**
+ * Exporte la feuille de rétroplanning actuelle en image PNG HD
+ */
+export async function exportRetroplanningToPng(
+  projectName: string,
+  eventTitle?: string,
+  onProgress?: (message: string) => void
+): Promise<void> {
+  const element = document.getElementById('retroplanning-sheet-target');
+  if (!element) {
+    throw new Error('Élément de rétroplanning introuvable (#retroplanning-sheet-target).');
+  }
+
+  onProgress?.('Capture haute résolution du rétroplanning...');
+  await new Promise((resolve) => setTimeout(resolve, 150));
+
+  const canvas = await html2canvas(element, {
+    scale: 2.0,
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    logging: false,
+    ignoreElements: (el) => el.classList.contains('no-print')
+  });
+
+  const imgData = canvas.toDataURL('image/png');
+  const link = document.createElement('a');
+  const cleanTitle = (eventTitle || projectName)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
+  link.href = imgData;
+  link.download = `${cleanTitle}_retroplanning_hd.png`;
+  link.click();
 }

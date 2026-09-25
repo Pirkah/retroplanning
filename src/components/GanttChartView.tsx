@@ -9,9 +9,10 @@ import {
   CATEGORY_CLASSES,
   CategoryClass
 } from '../utils/scheduler';
-import { Sparkles, CheckCircle2, Plus, Clock, User, ChevronDown, ChevronRight, Layers, ArrowUpDown } from 'lucide-react';
+import { Sparkles, CheckCircle2, Plus, Clock, User, ChevronDown, ChevronRight, Layers, ArrowUpDown, Printer, Download, Loader2 } from 'lucide-react';
 import { Task, WeekColumn } from '../types/planning';
 import { format } from 'date-fns';
+import { printGantt, exportGanttToPdf } from '../utils/pdfExport';
 
 export const GanttChartView: React.FC = () => {
   const {
@@ -29,9 +30,29 @@ export const GanttChartView: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const currentWeekRef = useRef<HTMLDivElement>(null);
   const [columnWidth, setColumnWidth] = useState<number>(130);
+  const [groupByClass, setGroupByClass] = useState<boolean>(true);
   const [hoveredTaskId, setHoveredTaskId] = useState<string | null>(null);
-  const [groupByClass, setGroupByClass] = useState<boolean>(true); // Tri et regroupement par classe actif par défaut
   const [collapsedClasses, setCollapsedClasses] = useState<Record<string, boolean>>({});
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+
+  const handlePrintGantt = () => {
+    printGantt();
+  };
+
+  const handleExportPdfA3 = async () => {
+    try {
+      setIsExporting(true);
+      await exportGanttToPdf({
+        projectName: currentProject.name,
+        format: 'a3'
+      });
+    } catch (e) {
+      console.error(e);
+      alert('Erreur lors de la génération du PDF A3.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // Filtrage des tâches selon recherche, couleur et collaborateur
   const filteredTasks = useMemo(() => {
@@ -177,6 +198,28 @@ export const GanttChartView: React.FC = () => {
           >
             <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
             Semaine en cours
+          </button>
+
+          <div className="h-4 w-px bg-slate-200 no-print" />
+
+          {/* Boutons d'impression et d'export spécifiques au Gantt */}
+          <button
+            onClick={handlePrintGantt}
+            className="px-3 py-1.5 bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-2xs no-print"
+            title="Imprimer ce Diagramme de Gantt en mode paysage vectoriel"
+          >
+            <Printer size={13} />
+            <span>Imprimer le Gantt</span>
+          </button>
+
+          <button
+            onClick={handleExportPdfA3}
+            disabled={isExporting}
+            className="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-600 rounded-lg text-xs font-semibold transition flex items-center gap-1 shadow-2xs no-print"
+            title="Télécharger le diagramme complet en PDF A3 Paysage HD"
+          >
+            {isExporting ? <Loader2 size={13} className="animate-spin" /> : <Download size={13} />}
+            <span>PDF A3</span>
           </button>
         </div>
       </div>

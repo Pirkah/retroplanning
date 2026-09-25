@@ -31,7 +31,14 @@ import {
 import html2canvas from 'html2canvas';
 import { TeamModal } from './TeamModal';
 import { AuthModal } from './AuthModal';
-import { exportGanttToPdf, exportGanttToPng, printGantt } from '../utils/pdfExport';
+import {
+  exportGanttToPdf,
+  exportGanttToPng,
+  printGantt,
+  printRetroplanning,
+  exportRetroplanningToPdf,
+  exportRetroplanningToPng
+} from '../utils/pdfExport';
 
 export const Header: React.FC = () => {
   const {
@@ -127,6 +134,59 @@ export const Header: React.FC = () => {
     } catch (err) {
       console.error(err);
       alert("Erreur lors de l'export de l'image.");
+    } finally {
+      setExportStatus(null);
+    }
+  };
+
+  const handlePrintGantt = () => {
+    setIsExportMenuOpen(false);
+    printGantt();
+  };
+
+  const handlePrintRetroplanning = () => {
+    setIsExportMenuOpen(false);
+    if (viewMode !== 'retroplanning') {
+      setViewMode('retroplanning');
+      setTimeout(() => {
+        printRetroplanning();
+      }, 250);
+    } else {
+      printRetroplanning();
+    }
+  };
+
+  const handleExportRetroPdf = async (format: 'a3' | 'a4') => {
+    setIsExportMenuOpen(false);
+    try {
+      if (viewMode !== 'retroplanning') {
+        setViewMode('retroplanning');
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+      await exportRetroplanningToPdf({
+        projectName: currentProject.name,
+        format,
+        onProgress: (msg) => setExportStatus(msg)
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de la génération du PDF du rétroplanning.");
+    } finally {
+      setExportStatus(null);
+    }
+  };
+
+  const handleExportRetroPng = async () => {
+    setIsExportMenuOpen(false);
+    try {
+      if (viewMode !== 'retroplanning') {
+        setViewMode('retroplanning');
+        await new Promise((resolve) => setTimeout(resolve, 250));
+      }
+      await exportRetroplanningToPng(currentProject.name, undefined, (msg) => setExportStatus(msg));
+    } catch (err) {
+      console.error(err);
+      alert("Erreur lors de l'export de l'image du rétroplanning.");
     } finally {
       setExportStatus(null);
     }
@@ -317,107 +377,243 @@ export const Header: React.FC = () => {
             <span className="hidden sm:inline">Importer</span>
           </button>
 
-          {/* Menu Export */}
+          {/* Boutons d'Impression Directs Dédiés (Gantt vs Rétroplanning) */}
+          <div className="hidden lg:flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl border border-slate-200 shadow-2xs">
+            <button
+              onClick={handlePrintGantt}
+              className="px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-indigo-700 bg-white hover:bg-indigo-50 shadow-xs border border-indigo-200/60"
+              title="Imprimer directement le Diagramme de Gantt en mode paysage vectoriel"
+            >
+              <Printer size={13} className="text-indigo-600" />
+              <span>Imprimer Gantt</span>
+            </button>
+
+            <button
+              onClick={handlePrintRetroplanning}
+              className="px-2.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 text-blue-700 bg-white hover:bg-blue-50 shadow-xs border border-blue-200/60"
+              title="Imprimer directement la feuille de Rétroplanning Événements en mode paysage"
+            >
+              <FileSpreadsheet size={13} className="text-blue-600" />
+              <span>Imprimer Rétroplanning</span>
+            </button>
+          </div>
+
+          {/* Menu Export Détaillé */}
           <div className="relative">
             <button
               onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
-              className="px-2.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold transition flex items-center gap-1"
+              className="px-2.5 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold transition flex items-center gap-1 shadow-2xs"
             >
               <Download size={14} />
               <span className="hidden sm:inline">Exporter</span>
             </button>
 
             {isExportMenuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-2xl py-2 z-50 animate-fadeIn">
-                <div className="px-3.5 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                  Export & Impression
+              <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white border border-slate-200 rounded-2xl shadow-2xl py-2.5 z-50 animate-fadeIn max-h-[85vh] overflow-y-auto custom-scrollbar">
+                <div className="px-4 py-1 text-[11px] font-black text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                  <span>Centre d'Export & Impression</span>
+                  {exportStatus && (
+                    <span className="text-[10px] text-indigo-600 font-bold flex items-center gap-1">
+                      <Loader2 size={11} className="animate-spin" />
+                      En cours...
+                    </span>
+                  )}
                 </div>
 
-                {/* PDF Paysage A3 */}
-                <button
-                  onClick={() => handleExportPdf('a3')}
-                  disabled={!!exportStatus}
-                  className="w-full text-left px-3.5 py-2.5 hover:bg-slate-50 flex items-start gap-2.5 transition group"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                    <FileText size={16} />
+                {exportStatus && (
+                  <div className="mx-3 my-2 p-2 bg-indigo-50 border border-indigo-200 rounded-xl text-xs text-indigo-900 font-semibold flex items-center gap-2">
+                    <Loader2 size={14} className="animate-spin text-indigo-600 shrink-0" />
+                    <span>{exportStatus}</span>
                   </div>
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <p className="text-xs font-bold text-slate-800">PDF Paysage A3</p>
-                      <span className="text-[9px] bg-rose-100 text-rose-700 px-1.5 py-0.2 rounded font-extrabold uppercase">
-                        Optimal
-                      </span>
+                )}
+
+                {/* ======================================================== */}
+                {/* SECTION 1 : DIAGRAMME DE GANTT                           */}
+                {/* ======================================================== */}
+                <div className="mt-2 pt-2 border-t border-slate-100">
+                  <div className="px-4 py-1 flex items-center gap-1.5 text-xs font-black text-indigo-950 uppercase tracking-wide bg-indigo-50/60 mx-2 rounded-lg">
+                    <GanttChartSquare size={14} className="text-indigo-600" />
+                    <span>1. Diagramme de Gantt</span>
+                  </div>
+
+                  {/* Bouton Imprimer Gantt */}
+                  <button
+                    onClick={handlePrintGantt}
+                    className="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                      <Printer size={15} />
                     </div>
-                    <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                      Toutes les semaines & tâches visibles sans coupure (Grand format HD)
-                    </p>
-                  </div>
-                </button>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-bold text-slate-800">Imprimer le Gantt</p>
+                        <span className="text-[9px] bg-indigo-100 text-indigo-700 px-1.5 py-0.2 rounded font-extrabold uppercase">
+                          Vectoriel
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                        Boîte d'impression macOS ("Enregistrer au format PDF" paysage)
+                      </p>
+                    </div>
+                  </button>
 
-                {/* PDF Paysage A4 */}
-                <button
-                  onClick={() => handleExportPdf('a4')}
-                  disabled={!!exportStatus}
-                  className="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                    <FileText size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">PDF Paysage A4</p>
-                    <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                      Format standard paysage compact pour impression
-                    </p>
-                  </div>
-                </button>
+                  {/* Bouton PDF Gantt A3 */}
+                  <button
+                    onClick={() => handleExportPdf('a3')}
+                    disabled={!!exportStatus}
+                    className="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                      <FileText size={15} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-bold text-slate-800">Télécharger PDF Gantt (A3)</p>
+                        <span className="text-[9px] bg-rose-100 text-rose-700 px-1.5 py-0.2 rounded font-extrabold uppercase">
+                          HD Optimal
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                        Grand format paysage 420mm sans coupure de texte
+                      </p>
+                    </div>
+                  </button>
 
-                {/* Image Panoramique PNG */}
-                <button
-                  onClick={handleExportPng}
-                  disabled={!!exportStatus}
-                  className="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                    <FileImage size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">Image Panoramique (PNG)</p>
-                    <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                      Image haute résolution intégrale
-                    </p>
-                  </div>
-                </button>
+                  {/* Bouton PDF Gantt A4 */}
+                  <button
+                    onClick={() => handleExportPdf('a4')}
+                    disabled={!!exportStatus}
+                    className="w-full text-left px-4 py-1.5 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                      <FileText size={15} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-800">Télécharger PDF Gantt (A4)</p>
+                      <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                        Format standard paysage compact pour impression papier
+                      </p>
+                    </div>
+                  </button>
 
-                {/* Impression / Export Vectoriel Navigateur */}
-                <button
-                  onClick={() => {
-                    setIsExportMenuOpen(false);
-                    printGantt();
-                  }}
-                  className="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
-                >
-                  <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                    <Printer size={16} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">Imprimer / PDF Vectoriel (Navigateur)</p>
-                    <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
-                      Via la boîte d'impression macOS ("Enregistrer au format PDF")
-                    </p>
-                  </div>
-                </button>
+                  {/* Bouton PNG Gantt */}
+                  <button
+                    onClick={handleExportPng}
+                    disabled={!!exportStatus}
+                    className="w-full text-left px-4 py-1.5 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                      <FileImage size={15} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-800">Image Panoramique Gantt (PNG)</p>
+                      <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                        Image panoramique intégrale haute résolution
+                      </p>
+                    </div>
+                  </button>
+                </div>
 
-                <div className="border-t border-slate-100 my-1 pt-1">
+                {/* ======================================================== */}
+                {/* SECTION 2 : RÉTROPLANNING ÉVÉNEMENTS (EXCEL)             */}
+                {/* ======================================================== */}
+                <div className="mt-3 pt-2 border-t border-slate-100">
+                  <div className="px-4 py-1 flex items-center gap-1.5 text-xs font-black text-blue-950 uppercase tracking-wide bg-blue-50/70 mx-2 rounded-lg">
+                    <FileSpreadsheet size={14} className="text-blue-600" />
+                    <span>2. Rétroplanning Événements (Excel)</span>
+                  </div>
+
+                  {/* Bouton Imprimer Rétroplanning */}
+                  <button
+                    onClick={handlePrintRetroplanning}
+                    className="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                      <Printer size={15} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-bold text-slate-800">Imprimer le Rétroplanning</p>
+                        <span className="text-[9px] bg-blue-100 text-blue-700 px-1.5 py-0.2 rounded font-extrabold uppercase">
+                          Excel
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                        Imprime la feuille active en plein format paysage sans coupure
+                      </p>
+                    </div>
+                  </button>
+
+                  {/* Bouton PDF Rétroplanning A3 */}
+                  <button
+                    onClick={() => handleExportRetroPdf('a3')}
+                    disabled={!!exportStatus}
+                    className="w-full text-left px-4 py-2 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                      <FileText size={15} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-bold text-slate-800">Télécharger PDF Rétroplanning (A3)</p>
+                        <span className="text-[9px] bg-teal-100 text-teal-800 px-1.5 py-0.2 rounded font-extrabold uppercase">
+                          HD
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                        Génère directement le PDF de la feuille active en haute définition
+                      </p>
+                    </div>
+                  </button>
+
+                  {/* Bouton PDF Rétroplanning A4 */}
+                  <button
+                    onClick={() => handleExportRetroPdf('a4')}
+                    disabled={!!exportStatus}
+                    className="w-full text-left px-4 py-1.5 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                      <FileText size={15} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-800">Télécharger PDF Rétroplanning (A4)</p>
+                      <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                        Format A4 paysage prêt à imprimer
+                      </p>
+                    </div>
+                  </button>
+
+                  {/* Bouton Image PNG Rétroplanning */}
+                  <button
+                    onClick={handleExportRetroPng}
+                    disabled={!!exportStatus}
+                    className="w-full text-left px-4 py-1.5 hover:bg-slate-50 flex items-start gap-2.5 transition group"
+                  >
+                    <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                      <FileImage size={15} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-slate-800">Image HD Rétroplanning (PNG)</p>
+                      <p className="text-[10px] text-slate-400 leading-tight mt-0.5">
+                        Capture image nette de la feuille actuelle
+                      </p>
+                    </div>
+                  </button>
+                </div>
+
+                {/* ======================================================== */}
+                {/* SECTION 3 : SAUVEGARDE                                   */}
+                {/* ======================================================== */}
+                <div className="border-t border-slate-100 mt-2 pt-2 px-1">
                   <button
                     onClick={() => {
                       setIsExportMenuOpen(false);
                       exportProjectJson();
                     }}
-                    className="w-full text-left px-3.5 py-2 hover:bg-slate-50 flex items-center gap-2 text-xs text-slate-700 transition"
+                    className="w-full text-left px-3.5 py-1.5 hover:bg-slate-50 rounded-lg flex items-center gap-2 text-xs text-slate-700 transition"
                   >
                     <FileCode size={15} className="text-slate-400" />
-                    <span>Sauvegarde complète (JSON)</span>
+                    <span>Sauvegarde complète du projet (JSON)</span>
                   </button>
                 </div>
               </div>

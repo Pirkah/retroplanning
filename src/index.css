@@ -43,11 +43,14 @@
     display: none !important;
   }
 
-  /* Si impression Gantt classique : masque la vue normale et montre le canvas vectoriel */
-  body:not(.print-retroplanning) #planning-main-view {
+  /* 1. Si mode impression GANTT actif (ou par défaut sans rétroplanning) :
+        On masque le DOM dynamique et on affiche le conteneur vectoriel complet du Gantt */
+  body.print-mode-gantt #planning-main-view,
+  body:not(.print-mode-retroplanning):not(.print-retroplanning) #planning-main-view {
     display: none !important;
   }
-  body:not(.print-retroplanning) #export-canvas-container {
+  body.print-mode-gantt #export-canvas-container,
+  body:not(.print-mode-retroplanning):not(.print-retroplanning) #export-canvas-container {
     display: block !important;
     position: static !important;
     left: auto !important;
@@ -56,22 +59,32 @@
     opacity: 1 !important;
     z-index: auto !important;
   }
-  body:not(.print-retroplanning) #gantt-export-canvas-target {
+  body.print-mode-gantt #gantt-export-canvas-target,
+  body:not(.print-mode-retroplanning):not(.print-retroplanning) #gantt-export-canvas-target {
     display: block !important;
     position: static !important;
     width: 100% !important;
     page-break-inside: avoid;
   }
 
-  /* Si impression Rétroplanning Événements : imprime directement le tableau Excel */
+  /* 2. Si mode impression RÉTROPLANNING actif :
+        On masque l'export Gantt et on affiche le tableau Excel du rétroplanning */
+  body.print-mode-retroplanning #export-canvas-container,
   body.print-retroplanning #export-canvas-container {
     display: none !important;
   }
+  body.print-mode-retroplanning #planning-main-view,
   body.print-retroplanning #planning-main-view {
     display: block !important;
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
+    overflow: visible !important;
+  }
+  body.print-mode-retroplanning #retroplanning-sheet-target,
+  body.print-retroplanning #retroplanning-sheet-target {
+    display: block !important;
+    width: 100% !important;
     overflow: visible !important;
   }
 }

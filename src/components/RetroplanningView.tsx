@@ -14,8 +14,11 @@ import {
   FileText,
   Flag,
   ChevronRight,
-  Info
+  Info,
+  Download,
+  Loader2
 } from 'lucide-react';
+import { printRetroplanning, exportRetroplanningToPdf } from '../utils/pdfExport';
 
 // Palette de couleurs officielles pour les phases du rétroplanning (identique aux photos)
 export const RETRO_CATEGORIES: {
@@ -367,12 +370,30 @@ export const RetroplanningView: React.FC = () => {
     }
   };
 
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+
   const handlePrint = () => {
-    window.print();
+    printRetroplanning();
+  };
+
+  const handleDownloadPdf = async () => {
+    try {
+      setIsExportingPdf(true);
+      await exportRetroplanningToPdf({
+        projectName: currentProject.name,
+        eventTitle: currentEvent ? currentEvent.title : "Vue_d_ensemble",
+        format: 'a3'
+      });
+    } catch (e) {
+      console.error(e);
+      alert("Erreur lors de la génération du PDF.");
+    } finally {
+      setIsExportingPdf(false);
+    }
   };
 
   return (
-    <div className="flex-1 flex flex-col bg-slate-50 min-h-full">
+    <div id="retroplanning-sheet-target" className="flex-1 flex flex-col bg-slate-50 min-h-full">
       {/* 1. GRAND BANDEAU TITRE OFFICIEL STYLE EXCEL (PHOTO 1 & 2) */}
       <div className="bg-[#0F2756] text-white px-6 py-3.5 shadow-md border-b-2 border-indigo-900 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -389,14 +410,24 @@ export const RetroplanningView: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2.5 no-print">
           <button
             onClick={handlePrint}
-            className="px-3 py-1.5 bg-blue-800/80 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
-            title="Imprimer cette feuille"
+            className="px-3.5 py-1.5 bg-blue-700 hover:bg-blue-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs border border-blue-500/40"
+            title="Imprimer cette feuille de rétroplanning en mode paysage"
           >
             <Printer size={14} />
-            <span className="hidden sm:inline">Imprimer / PDF</span>
+            <span>Imprimer ce Rétroplanning</span>
+          </button>
+
+          <button
+            onClick={handleDownloadPdf}
+            disabled={isExportingPdf}
+            className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs border border-emerald-400/40"
+            title="Télécharger directement la feuille de rétroplanning en PDF Paysage HD"
+          >
+            {isExportingPdf ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+            <span>PDF HD (A3)</span>
           </button>
         </div>
       </div>
