@@ -22,8 +22,8 @@ interface WorkspaceContextType {
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
-const STORAGE_MESSAGES = 'rnf_team_messages_v2';
-const STORAGE_IDEAS = 'rnf_team_ideas_v2';
+const STORAGE_MESSAGES = 'rnf_team_messages_v3';
+const STORAGE_IDEAS = 'rnf_team_ideas_v3';
 
 export const getClientSessionId = (): string => {
   try {

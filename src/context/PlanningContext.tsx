@@ -83,7 +83,7 @@ interface PlanningContextType {
   closeAuthModal: () => void;
   unlockEditMode: (password: string, user?: ConnectedUser) => Promise<boolean>;
   lockEditMode: () => void;
-  changePassword: (oldPass: string, newPass: string) => Promise<{ success: boolean; message?: string }>;
+  changePassword: (oldPass: string, newPass: string, memberId?: string) => Promise<{ success: boolean; message?: string }>;
 
   // Rétroplanning par Événements (style Excel)
   addRetroEvent: (event: Omit<RetroplanningEvent, 'id'>) => void;
@@ -113,26 +113,37 @@ const normalizeMember = (m: TeamMember): TeamMember => {
 
   if (id === 'm-vianney' || name.includes('vianney')) {
     updated.role = 'Président';
+    updated.generation = updated.generation || '10ème équipe';
   } else if (id === 'm-julien' || name.includes('julien')) {
     updated.role = 'Vice-président';
+    updated.generation = updated.generation || '10ème équipe';
   } else if (id === 'm-theo' || name.includes('théo') || name.includes('theo')) {
     updated.role = 'Chargé de communication interne';
+    updated.generation = updated.generation || '10ème équipe';
   } else if (id === 'm-mathias' || name.includes('mathias')) {
     updated.role = 'Chargé de communication externe';
+    updated.generation = updated.generation || '10ème équipe';
   } else if (id === 'm-sina' || name.includes('sina')) {
     updated.role = 'Chargé de communication externe';
+    updated.generation = updated.generation || '10ème équipe';
   } else if (id === 'm-christelle' || name.includes('christelle') || name.includes('voisin')) {
     updated.id = 'm-christelle';
     updated.name = 'Christelle Voisin';
     updated.role = 'Professeure encadrante';
     updated.initials = 'CV';
     updated.color = updated.color || '#8B5CF6';
+    updated.generation = 'Équipe pédagogique';
+    updated.isSupervisor = true;
   } else if (id === 'm-marius' || name.includes('marius') || name.includes('chevalier')) {
     updated.id = 'm-marius';
     updated.name = 'Marius Chevalier';
     updated.role = 'Professeur encadrant';
     updated.initials = 'MC';
     updated.color = updated.color || '#0EA5E9';
+    updated.generation = 'Équipe pédagogique';
+    updated.isSupervisor = true;
+  } else {
+    updated.generation = updated.generation || '10ème équipe';
   }
   return updated;
 };
@@ -147,26 +158,37 @@ const normalizeConnectedUser = (u: ConnectedUser): ConnectedUser => {
 
   if (id === 'm-vianney' || name.includes('vianney')) {
     updated.role = 'Président';
+    updated.generation = updated.generation || '10ème équipe';
   } else if (id === 'm-julien' || name.includes('julien')) {
     updated.role = 'Vice-président';
+    updated.generation = updated.generation || '10ème équipe';
   } else if (id === 'm-theo' || name.includes('théo') || name.includes('theo')) {
     updated.role = 'Chargé de communication interne';
+    updated.generation = updated.generation || '10ème équipe';
   } else if (id === 'm-mathias' || name.includes('mathias')) {
     updated.role = 'Chargé de communication externe';
+    updated.generation = updated.generation || '10ème équipe';
   } else if (id === 'm-sina' || name.includes('sina')) {
     updated.role = 'Chargé de communication externe';
+    updated.generation = updated.generation || '10ème équipe';
   } else if (id === 'm-christelle' || name.includes('christelle') || name.includes('voisin')) {
     updated.id = 'm-christelle';
     updated.name = 'Christelle Voisin';
     updated.role = 'Professeure encadrante';
     updated.initials = 'CV';
     updated.color = updated.color || '#8B5CF6';
+    updated.generation = 'Équipe pédagogique';
+    updated.isSupervisor = true;
   } else if (id === 'm-marius' || name.includes('marius') || name.includes('chevalier')) {
     updated.id = 'm-marius';
     updated.name = 'Marius Chevalier';
     updated.role = 'Professeur encadrant';
     updated.initials = 'MC';
     updated.color = updated.color || '#0EA5E9';
+    updated.generation = 'Équipe pédagogique';
+    updated.isSupervisor = true;
+  } else {
+    updated.generation = updated.generation || '10ème équipe';
   }
   return updated;
 };
@@ -361,6 +383,15 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const checkSavedAuth = async () => {
       const savedPass = localStorage.getItem(AUTH_KEY);
+      const savedUserStr = localStorage.getItem(USER_KEY);
+      let savedMemberId: string | undefined = undefined;
+      try {
+        if (savedUserStr) {
+          const parsed = JSON.parse(savedUserStr);
+          savedMemberId = parsed?.id;
+        }
+      } catch {}
+
       if (savedPass) {
         try {
           const isDev = window.location.port === '5173';
@@ -370,7 +401,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           const res = await fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password: savedPass })
+            body: JSON.stringify({ password: savedPass, memberId: savedMemberId })
           });
           if (res.ok) {
             setIsAuthorized(true);
@@ -558,6 +589,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         JSON.stringify({
           type: 'SYNC_PROJECTS',
           password: authPassword,
+          memberId: currentUser?.id,
           payload: {
             projects: newProjects,
             activeProjectId: newActiveId
@@ -589,7 +621,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
+        body: JSON.stringify({ password, memberId: user?.id })
       });
       if (res.ok) {
         setIsAuthorized(true);
@@ -601,7 +633,14 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
       return false;
     } catch {
-      if (password === 'rnf2026') {
+      const userPasswordsKey = 'rnf_user_passwords_v1';
+      let localUserPass: string | undefined = undefined;
+      try {
+        const parsed = JSON.parse(localStorage.getItem(userPasswordsKey) || '{}');
+        if (user?.id && parsed[user.id]) localUserPass = parsed[user.id];
+      } catch {}
+
+      if (password === localUserPass || password === 'rnf2026') {
         setIsAuthorized(true);
         setAuthPassword(password);
         localStorage.setItem(AUTH_KEY, password);
@@ -621,7 +660,8 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     localStorage.removeItem(USER_KEY);
   };
 
-  const changePassword = async (oldPass: string, newPass: string): Promise<{ success: boolean; message?: string }> => {
+  const changePassword = async (oldPass: string, newPass: string, memberId?: string): Promise<{ success: boolean; message?: string }> => {
+    const targetMemberId = memberId || currentUser?.id;
     try {
       const isDev = window.location.port === '5173';
       const apiUrl = isDev
@@ -630,17 +670,39 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ oldPassword: oldPass, newPassword: newPass })
+        body: JSON.stringify({ oldPassword: oldPass, newPassword: newPass, memberId: targetMemberId })
       });
       const data = await res.json();
       if (res.ok && data.success) {
         setAuthPassword(newPass);
         localStorage.setItem(AUTH_KEY, newPass);
+        if (targetMemberId) {
+          try {
+            const userPasswordsKey = 'rnf_user_passwords_v1';
+            const parsed = JSON.parse(localStorage.getItem(userPasswordsKey) || '{}');
+            parsed[targetMemberId] = newPass;
+            localStorage.setItem(userPasswordsKey, JSON.stringify(parsed));
+          } catch {}
+        }
         return { success: true };
       }
       return { success: false, message: data.message || 'Mot de passe invalide' };
     } catch {
-      return { success: false, message: 'Erreur réseau' };
+      // Mode offline
+      if (oldPass === authPassword || oldPass === 'rnf2026') {
+        setAuthPassword(newPass);
+        localStorage.setItem(AUTH_KEY, newPass);
+        if (targetMemberId) {
+          try {
+            const userPasswordsKey = 'rnf_user_passwords_v1';
+            const parsed = JSON.parse(localStorage.getItem(userPasswordsKey) || '{}');
+            parsed[targetMemberId] = newPass;
+            localStorage.setItem(userPasswordsKey, JSON.stringify(parsed));
+          } catch {}
+        }
+        return { success: true };
+      }
+      return { success: false, message: 'Erreur réseau ou mot de passe incorrect' };
     }
   };
 

@@ -31,6 +31,12 @@ export const DEFAULT_CHANNELS: ChatChannel[] = [
     name: 'logistique-sécurité',
     description: 'Buvette, matériel, Croix-Rouge, autorisations et balisage',
     iconName: 'ShieldAlert'
+  },
+  {
+    id: 'c-supervision',
+    name: 'suivi-pedagogique-remarques',
+    description: 'Remarques, conseils et suivi des professeurs encadrants (Christelle Voisin & Marius Chevalier)',
+    iconName: 'GraduationCap'
   }
 ];
 
@@ -123,92 +129,108 @@ export const DEFAULT_MESSAGES: ChatMessage[] = [
     reactions: [
       { emoji: '🎯', count: 3, users: ['Julien Nicolle', 'Vianney Urbanick', 'Mathias Samson'] }
     ]
+  },
+  {
+    id: 'msg-sup-1',
+    channelId: 'c-supervision',
+    authorId: 'm-christelle',
+    authorName: 'Christelle Voisin',
+    authorInitials: 'CV',
+    authorColor: '#8B5CF6',
+    content: "Bonjour à toute l'équipe Run & Fun ! Nous suivons avec attention l'avancement de votre rétroplanning. N'hésitez pas si vous avez des questions sur la validation universitaire ou les conventions d'objectifs.",
+    timestamp: '2026-09-24T14:00:00Z',
+    reactions: [
+      { emoji: '🙏', count: 3, users: ['Julien Nicolle', 'Vianney Urbanick', 'Théo'] }
+    ]
+  },
+  {
+    id: 'msg-sup-2',
+    channelId: 'c-supervision',
+    authorId: 'm-julien',
+    authorName: 'Julien Nicolle',
+    authorInitials: 'JU',
+    authorColor: '#6366F1',
+    content: 'Merci Madame Voisin ! Nous avons bien calé les dates pour les dossiers préfecture et sponsors.',
+    timestamp: '2026-09-24T15:20:00Z',
+    replyTo: {
+      id: 'msg-sup-1',
+      authorName: 'Christelle Voisin',
+      content: "Bonjour à toute l'équipe Run & Fun ! Nous suivons avec attention l'avancement de votre rétroplanning..."
+    },
+    reactions: [
+      { emoji: '👍', count: 1, users: ['Christelle Voisin'] }
+    ]
+  },
+  {
+    id: 'msg-sup-3',
+    channelId: 'c-supervision',
+    authorId: 'm-marius',
+    authorName: 'Marius Chevalier',
+    authorInitials: 'MC',
+    authorColor: '#0EA5E9',
+    content: "Bravo pour la mise en place de cet outil collaboratif, c'est très clair et bien structuré. Pensez bien à anticiper la demande d'occupation du domaine public auprès de la mairie d'Alençon.",
+    timestamp: '2026-09-24T16:00:00Z',
+    reactions: [
+      { emoji: '🎯', count: 3, users: ['Julien Nicolle', 'Vianney Urbanick', 'Mathias Samson'] }
+    ]
   }
 ];
 
 export const DEFAULT_IDEAS: IdeaItem[] = [
   {
     id: 'idea-1',
-    title: 'Médailles éco-responsables en bois gravé',
-    content: 'Proposer pour tous les finishers de la course 2026 une médaille découpée en bois de forêt certifiée avec le logo Run & Fun et le ruban aux couleurs de l’association.',
+    title: 'modifier réseaux pirkah',
+    content: "qu'il y'ai un endroit plus discret avec mes contacts dev",
     category: 'Course & Parcours',
-    status: 'implemented',
-    authorName: 'Théo',
-    authorColor: '#EC4899',
-    authorInitials: 'TH',
-    createdAt: '2026-09-21T14:30:00Z',
-    likes: 7,
-    likedBy: ['Vianney Urbanick', 'Julien Nicolle', 'Mathias Samson', 'Sina Abdoul Bastoi', 'Théo', 'Christelle Voisin', 'Marius Chevalier'],
-    tags: ['Éco-responsable', 'Goodies', 'Finisher']
-  },
-  {
-    id: 'idea-2',
-    title: 'Stand crêpes & bar à smoothies au ravitaillement',
-    content: 'Installer un stand gourmand et convivial à côté de l’arche d’arrivée tenu par des bénévoles pour dynamiser l’ambiance après la course.',
-    category: 'Logistique & Buvette',
-    status: 'implemented',
-    authorName: 'Théo',
-    authorColor: '#EC4899',
-    authorInitials: 'TH',
-    createdAt: '2026-09-22T10:15:00Z',
-    likes: 6,
-    likedBy: ['Julien Nicolle', 'Mathias Samson', 'Sina Abdoul Bastoi', 'Théo', 'Christelle Voisin', 'Marius Chevalier'],
-    tags: ['Ravitaillement', 'Buvette', 'Convivialité']
-  },
-  {
-    id: 'idea-3',
-    title: 'Chèque géant sur support bois réutilisable',
-    content: 'Au lieu d’un carton jetable à chaque événement, faire fabriquer un chèque en bois gravé avec surface velleda effaçable pour réutilisation sur toutes les éditions.',
-    category: 'Animations & Soirées',
-    status: 'implemented',
-    authorName: 'Vianney Urbanick',
-    authorColor: '#3B82F6',
-    authorInitials: 'VI',
-    createdAt: '2026-09-23T08:00:00Z',
-    likes: 7,
-    likedBy: ['Vianney Urbanick', 'Julien Nicolle', 'Mathias Samson', 'Sina Abdoul Bastoi', 'Théo', 'Christelle Voisin', 'Marius Chevalier'],
-    tags: ['Cérémonie', 'Presse', 'Durable']
-  },
-  {
-    id: 'idea-4',
-    title: 'Défi Strava inter-promos IUT GEA',
-    content: 'Créer un challenge virtuel sur 2 semaines précédant la course avec affichage des kilomètres parcourus sur l’écran du hall de l’IUT.',
-    category: 'Communication & Réseaux',
     status: 'implemented',
     authorName: 'Julien Nicolle',
     authorColor: '#6366F1',
     authorInitials: 'JU',
-    createdAt: '2026-09-23T16:20:00Z',
-    likes: 5,
-    likedBy: ['Vianney Urbanick', 'Sina Abdoul Bastoi', 'Julien Nicolle', 'Christelle Voisin', 'Marius Chevalier'],
-    tags: ['Strava', 'Étudiants', 'Gamification']
+    createdAt: '2026-09-25T10:00:00Z',
+    likes: 1,
+    likedBy: ['Julien Nicolle'],
+    tags: ['Dev', 'Discret', 'Contacts']
   },
   {
-    id: 'idea-5',
-    title: 'Pack Partenaires avec flocage t-shirt et banderole',
-    content: 'Structurer 3 formules de sponsoring claires (Bronze 200€, Argent 500€, Or 1000€) avec logo sur dossards, t-shirts coureurs et passage sono le jour J.',
-    category: 'Partenaires & Sponsors',
+    id: 'idea-2',
+    title: 'classer les membres par génération',
+    content: "en gros si on laisse ce site aux prochains l'année pro qu'ils aient leur compte en qu'ils aient un truc en mode 11eme équipe et que nous y'ai écrit 10 eme équipe. comme ca si on veut passer leur donner des conseil ou voir comment ca avance on peut, et ca leur permet aussi d'avoir nos nom si plus tard des promos ont besoin de nous recontacter",
+    category: 'Général & Idées Vrac',
     status: 'implemented',
-    authorName: 'Mathias Samson',
-    authorColor: '#F59E0B',
-    authorInitials: 'MA',
-    createdAt: '2026-09-24T09:45:00Z',
-    likes: 7,
-    likedBy: ['Mathias Samson', 'Vianney Urbanick', 'Julien Nicolle', 'Théo', 'Sina Abdoul Bastoi', 'Christelle Voisin', 'Marius Chevalier'],
-    tags: ['Sponsoring', 'Mécénat', 'Finances']
+    authorName: 'Julien Nicolle',
+    authorColor: '#6366F1',
+    authorInitials: 'JU',
+    createdAt: '2026-09-25T10:15:00Z',
+    likes: 1,
+    likedBy: ['Julien Nicolle'],
+    tags: ['Générations', '10e équipe', '11e équipe', 'Transmission']
   },
   {
-    id: 'idea-6',
-    title: 'Série de micro-trottoirs humoristiques sur TikTok',
-    content: 'Interroger des étudiants et des profs dans le hall sur leur niveau en course à pied pour promouvoir l’ouverture de la billetterie HelloAsso.',
-    category: 'Communication & Réseaux',
+    id: 'idea-3',
+    title: 'compte spécial pour Christelle et marius',
+    content: "que Christelle et marius ai un compte spécial qui leur enlève la vision de la messagerie d'équipe mais qu'ils aient un endroit pour nous laisser des remarques ou des messages,",
+    category: 'Général & Idées Vrac',
     status: 'implemented',
-    authorName: 'Sina Abdoul Bastoi',
-    authorColor: '#10B981',
-    authorInitials: 'SI',
-    createdAt: '2026-09-24T18:10:00Z',
-    likes: 6,
-    likedBy: ['Sina Abdoul Bastoi', 'Théo', 'Mathias Samson', 'Julien Nicolle', 'Christelle Voisin', 'Marius Chevalier'],
-    tags: ['TikTok', 'Viral', 'Communication']
+    authorName: 'Julien Nicolle',
+    authorColor: '#6366F1',
+    authorInitials: 'JU',
+    createdAt: '2026-09-25T10:30:00Z',
+    likes: 1,
+    likedBy: ['Julien Nicolle'],
+    tags: ['Superviseurs', 'Remarques', 'Confidentialité']
+  },
+  {
+    id: 'idea-4',
+    title: 'avoir des mots de pass par utilisateur',
+    content: "que chaque utilisateur puisse avoir son propre mot de passe",
+    category: 'Général & Idées Vrac',
+    status: 'implemented',
+    authorName: 'Julien Nicolle',
+    authorColor: '#6366F1',
+    authorInitials: 'JU',
+    createdAt: '2026-09-25T10:45:00Z',
+    likes: 1,
+    likedBy: ['Julien Nicolle'],
+    tags: ['Sécurité', 'Mots de passe', 'Multi-utilisateurs']
   }
 ];

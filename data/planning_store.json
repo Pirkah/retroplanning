@@ -591,90 +591,6 @@
           "assigneeId": "m-julien"
         },
         {
-          "id": "task-idea-1",
-          "title": "Conception & commande des médailles éco-responsables en bois",
-          "description": "Sourcing bois certifié, gravure laser du logo Run & Fun 2026 et rubans personnalisés pour tous les finishers (Idée concrétisée).",
-          "startDate": "2026-11-09",
-          "endDate": "2026-12-06",
-          "color": "#8B5CF6",
-          "status": "completed",
-          "priority": "high",
-          "progress": 100,
-          "category": "Fournisseurs & Commandes",
-          "assignee": "Théo",
-          "assigneeId": "m-theo"
-        },
-        {
-          "id": "task-idea-2",
-          "title": "Stand crêpes & smoothies au ravitaillement arrivée",
-          "description": "Mise en place du stand gourmand convivial pour les coureurs et bénévoles à côté de l’arche d’arrivée (Idée concrétisée).",
-          "startDate": "2027-02-01",
-          "endDate": "2027-02-28",
-          "color": "#EC4899",
-          "status": "completed",
-          "priority": "medium",
-          "progress": 100,
-          "category": "Événements & Animations",
-          "assignee": "Théo",
-          "assigneeId": "m-theo"
-        },
-        {
-          "id": "task-idea-3",
-          "title": "Fabrication du chèque géant en bois gravé réutilisable",
-          "description": "Création du support chèque pérenne en bois avec surface effaçable velleda pour toutes les cérémonies (Idée concrétisée).",
-          "startDate": "2026-09-14",
-          "endDate": "2026-10-04",
-          "color": "#6366F1",
-          "status": "completed",
-          "priority": "medium",
-          "progress": 100,
-          "category": "Administratif & Juridique",
-          "assignee": "Vianney Urbanick",
-          "assigneeId": "m-vianney"
-        },
-        {
-          "id": "task-idea-4",
-          "title": "Lancement du Défi Strava inter-promos IUT GEA",
-          "description": "Challenge virtuel sur 2 semaines précédant la course avec affichage des kilomètres parcourus sur l’écran du hall IUT (Idée concrétisée).",
-          "startDate": "2027-02-15",
-          "endDate": "2027-03-14",
-          "color": "#10B981",
-          "status": "completed",
-          "priority": "high",
-          "progress": 100,
-          "category": "Communication & Médias",
-          "assignee": "Julien Nicolle",
-          "assigneeId": "m-julien"
-        },
-        {
-          "id": "task-idea-5",
-          "title": "Offres & commercialisation des Packs Partenaires (Bronze, Argent, Or)",
-          "description": "Plaquette sponsoring tripartite, conventions et flocage t-shirts / banderoles partenaires (Idée concrétisée).",
-          "startDate": "2026-10-12",
-          "endDate": "2026-11-15",
-          "color": "#F59E0B",
-          "status": "completed",
-          "priority": "high",
-          "progress": 100,
-          "category": "Partenaires & Sponsors",
-          "assignee": "Mathias Samson",
-          "assigneeId": "m-mathias"
-        },
-        {
-          "id": "task-idea-6",
-          "title": "Série de micro-trottoirs humoristiques sur TikTok (Hall IUT)",
-          "description": "Capsules vidéos humoristiques avec les étudiants et enseignants (dont Christelle Voisin & Marius Chevalier) pour la billetterie HelloAsso.",
-          "startDate": "2027-01-11",
-          "endDate": "2027-02-07",
-          "color": "#10B981",
-          "status": "completed",
-          "priority": "medium",
-          "progress": 100,
-          "category": "Communication & Médias",
-          "assignee": "Sina Abdoul Bastoi",
-          "assigneeId": "m-sina"
-        },
-        {
           "id": "task-prof-1",
           "title": "Supervision pédagogique & cadrage administratif du projet",
           "description": "Revue de conformité du dossier de manifestation, budget prévisionnel et validation pédagogique BUT GEA.",
@@ -1515,6 +1431,7 @@
   ],
   "activeProjectId": "proj-rnf-2026",
   "security": {
-    "editPassword": "rnf2026"
+    "editPassword": "rnf2026",
+    "userPasswords": {}
   }
 }

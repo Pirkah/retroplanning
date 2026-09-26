@@ -70,11 +70,16 @@ if (!store) {
   store = {
     projects: [],
     activeProjectId: null,
-    security: { editPassword: DEFAULT_PASSWORD }
+    security: { editPassword: DEFAULT_PASSWORD, userPasswords: {} }
   };
-} else if (!store.security) {
-  store.security = { editPassword: DEFAULT_PASSWORD };
-  saveStore(store);
+} else {
+  if (!store.security) {
+    store.security = { editPassword: DEFAULT_PASSWORD, userPasswords: {} };
+    saveStore(store);
+  } else if (!store.security.userPasswords) {
+    store.security.userPasswords = {};
+    saveStore(store);
+  }
 }
 
 // Routes API
@@ -96,28 +101,39 @@ app.get('/api/projects', (req, res) => {
   }
 });
 
-// Vérification du mot de passe de modification
+// Vérification du mot de passe de modification (général ou spécifique utilisateur)
 app.post('/api/auth/verify', (req, res) => {
-  const { password } = req.body || {};
-  const currentPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
-  if (password === currentPassword) {
+  const { password, memberId } = req.body || {};
+  const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
+  const memberPassword = (memberId && store?.security?.userPasswords?.[memberId]) || masterPassword;
+
+  if (password === memberPassword || password === masterPassword) {
     return res.json({ success: true });
   }
   return res.status(401).json({ success: false, message: 'Mot de passe incorrect' });
 });
 
-// Changement de mot de passe (nécessite l'ancien mot de passe)
+// Changement de mot de passe (par membre ou mot de passe maître)
 app.post('/api/auth/change-password', (req, res) => {
-  const { oldPassword, newPassword } = req.body || {};
-  const currentPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
-  if (oldPassword !== currentPassword) {
+  const { oldPassword, newPassword, memberId } = req.body || {};
+  const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
+  const currentPassword = (memberId && store?.security?.userPasswords?.[memberId]) || masterPassword;
+
+  if (oldPassword !== currentPassword && oldPassword !== masterPassword) {
     return res.status(401).json({ success: false, message: 'Ancien mot de passe invalide' });
   }
   if (!newPassword || newPassword.trim().length < 3) {
-    return res.status(400).json({ success: false, message: 'Le mot de passe doit faire au moins 3 caractères' });
+    return res.status(400).json({ success: false, message: 'Le nouveau mot de passe doit comporter au moins 3 caractères' });
   }
+
   if (!store.security) store.security = {};
-  store.security.editPassword = newPassword.trim();
+  if (!store.security.userPasswords) store.security.userPasswords = {};
+
+  if (memberId) {
+    store.security.userPasswords[memberId] = newPassword.trim();
+  } else {
+    store.security.editPassword = newPassword.trim();
+  }
   saveStore(store);
   return res.json({ success: true });
 });
@@ -172,10 +188,12 @@ wss.on('connection', (ws) => {
       }
 
       if (data.type === 'SYNC_PROJECTS') {
-        const currentPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
+        const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
+        const memberId = data.memberId || (ws.user && ws.user.id);
+        const memberPassword = (memberId && store?.security?.userPasswords?.[memberId]) || masterPassword;
         
         // Vérifie si le mot de passe fourni autorise la modification
-        if (data.password !== currentPassword) {
+        if (data.password !== memberPassword && data.password !== masterPassword) {
           ws.send(JSON.stringify({
             type: 'AUTH_ERROR',
             message: 'Mot de passe requis ou invalide pour modifier le rétroplanning.'

@@ -7,6 +7,8 @@ export interface TeamMember {
   role: string;
   color: string;
   initials: string;
+  generation?: string;
+  isSupervisor?: boolean;
 }
 
 export interface ConnectedUser {
@@ -15,6 +17,8 @@ export interface ConnectedUser {
   role?: string;
   color?: string;
   initials?: string;
+  generation?: string;
+  isSupervisor?: boolean;
   loggedInAt?: string;
 }
 
@@ -90,13 +94,13 @@ export const COLOR_PRESETS: ColorPreset[] = [
 ];
 
 export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
-  { id: 'm-vianney', name: 'Vianney Urbanick', role: 'Président', color: '#3B82F6', initials: 'VI' },
-  { id: 'm-julien', name: 'Julien Nicolle', role: 'Vice-président', color: '#6366F1', initials: 'JU' },
-  { id: 'm-theo', name: 'Théo', role: 'Chargé de communication interne', color: '#EC4899', initials: 'TH' },
-  { id: 'm-mathias', name: 'Mathias Samson', role: 'Chargé de communication externe', color: '#F59E0B', initials: 'MA' },
-  { id: 'm-sina', name: 'Sina Abdoul Bastoi', role: 'Chargé de communication externe', color: '#10B981', initials: 'SI' },
-  { id: 'm-christelle', name: 'Christelle Voisin', role: 'Professeure encadrante', color: '#8B5CF6', initials: 'CV' },
-  { id: 'm-marius', name: 'Marius Chevalier', role: 'Professeur encadrant', color: '#0EA5E9', initials: 'MC' },
+  { id: 'm-vianney', name: 'Vianney Urbanick', role: 'Président', color: '#3B82F6', initials: 'VI', generation: '10ème équipe' },
+  { id: 'm-julien', name: 'Julien Nicolle', role: 'Vice-président', color: '#6366F1', initials: 'JU', generation: '10ème équipe' },
+  { id: 'm-theo', name: 'Théo', role: 'Chargé de communication interne', color: '#EC4899', initials: 'TH', generation: '10ème équipe' },
+  { id: 'm-mathias', name: 'Mathias Samson', role: 'Chargé de communication externe', color: '#F59E0B', initials: 'MA', generation: '10ème équipe' },
+  { id: 'm-sina', name: 'Sina Abdoul Bastoi', role: 'Chargé de communication externe', color: '#10B981', initials: 'SI', generation: '10ème équipe' },
+  { id: 'm-christelle', name: 'Christelle Voisin', role: 'Professeure encadrante', color: '#8B5CF6', initials: 'CV', generation: 'Équipe pédagogique', isSupervisor: true },
+  { id: 'm-marius', name: 'Marius Chevalier', role: 'Professeur encadrant', color: '#0EA5E9', initials: 'MC', generation: 'Équipe pédagogique', isSupervisor: true },
 ];
 
 export interface WeekColumn {

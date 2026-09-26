@@ -14,7 +14,8 @@ import {
   MessageSquare,
   Lock,
   Reply,
-  X
+  X,
+  GraduationCap
 } from 'lucide-react';
 
 const CHANNEL_ICONS: Record<string, any> = {
@@ -22,7 +23,8 @@ const CHANNEL_ICONS: Record<string, any> = {
   Flame,
   Handshake,
   Megaphone,
-  ShieldAlert
+  ShieldAlert,
+  GraduationCap
 };
 
 const COMMON_EMOJIS = ['👍', '❤️', '🔥', '🎯', '🎉', '💪', '👏'];
@@ -39,8 +41,22 @@ export const TeamMessagesView: React.FC = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const activeChannel = channels.find((c) => c.id === activeChannelId) || channels[0];
-  const channelMessages = messages.filter((m) => m.channelId === activeChannelId);
+  const isCurrentUserSupervisor = Boolean(
+    currentUser?.isSupervisor ||
+    currentUser?.role?.toLowerCase().includes('professeur') ||
+    currentUser?.generation?.toLowerCase().includes('pédagogique')
+  );
+
+  // Pour les superviseurs, restreindre les salons visibles uniquement au salon de supervision
+  const visibleChannels = channels.filter((c) => {
+    if (isCurrentUserSupervisor) {
+      return c.id === 'c-supervision';
+    }
+    return true;
+  });
+
+  const activeChannel = visibleChannels.find((c) => c.id === activeChannelId) || visibleChannels[0] || channels[0];
+  const channelMessages = messages.filter((m) => m.channelId === activeChannel.id);
 
   const filteredMessages = channelMessages.filter((m) => {
     if (!searchQuery.trim()) return true;
@@ -52,6 +68,13 @@ export const TeamMessagesView: React.FC = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [channelMessages.length]);
+
+  // Si superviseur et salon actif non valide, forcer sur visibleChannels
+  useEffect(() => {
+    if (visibleChannels.length > 0 && !visibleChannels.some((c) => c.id === activeChannelId)) {
+      setActiveChannelId(visibleChannels[0].id);
+    }
+  }, [isCurrentUserSupervisor, visibleChannels, activeChannelId, setActiveChannelId]);
 
   // Réinitialiser la réponse si on change de canal
   useEffect(() => {
@@ -131,14 +154,20 @@ export const TeamMessagesView: React.FC = () => {
         {/* Liste des canaux */}
         <div className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
           <div className="space-y-1">
-            <div className="px-2 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              Salons Thématiques
+            <div className="px-2 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center justify-between">
+              <span>{isCurrentUserSupervisor ? 'Espace Encadrement' : 'Salons Thématiques'}</span>
+              {isCurrentUserSupervisor && (
+                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
+                  Professeurs
+                </span>
+              )}
             </div>
 
-            {channels.map((channel) => {
+            {visibleChannels.map((channel) => {
               const IconComp = CHANNEL_ICONS[channel.iconName] || Hash;
-              const isActive = channel.id === activeChannelId;
+              const isActive = channel.id === activeChannel.id;
               const msgCount = messages.filter((m) => m.channelId === channel.id).length;
+              const isSupervision = channel.id === 'c-supervision';
 
               return (
                 <button
@@ -146,17 +175,43 @@ export const TeamMessagesView: React.FC = () => {
                   onClick={() => setActiveChannelId(channel.id)}
                   className={`w-full text-left px-3 py-2 rounded-xl text-xs transition flex items-center justify-between group ${
                     isActive
-                      ? 'bg-emerald-600 text-white font-bold shadow-xs'
+                      ? isSupervision
+                        ? 'bg-purple-600 text-white font-bold shadow-xs'
+                        : 'bg-emerald-600 text-white font-bold shadow-xs'
                       : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 font-medium'
                   }`}
                 >
                   <div className="flex items-center gap-2 truncate">
-                    <IconComp size={15} className={isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'} />
+                    <IconComp
+                      size={15}
+                      className={
+                        isActive
+                          ? 'text-white'
+                          : isSupervision
+                          ? 'text-purple-500 dark:text-purple-400'
+                          : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
+                      }
+                    />
                     <span className="truncate">#{channel.name}</span>
+                    {isSupervision && (
+                      <span
+                        className={`text-[8px] font-black px-1.5 py-0.2 rounded-full shrink-0 ${
+                          isActive
+                            ? 'bg-purple-700 text-purple-100'
+                            : 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300'
+                        }`}
+                      >
+                        Encadrement
+                      </span>
+                    )}
                   </div>
                   <span
                     className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                      isActive ? 'bg-emerald-700 text-emerald-100' : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
+                      isActive
+                        ? isSupervision
+                          ? 'bg-purple-700 text-purple-100'
+                          : 'bg-emerald-700 text-emerald-100'
+                        : 'bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300'
                     }`}
                   >
                     {msgCount}
@@ -202,7 +257,18 @@ export const TeamMessagesView: React.FC = () => {
                           {isOnline ? 'En ligne' : 'Hors ligne'}
                         </span>
                       </div>
-                      <p className="text-[9px] text-slate-400 dark:text-slate-500 truncate">{member.role}</p>
+                      <div className="flex items-center gap-1">
+                        <p className="text-[9px] text-slate-400 dark:text-slate-500 truncate">{member.role}</p>
+                        {member.generation && (
+                          <span className={`text-[8px] font-bold px-1 py-0.2 rounded shrink-0 ${
+                            member.isSupervisor || member.generation.includes('pédagogique')
+                              ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300'
+                              : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                          }`}>
+                            {member.generation}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
@@ -242,6 +308,28 @@ export const TeamMessagesView: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Bannière d'information pour la supervision pédagogique */}
+        {isCurrentUserSupervisor ? (
+          <div className="bg-purple-50 dark:bg-purple-950/40 border-b border-purple-200/80 dark:border-purple-800/60 px-5 py-2.5 flex items-center justify-between text-xs text-purple-900 dark:text-purple-200">
+            <div className="flex items-center gap-2">
+              <GraduationCap size={16} className="text-purple-600 dark:text-purple-400 shrink-0" />
+              <span>
+                <strong>Espace Supervision Pédagogique :</strong> Vos remarques et conseils sont partagés ici directement avec l'équipe étudiante Run & Fun.
+              </span>
+            </div>
+            <span className="text-[10px] font-bold bg-purple-200/70 dark:bg-purple-900/60 text-purple-800 dark:text-purple-300 px-2 py-0.5 rounded-full shrink-0">
+              Accès Encadrement
+            </span>
+          </div>
+        ) : activeChannel.id === 'c-supervision' ? (
+          <div className="bg-purple-50/70 dark:bg-purple-950/30 border-b border-purple-200/60 dark:border-purple-900/40 px-5 py-2 flex items-center gap-2 text-xs text-purple-900 dark:text-purple-200">
+            <GraduationCap size={15} className="text-purple-600 dark:text-purple-400 shrink-0" />
+            <span>
+              Salon d'échange et de remarques avec les professeurs encadrants (<strong>Christelle Voisin</strong> & <strong>Marius Chevalier</strong>).
+            </span>
+          </div>
+        ) : null}
 
         {/* Fil des messages scrollable */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar">

@@ -155,7 +155,7 @@ export const AuthModal: React.FC = () => {
     setErrorMessage('');
     setIsLoading(true);
 
-    const res = await changePassword(oldPassword.trim(), newPassword.trim());
+    const res = await changePassword(oldPassword.trim(), newPassword.trim(), currentUser?.id);
     setIsLoading(false);
 
     if (res.success) {
@@ -225,7 +225,7 @@ export const AuthModal: React.FC = () => {
           {changeSuccess && (
             <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/60 text-emerald-700 dark:text-emerald-300 rounded-xl text-xs flex items-center gap-2">
               <Check size={16} className="shrink-0" />
-              <span>Mot de passe d'équipe mis à jour avec succès !</span>
+              <span>Votre mot de passe personnel a été mis à jour avec succès !</span>
             </div>
           )}
 
@@ -259,9 +259,22 @@ export const AuthModal: React.FC = () => {
                           {member.initials}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className={`text-xs font-bold truncate ${isSelected ? 'text-indigo-950 dark:text-indigo-200' : 'text-slate-800 dark:text-slate-100'}`}>
-                            {member.name}
-                          </p>
+                          <div className="flex items-center gap-1.5">
+                            <p className={`text-xs font-bold truncate ${isSelected ? 'text-indigo-950 dark:text-indigo-200' : 'text-slate-800 dark:text-slate-100'}`}>
+                              {member.name}
+                            </p>
+                            {member.generation && (
+                              <span className={`text-[8px] font-bold px-1.5 py-0.2 rounded-full shrink-0 ${
+                                member.isSupervisor || member.generation.includes('pédagogique')
+                                  ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
+                                  : member.generation.includes('10')
+                                  ? 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800'
+                                  : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                              }`}>
+                                {member.generation}
+                              </span>
+                            )}
+                          </div>
                           <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">{member.role}</p>
                         </div>
                         {isSelected && (
@@ -313,17 +326,17 @@ export const AuthModal: React.FC = () => {
                 )}
               </div>
 
-              {/* Étape 2 : Mot de passe d'équipe */}
+              {/* Étape 2 : Mot de passe personnel */}
               <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                   <Key size={13} className="text-indigo-600 dark:text-indigo-400" />
-                  <span>2. Mot de passe d'équipe</span>
+                  <span>2. Mot de passe de {activeSelectedUser.name.split(' ')[0] || 'connexion'}</span>
                 </label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
-                    placeholder="Entrez le mot de passe (rnf2026)..."
+                    placeholder={`Entrez le mot de passe de ${activeSelectedUser.name.split(' ')[0] || 'connexion'}...`}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white dark:focus:bg-slate-800 transition font-mono"
@@ -337,7 +350,7 @@ export const AuthModal: React.FC = () => {
                   </button>
                 </div>
                 <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                  Mot de passe par défaut : <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">rnf2026</code>
+                  Chaque membre a son propre mot de passe (par défaut : <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">rnf2026</code>)
                 </p>
               </div>
 
@@ -462,10 +475,10 @@ export const AuthModal: React.FC = () => {
               </div>
             </form>
           ) : isChangingPass ? (
-            /* CAS 3 : Changement de mot de passe */
+            /* CAS 3 : Changement de mot de passe personnel */
             <form onSubmit={handleChangePassword} className="space-y-3">
               <p className="text-xs text-slate-600 dark:text-slate-300">
-                Définissez un nouveau mot de passe pour restreindre l'édition aux personnes autorisées.
+                Modifier le mot de passe de <strong>{currentUser?.name || 'mon compte'}</strong>. Définissez votre propre mot de passe personnel.
               </p>
               <div>
                 <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Mot de passe actuel</label>
@@ -478,7 +491,7 @@ export const AuthModal: React.FC = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Nouveau mot de passe</label>
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-300 mb-1">Nouveau mot de passe personnel</label>
                 <input
                   type="password"
                   required
@@ -501,7 +514,7 @@ export const AuthModal: React.FC = () => {
                   disabled={isLoading}
                   className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold"
                 >
-                  Enregistrer le mot de passe
+                  Enregistrer mon mot de passe
                 </button>
               </div>
             </form>
@@ -547,7 +560,7 @@ export const AuthModal: React.FC = () => {
                   className="w-full py-2.5 px-3 bg-white dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition"
                 >
                   <Key size={14} className="text-slate-500 dark:text-slate-400" />
-                  <span>Modifier le mot de passe d'équipe</span>
+                  <span>Modifier mon mot de passe personnel</span>
                 </button>
 
                 <button

@@ -41,7 +41,18 @@ export const HomeHubView: React.FC = () => {
   const totalTasks = currentProject.tasks.length;
   const completedTasks = currentProject.tasks.filter((t) => t.status === 'completed').length;
   const topIdeas = [...ideas].sort((a, b) => b.likes - a.likes).slice(0, 3);
-  const latestMessages = [...messages].slice(-3).reverse();
+
+  const isCurrentUserSupervisor = Boolean(
+    currentUser?.isSupervisor ||
+    currentUser?.role?.toLowerCase().includes('professeur') ||
+    currentUser?.generation?.toLowerCase().includes('pédagogique')
+  );
+
+  const visibleMessages = isCurrentUserSupervisor
+    ? messages.filter((m) => m.channelId === 'c-supervision')
+    : messages;
+
+  const latestMessages = [...visibleMessages].slice(-3).reverse();
 
   return (
     <div className="space-y-6 pb-12 animate-fadeIn max-w-7xl mx-auto w-full">
@@ -229,31 +240,53 @@ export const HomeHubView: React.FC = () => {
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-105 group-hover:bg-emerald-600 group-hover:text-white transition-all shadow-xs">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all shadow-xs ${
+                  isCurrentUserSupervisor
+                    ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 group-hover:bg-purple-600 group-hover:text-white'
+                    : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white'
+                }`}>
                   <MessageSquare size={24} />
                 </div>
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200">
-                  Messagerie Carrée
+                <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                  isCurrentUserSupervisor
+                    ? 'bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200'
+                    : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200'
+                }`}>
+                  {isCurrentUserSupervisor ? 'Supervision Professeurs' : 'Messagerie Carrée'}
                 </span>
               </div>
 
               <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                  Discussions par Sujets
+                <h3 className={`text-base font-bold text-slate-900 dark:text-white transition-colors ${
+                  isCurrentUserSupervisor
+                    ? 'group-hover:text-purple-600 dark:group-hover:text-purple-400'
+                    : 'group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+                }`}>
+                  {isCurrentUserSupervisor ? 'Remarques & Suivi Pédagogique' : 'Discussions par Sujets'}
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                  Salons thématiques (#général, #course-2026, #partenaires, #communication) pour échanger sans se disperser.
+                  {isCurrentUserSupervisor
+                    ? 'Espace réservé pour laisser vos conseils, remarques et suivre les avancées de l’équipe étudiante.'
+                    : 'Salons thématiques (#général, #course, etc.) et salon de suivi avec les professeurs encadrants.'}
                 </p>
               </div>
 
               <div className="pt-2 flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span>{channels.length} salons thématiques actifs</span>
+                <span className={`w-2 h-2 rounded-full ${isCurrentUserSupervisor ? 'bg-purple-500' : 'bg-emerald-500'}`} />
+                <span>
+                  {isCurrentUserSupervisor
+                    ? '1 salon d’encadrement dédié aux retours profs'
+                    : `${channels.length} salons thématiques actifs`}
+                </span>
               </div>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400 group-hover:translate-x-1 transition-transform">
-              <span>Rejoindre les discussions</span>
+            <div className={`mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold group-hover:translate-x-1 transition-transform ${
+              isCurrentUserSupervisor
+                ? 'text-purple-600 dark:text-purple-400'
+                : 'text-emerald-600 dark:text-emerald-400'
+            }`}>
+              <span>{isCurrentUserSupervisor ? "Ouvrir l'espace encadrement" : 'Rejoindre les discussions'}</span>
               <ArrowRight size={15} />
             </div>
           </div>
@@ -433,7 +466,20 @@ export const HomeHubView: React.FC = () => {
                         {isOnline ? 'En ligne' : 'Hors ligne'}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate">{member.role}</p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate">{member.role}</p>
+                      {member.generation && (
+                        <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded-md shrink-0 ${
+                          member.isSupervisor || member.generation.includes('pédagogique')
+                            ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
+                            : member.generation.includes('10')
+                            ? 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800'
+                            : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                        }`}>
+                          {member.generation}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
@@ -448,16 +494,26 @@ export const HomeHubView: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 flex items-center justify-center">
+              <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                isCurrentUserSupervisor
+                  ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300'
+                  : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+              }`}>
                 <MessageSquare size={16} />
               </div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Derniers échanges de l'équipe</h3>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                {isCurrentUserSupervisor ? 'Dernières remarques & échanges de suivi' : "Derniers échanges de l'équipe"}
+              </h3>
             </div>
             <button
               onClick={() => setViewMode('messages')}
-              className="text-xs font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300"
+              className={`text-xs font-bold ${
+                isCurrentUserSupervisor
+                  ? 'text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300'
+                  : 'text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300'
+              }`}
             >
-              Ouvrir le chat →
+              {isCurrentUserSupervisor ? 'Ouvrir les échanges →' : 'Ouvrir le chat →'}
             </button>
           </div>
 
