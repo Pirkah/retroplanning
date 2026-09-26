@@ -43,7 +43,7 @@ export interface RetroplanningTask {
   weekLabel: string; // e.g. "S39", "S40", "S42 (12 oct.)"
   category: string;  // e.g. "Communication", "Logistique", "Activité", "Événement", "Post-événement"
   action: string;
-  assignee: string;  // e.g. "Laurine COGHE", "Toute l'équipe"
+  assignee: string;  // e.g. "Julien Nicolle", "Toute l'équipe"
   status: 'todo' | 'in_progress' | 'completed' | 'event';
   isEventHighlight?: boolean;
 }

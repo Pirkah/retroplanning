@@ -930,7 +930,7 @@ export const RetroplanningView: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    placeholder="Ex: Laurine COGHE, Toute l'équipe..."
+                    placeholder="Ex: Vianney Urbanick, Julien Nicolle, Toute l'équipe..."
                     value={taskFormAssignee}
                     onChange={(e) => setTaskFormAssignee(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"

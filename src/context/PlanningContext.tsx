@@ -10,7 +10,7 @@ import {
   RetroplanningEvent,
   RetroplanningTask
 } from '../types/planning';
-import { DEFAULT_PROJECT, GEA_ENTREPRENEURIAT_PROJECT } from '../data/defaultProject';
+import { DEFAULT_PROJECT } from '../data/defaultProject';
 import { sortTasksChronologically, sortRetroEventsChronologically } from '../utils/scheduler';
 import { getCategoryDefinition, getCategoryColor, STANDARD_CATEGORIES } from '../utils/categories';
 
@@ -222,58 +222,59 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const loaded = parsed.map((p) => {
-            let events = p.events;
-            // Pour le projet principal R&F, charger les événements avec la classification propre
-            if (!events || events.length === 0 || p.id === 'proj-rnf-2026') {
-              if (p.id === 'proj-rnf-2026') events = DEFAULT_PROJECT.events;
-              if (p.id === 'proj-gea-2026') events = GEA_ENTREPRENEURIAT_PROJECT.events;
-            }
+          const loaded = parsed
+            .filter((p: Project) => p.id !== 'proj-gea-2026')
+            .map((p: Project) => {
+              let events = p.events;
+              // Pour le projet principal R&F, charger les événements avec la classification propre
+              if (!events || events.length === 0 || p.id === 'proj-rnf-2026') {
+                events = DEFAULT_PROJECT.events;
+              }
 
-            // Normalisation des tâches : assignation systématique de la couleur officielle de leur catégorie
-            const rawTasks = (p.id === 'proj-rnf-2026' && (!p.tasks || p.tasks.length <= DEFAULT_PROJECT.tasks.length))
-              ? DEFAULT_PROJECT.tasks
-              : (p.tasks || []);
+              // Normalisation des tâches : assignation systématique de la couleur officielle de leur catégorie
+              const rawTasks = (p.id === 'proj-rnf-2026' && (!p.tasks || p.tasks.length <= DEFAULT_PROJECT.tasks.length))
+                ? DEFAULT_PROJECT.tasks
+                : (p.tasks || []);
 
-            const rawMembers = p.members || (p.id === 'proj-gea-2026' ? GEA_ENTREPRENEURIAT_PROJECT.members : DEFAULT_TEAM_MEMBERS);
-            const mergedMembers = [...rawMembers];
-            if (p.id === 'proj-rnf-2026') {
-              DEFAULT_TEAM_MEMBERS.forEach((dm) => {
-                if (!mergedMembers.some((m) => m.id === dm.id || m.name.toLowerCase().includes(dm.name.toLowerCase().split(' ')[0]))) {
-                  mergedMembers.push(dm);
-                }
-              });
-            }
-            const normalizedMembers = mergedMembers.map(normalizeMember);
-            const normalizedTasks = rawTasks.map(normalizeTask);
-            const normalizedEvents = normalizeRetroEvents(events || []);
+              const rawMembers = p.members || DEFAULT_TEAM_MEMBERS;
+              const mergedMembers = [...rawMembers];
+              if (p.id === 'proj-rnf-2026') {
+                DEFAULT_TEAM_MEMBERS.forEach((dm) => {
+                  if (!mergedMembers.some((m) => m.id === dm.id || m.name.toLowerCase().includes(dm.name.toLowerCase().split(' ')[0]))) {
+                    mergedMembers.push(dm);
+                  }
+                });
+              }
+              const normalizedMembers = mergedMembers.map(normalizeMember);
+              const normalizedTasks = rawTasks.map(normalizeTask);
+              const normalizedEvents = normalizeRetroEvents(events || []);
 
-            return {
-              ...p,
-              tasks: sortTasksChronologically(normalizedTasks),
-              members: normalizedMembers,
-              events: sortRetroEventsChronologically(normalizedEvents)
-            };
-          });
+              return {
+                ...p,
+                tasks: sortTasksChronologically(normalizedTasks),
+                members: normalizedMembers,
+                events: sortRetroEventsChronologically(normalizedEvents)
+              };
+            });
 
-          if (!loaded.some((p: Project) => p.id === 'proj-gea-2026')) {
-            loaded.push(GEA_ENTREPRENEURIAT_PROJECT);
+          if (loaded.length > 0) {
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
+            } catch {}
+            return loaded;
           }
-          try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(loaded));
-          } catch {}
-          return loaded;
         }
       }
     } catch (e) {
       console.error('Erreur chargement localStorage:', e);
     }
-    return [DEFAULT_PROJECT, GEA_ENTREPRENEURIAT_PROJECT];
+    return [DEFAULT_PROJECT];
   });
 
   const [activeProjectId, setActiveProjectId] = useState<string>(() => {
     const savedId = localStorage.getItem(ACTIVE_PROJ_KEY);
-    return savedId || projects[0]?.id || DEFAULT_PROJECT.id;
+    if (savedId && savedId !== 'proj-gea-2026') return savedId;
+    return DEFAULT_PROJECT.id;
   });
 
   const [viewMode, setViewModeState] = useState<ViewMode>(() => {
@@ -469,36 +470,43 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             const data = JSON.parse(event.data);
             if (data.type === 'INIT_STATE' && data.payload) {
               if (data.payload.projects && data.payload.projects.length > 0) {
-                const refreshed = data.payload.projects.map((p: Project) => {
-                  let events = p.events;
-                  if (!events || events.length === 0 || (p.id === 'proj-rnf-2026' && events.length < 4)) {
-                    if (p.id === 'proj-rnf-2026') events = DEFAULT_PROJECT.events;
-                    if (p.id === 'proj-gea-2026') events = GEA_ENTREPRENEURIAT_PROJECT.events;
-                  }
-                  return {
-                    ...p,
-                    members: (p.members || []).map(normalizeMember),
-                    tasks: (p.tasks || []).map(normalizeTask),
-                    events: normalizeRetroEvents(events || [])
-                  };
-                });
-                setProjects(refreshed);
-                if (data.payload.activeProjectId) {
-                  setActiveProjectId(data.payload.activeProjectId);
-                }
+                const refreshed = data.payload.projects
+                  .filter((p: Project) => p.id !== 'proj-gea-2026')
+                  .map((p: Project) => {
+                    let events = p.events;
+                    if (!events || events.length === 0 || (p.id === 'proj-rnf-2026' && events.length < 4)) {
+                      events = DEFAULT_PROJECT.events;
+                    }
+                    return {
+                      ...p,
+                      members: (p.members || []).map(normalizeMember),
+                      tasks: (p.tasks || []).map(normalizeTask),
+                      events: normalizeRetroEvents(events || [])
+                    };
+                  });
+                const finalProjects = refreshed.length > 0 ? refreshed : [DEFAULT_PROJECT];
+                setProjects(finalProjects);
+                const targetActiveId = (data.payload.activeProjectId && data.payload.activeProjectId !== 'proj-gea-2026')
+                  ? data.payload.activeProjectId
+                  : DEFAULT_PROJECT.id;
+                setActiveProjectId(targetActiveId);
               }
             } else if (data.type === 'STATE_UPDATED' && data.payload) {
               isBroadcastingRef.current = true;
-              const refreshed = (data.payload.projects || []).map((p: Project) => ({
-                ...p,
-                members: (p.members || []).map(normalizeMember),
-                tasks: (p.tasks || []).map(normalizeTask),
-                events: normalizeRetroEvents(p.events || [])
-              }));
-              setProjects(refreshed);
-              if (data.payload.activeProjectId) {
-                setActiveProjectId(data.payload.activeProjectId);
-              }
+              const refreshed = (data.payload.projects || [])
+                .filter((p: Project) => p.id !== 'proj-gea-2026')
+                .map((p: Project) => ({
+                  ...p,
+                  members: (p.members || []).map(normalizeMember),
+                  tasks: (p.tasks || []).map(normalizeTask),
+                  events: normalizeRetroEvents(p.events || [])
+                }));
+              const finalProjects = refreshed.length > 0 ? refreshed : [DEFAULT_PROJECT];
+              setProjects(finalProjects);
+              const targetActiveId = (data.payload.activeProjectId && data.payload.activeProjectId !== 'proj-gea-2026')
+                ? data.payload.activeProjectId
+                : DEFAULT_PROJECT.id;
+              setActiveProjectId(targetActiveId);
               setTimeout(() => {
                 isBroadcastingRef.current = false;
               }, 50);
