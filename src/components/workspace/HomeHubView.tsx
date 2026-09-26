@@ -31,7 +31,8 @@ export const HomeHubView: React.FC = () => {
     isAuthorized,
     openAuthModal,
     members,
-    onlineCount
+    onlineCount,
+    isMemberOnline
   } = usePlanning();
 
   const { ideas, messages, channels, setActiveChannelId } = useWorkspace();
@@ -398,27 +399,45 @@ export const HomeHubView: React.FC = () => {
               </div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">Équipe Run & Fun</h3>
             </div>
-            <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500">{members.length} membres</span>
+            <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+              {onlineCount} en ligne
+            </span>
           </div>
 
           <div className="space-y-2.5">
-            {members.map((member) => (
-              <div
-                key={member.id}
-                className="p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/80 hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition flex items-center gap-3"
-              >
+            {members.map((member) => {
+              const isOnline = isMemberOnline(member.id) || isMemberOnline(member.name);
+              return (
                 <div
-                  className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-2xs shrink-0"
-                  style={{ backgroundColor: member.color }}
+                  key={member.id}
+                  className="p-2.5 rounded-xl border border-slate-100 dark:border-slate-800/80 hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition flex items-center gap-3"
                 >
-                  {member.initials}
+                  <div className="relative shrink-0">
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-2xs"
+                      style={{ backgroundColor: member.color }}
+                    >
+                      {member.initials}
+                    </div>
+                    <span
+                      className={`absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2 border-white dark:border-slate-900 transition-colors ${
+                        isOnline ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'
+                      }`}
+                      title={isOnline ? 'En ligne' : 'Hors ligne'}
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-1">
+                      <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{member.name}</p>
+                      <span className={`text-[10px] font-medium shrink-0 ${isOnline ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-400 dark:text-slate-500'}`}>
+                        {isOnline ? 'En ligne' : 'Hors ligne'}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate">{member.role}</p>
+                  </div>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{member.name}</p>
-                  <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate">{member.role}</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

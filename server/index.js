@@ -134,7 +134,13 @@ function broadcast(message, senderSocket = null) {
 
 function broadcastPresence() {
   const count = wss.clients.size;
-  const payload = JSON.stringify({ type: 'PRESENCE', count });
+  const users = [];
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN && client.user) {
+      users.push(client.user);
+    }
+  });
+  const payload = JSON.stringify({ type: 'PRESENCE', count, users });
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(payload);
@@ -158,6 +164,12 @@ wss.on('connection', (ws) => {
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message.toString());
+
+      if (data.type === 'IDENTIFY') {
+        ws.user = data.user || null;
+        broadcastPresence();
+        return;
+      }
 
       if (data.type === 'SYNC_PROJECTS') {
         const currentPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';

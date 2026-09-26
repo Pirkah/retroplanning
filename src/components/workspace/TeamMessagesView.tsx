@@ -28,7 +28,7 @@ const CHANNEL_ICONS: Record<string, any> = {
 const COMMON_EMOJIS = ['👍', '❤️', '🔥', '🎯', '🎉', '💪', '👏'];
 
 export const TeamMessagesView: React.FC = () => {
-  const { currentUser, isAuthorized, openAuthModal, members, onlineCount } = usePlanning();
+  const { currentUser, isAuthorized, openAuthModal, members, onlineCount, isMemberOnline } = usePlanning();
   const { channels, activeChannelId, setActiveChannelId, messages, addMessage, addReaction } = useWorkspace();
 
   const [inputMessage, setInputMessage] = useState('');
@@ -174,26 +174,39 @@ export const TeamMessagesView: React.FC = () => {
             </div>
 
             <div className="space-y-1">
-              {members.map((member) => (
-                <div
-                  key={member.id}
-                  className="px-2 py-1.5 rounded-lg flex items-center gap-2 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 transition"
-                >
-                  <div className="relative">
-                    <div
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-2xs"
-                      style={{ backgroundColor: member.color }}
-                    >
-                      {member.initials}
+              {members.map((member) => {
+                const isOnline = isMemberOnline(member.id) || isMemberOnline(member.name);
+                return (
+                  <div
+                    key={member.id}
+                    className="px-2 py-1.5 rounded-lg flex items-center gap-2 hover:bg-slate-100/80 dark:hover:bg-slate-800/60 transition"
+                  >
+                    <div className="relative shrink-0">
+                      <div
+                        className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-2xs"
+                        style={{ backgroundColor: member.color }}
+                      >
+                        {member.initials}
+                      </div>
+                      <span
+                        className={`absolute bottom-0 right-0 w-2 h-2 rounded-full border border-white dark:border-slate-900 transition-colors ${
+                          isOnline ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'
+                        }`}
+                        title={isOnline ? 'En ligne' : 'Hors ligne'}
+                      />
                     </div>
-                    <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-white dark:border-slate-900" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{member.name}</p>
+                        <span className={`text-[9px] font-medium shrink-0 ${isOnline ? 'text-emerald-600 dark:text-emerald-400 font-semibold' : 'text-slate-400 dark:text-slate-500'}`}>
+                          {isOnline ? 'En ligne' : 'Hors ligne'}
+                        </span>
+                      </div>
+                      <p className="text-[9px] text-slate-400 dark:text-slate-500 truncate">{member.role}</p>
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{member.name}</p>
-                    <p className="text-[9px] text-slate-400 dark:text-slate-500 truncate">{member.role}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>

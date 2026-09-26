@@ -43,6 +43,8 @@ interface PlanningContextType {
 
   // Temps réel & Équipe
   onlineCount: number;
+  onlineUsers: ConnectedUser[];
+  isMemberOnline: (memberIdOrName: string) => boolean;
   isWebSocketConnected: boolean;
   serverInfo: { localIp: string; port: number } | null;
   members: TeamMember[];
@@ -317,6 +319,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // États WebSocket & Présence
   const [onlineCount, setOnlineCount] = useState<number>(1);
+  const [onlineUsers, setOnlineUsers] = useState<ConnectedUser[]>([]);
   const [isWebSocketConnected, setIsWebSocketConnected] = useState<boolean>(false);
   const [serverInfo, setServerInfo] = useState<{ localIp: string; port: number } | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
@@ -391,6 +394,11 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         ws.onopen = () => {
           setIsWebSocketConnected(true);
           console.log('[WS] Connecté au serveur collaboratif :', wsUrl);
+          if (currentUser) {
+            try {
+              ws.send(JSON.stringify({ type: 'IDENTIFY', user: currentUser }));
+            } catch {}
+          }
         };
 
         ws.onmessage = (event) => {
@@ -433,6 +441,9 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               }, 50);
             } else if (data.type === 'PRESENCE') {
               setOnlineCount(data.count || 1);
+              if (Array.isArray(data.users)) {
+                setOnlineUsers(data.users);
+              }
             }
           } catch (e) {
             console.error('[WS] Erreur parsing message:', e);
@@ -462,6 +473,42 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
     };
   }, []);
+
+  // Informe le serveur collaboratif de l'identité de l'utilisateur connecté
+  useEffect(() => {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      try {
+        socketRef.current.send(JSON.stringify({
+          type: 'IDENTIFY',
+          user: currentUser || null
+        }));
+      } catch {}
+    }
+  }, [currentUser]);
+
+  // Détermine si un membre est actuellement connecté (soit session locale, soit diffusé par WebSocket)
+  const isMemberOnline = (memberIdOrName: string): boolean => {
+    if (!memberIdOrName) return false;
+    const target = memberIdOrName.trim().toLowerCase();
+
+    // 1. Est-ce l'utilisateur actuellement connecté dans cette session ?
+    if (currentUser) {
+      if (currentUser.id && currentUser.id.toLowerCase() === target) return true;
+      if (currentUser.name && currentUser.name.trim().toLowerCase() === target) return true;
+    }
+
+    // 2. Est-ce l'un des utilisateurs connectés diffusés par le serveur WebSocket ?
+    if (onlineUsers && onlineUsers.length > 0) {
+      return onlineUsers.some((u) => {
+        if (!u) return false;
+        if (u.id && u.id.toLowerCase() === target) return true;
+        if (u.name && u.name.trim().toLowerCase() === target) return true;
+        return false;
+      });
+    }
+
+    return false;
+  };
 
   // Synchronisation des modifications vers les autres clients
   const broadcastState = (newProjects: Project[], newActiveId: string) => {
@@ -895,6 +942,8 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         retroActiveTab,
         setRetroActiveTab,
         onlineCount,
+        onlineUsers,
+        isMemberOnline,
         isWebSocketConnected,
         serverInfo,
         members,
