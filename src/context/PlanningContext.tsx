@@ -121,6 +121,18 @@ const normalizeMember = (m: TeamMember): TeamMember => {
     updated.role = 'Chargé de communication externe';
   } else if (id === 'm-sina' || name.includes('sina')) {
     updated.role = 'Chargé de communication externe';
+  } else if (id === 'm-christelle' || name.includes('christelle') || name.includes('voisin')) {
+    updated.id = 'm-christelle';
+    updated.name = 'Christelle Voisin';
+    updated.role = 'Professeure encadrante';
+    updated.initials = 'CV';
+    updated.color = updated.color || '#8B5CF6';
+  } else if (id === 'm-marius' || name.includes('marius') || name.includes('chevalier')) {
+    updated.id = 'm-marius';
+    updated.name = 'Marius Chevalier';
+    updated.role = 'Professeur encadrant';
+    updated.initials = 'MC';
+    updated.color = updated.color || '#0EA5E9';
   }
   return updated;
 };
@@ -143,6 +155,18 @@ const normalizeConnectedUser = (u: ConnectedUser): ConnectedUser => {
     updated.role = 'Chargé de communication externe';
   } else if (id === 'm-sina' || name.includes('sina')) {
     updated.role = 'Chargé de communication externe';
+  } else if (id === 'm-christelle' || name.includes('christelle') || name.includes('voisin')) {
+    updated.id = 'm-christelle';
+    updated.name = 'Christelle Voisin';
+    updated.role = 'Professeure encadrante';
+    updated.initials = 'CV';
+    updated.color = updated.color || '#8B5CF6';
+  } else if (id === 'm-marius' || name.includes('marius') || name.includes('chevalier')) {
+    updated.id = 'm-marius';
+    updated.name = 'Marius Chevalier';
+    updated.role = 'Professeur encadrant';
+    updated.initials = 'MC';
+    updated.color = updated.color || '#0EA5E9';
   }
   return updated;
 };
@@ -190,7 +214,15 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               : (p.tasks || []);
 
             const rawMembers = p.members || (p.id === 'proj-gea-2026' ? GEA_ENTREPRENEURIAT_PROJECT.members : DEFAULT_TEAM_MEMBERS);
-            const normalizedMembers = rawMembers.map(normalizeMember);
+            const mergedMembers = [...rawMembers];
+            if (p.id === 'proj-rnf-2026') {
+              DEFAULT_TEAM_MEMBERS.forEach((dm) => {
+                if (!mergedMembers.some((m) => m.id === dm.id || m.name.toLowerCase().includes(dm.name.toLowerCase().split(' ')[0]))) {
+                  mergedMembers.push(dm);
+                }
+              });
+            }
+            const normalizedMembers = mergedMembers.map(normalizeMember);
             const normalizedTasks = rawTasks.map(normalizeTask);
             const normalizedEvents = normalizeRetroEvents(events || []);
 

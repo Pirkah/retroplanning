@@ -17,7 +17,8 @@ import {
   Check,
   TrendingUp,
   MessageCircle,
-  ThumbsUp
+  ThumbsUp,
+  CalendarPlus
 } from 'lucide-react';
 
 const CATEGORIES: IdeaCategory[] = [
@@ -37,7 +38,7 @@ const STATUS_LABELS: Record<IdeaStatus, { label: string; bg: string; text: strin
 };
 
 export const IdeasNotesView: React.FC = () => {
-  const { isAuthorized, openAuthModal, currentUser } = usePlanning();
+  const { isAuthorized, openAuthModal, currentUser, addTask, currentProject } = usePlanning();
   const { ideas, addIdea, toggleLikeIdea, updateIdeaStatus, deleteIdea } = useWorkspace();
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -88,6 +89,42 @@ export const IdeasNotesView: React.FC = () => {
     setCategory('Course & Parcours');
     setTagsInput('');
     setIsModalOpen(false);
+  };
+
+  const isIdeaPlanned = (idea: IdeaItem) => {
+    return (currentProject?.tasks || []).some(
+      (t) => t.title.toLowerCase().includes(idea.title.toLowerCase().slice(0, 15)) ||
+             (t.description && t.description.toLowerCase().includes(idea.title.toLowerCase().slice(0, 15)))
+    );
+  };
+
+  const handleConvertToTask = (idea: IdeaItem) => {
+    if (!isAuthorized) {
+      openAuthModal();
+      return;
+    }
+    const today = new Date().toISOString().split('T')[0];
+    const twoWeeksLater = new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0];
+    addTask({
+      title: idea.title,
+      description: `${idea.content} (Issue de la boîte à idées par ${idea.authorName})`,
+      startDate: today,
+      endDate: twoWeeksLater,
+      color: '#8B5CF6',
+      status: 'completed',
+      priority: 'high',
+      progress: 100,
+      category: idea.category.includes('Communication')
+        ? 'Communication & Médias'
+        : idea.category.includes('Partenaires')
+        ? 'Partenaires & Sponsors'
+        : idea.category.includes('Logistique')
+        ? 'Logistique & Sécurité'
+        : 'Événements & Animations',
+      assignee: currentUser?.name || idea.authorName,
+      assigneeId: currentUser?.id
+    });
+    updateIdeaStatus(idea.id, 'implemented');
   };
 
   return (
@@ -300,6 +337,22 @@ export const IdeasNotesView: React.FC = () => {
                   </div>
 
                   <div className="flex items-center gap-1.5">
+                    {/* Bouton concrétiser / réaliser en tâche officielle */}
+                    <button
+                      onClick={() => handleConvertToTask(idea)}
+                      className={`px-2 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-2xs ${
+                        isIdeaPlanned(idea) || idea.status === 'implemented'
+                          ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
+                          : 'bg-slate-50 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/60 text-slate-600 dark:text-slate-300 hover:text-purple-700 dark:hover:text-purple-300 border border-slate-200 dark:border-slate-700'
+                      }`}
+                      title={isIdeaPlanned(idea) || idea.status === 'implemented' ? 'Idée planifiée et réalisée dans le planning' : 'Transformer cette idée en tâche dans le Gantt'}
+                    >
+                      <CalendarPlus size={12} className={isIdeaPlanned(idea) || idea.status === 'implemented' ? 'text-purple-600 dark:text-purple-400' : 'text-slate-400 dark:text-slate-500'} />
+                      <span className="text-[11px] hidden sm:inline">
+                        {isIdeaPlanned(idea) || idea.status === 'implemented' ? 'Réalisée' : 'Faire'}
+                      </span>
+                    </button>
+
                     {/* Bouton voter / aimer */}
                     <button
                       onClick={() => toggleLikeIdea(idea.id)}

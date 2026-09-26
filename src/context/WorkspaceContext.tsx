@@ -95,7 +95,12 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const saved = localStorage.getItem(STORAGE_IDEAS);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((item: IdeaItem) => ({
+            ...item,
+            status: 'implemented' as const
+          }));
+        }
       }
     } catch (e) {
       console.error('Erreur chargement idées:', e);
