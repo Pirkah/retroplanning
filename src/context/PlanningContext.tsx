@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import {
   Project,
   Task,
@@ -225,18 +225,19 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           const loaded = parsed
             .filter((p: Project) => p.id !== 'proj-gea-2026')
             .map((p: Project) => {
-              let events = p.events;
-              // Pour le projet principal R&F, charger les événements avec la classification propre
-              if (!events || events.length === 0 || p.id === 'proj-rnf-2026') {
-                events = DEFAULT_PROJECT.events;
-              }
+              // Ne JAMAIS écraser les événements existants s'ils sont déjà sauvegardés
+              const rawEvents = (p.events && p.events.length > 0)
+                ? p.events
+                : (DEFAULT_PROJECT.events || []);
 
-              // Normalisation des tâches : assignation systématique de la couleur officielle de leur catégorie
-              const rawTasks = (p.id === 'proj-rnf-2026' && (!p.tasks || p.tasks.length <= DEFAULT_PROJECT.tasks.length))
-                ? DEFAULT_PROJECT.tasks
-                : (p.tasks || []);
+              // Ne JAMAIS écraser les tâches existantes si elles sont déjà sauvegardées
+              const rawTasks = (p.tasks && p.tasks.length > 0)
+                ? p.tasks
+                : DEFAULT_PROJECT.tasks;
 
-              const rawMembers = p.members || DEFAULT_TEAM_MEMBERS;
+              const rawMembers = (p.members && p.members.length > 0)
+                ? p.members
+                : DEFAULT_TEAM_MEMBERS;
               const mergedMembers = [...rawMembers];
               if (p.id === 'proj-rnf-2026') {
                 DEFAULT_TEAM_MEMBERS.forEach((dm) => {
@@ -247,10 +248,11 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               }
               const normalizedMembers = mergedMembers.map(normalizeMember);
               const normalizedTasks = rawTasks.map(normalizeTask);
-              const normalizedEvents = normalizeRetroEvents(events || []);
+              const normalizedEvents = normalizeRetroEvents(rawEvents);
 
               return {
                 ...p,
+                updatedAt: p.updatedAt || new Date().toISOString(),
                 tasks: sortTasksChronologically(normalizedTasks),
                 members: normalizedMembers,
                 events: sortRetroEventsChronologically(normalizedEvents)
@@ -380,66 +382,172 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const socketRef = useRef<WebSocket | null>(null);
   const isBroadcastingRef = useRef<boolean>(false);
 
-  // Vérifie si le mot de passe sauvegardé est valide au démarrage
+  // Références d'état pour éviter les fermetures lexicales périmées (stale closures)
+  const projectsRef = useRef<Project[]>(projects);
   useEffect(() => {
-    const checkSavedAuth = async () => {
-      const savedPass = localStorage.getItem(AUTH_KEY);
-      const savedUserStr = localStorage.getItem(USER_KEY);
-      let savedMemberId: string | undefined = undefined;
-      try {
-        if (savedUserStr) {
-          const parsed = JSON.parse(savedUserStr);
-          savedMemberId = parsed?.id;
-        }
-      } catch {}
+    projectsRef.current = projects;
+  }, [projects]);
 
-      if (savedPass) {
-        try {
-          const isDev = window.location.port === '5173';
-          const apiUrl = isDev
-            ? `http://${window.location.hostname}:3001/api/auth/verify`
-            : '/api/auth/verify';
-          const res = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ password: savedPass, memberId: savedMemberId })
-          });
-          if (res.ok) {
-            setIsAuthorized(true);
-            setAuthPassword(savedPass);
-          } else {
-            localStorage.removeItem(AUTH_KEY);
-            localStorage.removeItem(USER_KEY);
-            setCurrentUser(null);
-          }
-        } catch {
-          // Mode local/offline
-          setIsAuthorized(true);
-        }
+  const activeProjectIdRef = useRef<string>(activeProjectId);
+  useEffect(() => {
+    activeProjectIdRef.current = activeProjectId;
+  }, [activeProjectId]);
+
+  const authPasswordRef = useRef<string>(authPassword);
+  useEffect(() => {
+    authPasswordRef.current = authPassword;
+  }, [authPassword]);
+
+  const currentUserRef = useRef<ConnectedUser | null>(currentUser);
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
+
+  // Calcul du timestamp le plus récent parmi une liste de projets
+  const getLatestProjectTimestamp = (projs: Project[]): number => {
+    if (!projs || !Array.isArray(projs)) return 0;
+    return projs.reduce((max, p) => {
+      const t = p.updatedAt ? new Date(p.updatedAt).getTime() : (p.createdAt ? new Date(p.createdAt).getTime() : 0);
+      return isNaN(t) ? max : Math.max(max, t);
+    }, 0);
+  };
+
+  // Synchronisation sécurisée du client vers le serveur (WebSocket + HTTP)
+  const syncLocalToServer = useCallback((projs: Project[], activeId: string) => {
+    const now = new Date().toISOString();
+    // 1. Envoi prioritaire par WebSocket
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      try {
+        socketRef.current.send(
+          JSON.stringify({
+            type: 'SYNC_PROJECTS',
+            password: authPasswordRef.current || 'rnf2026',
+            memberId: currentUserRef.current?.id,
+            payload: {
+              projects: projs,
+              activeProjectId: activeId,
+              lastModified: now
+            }
+          })
+        );
+      } catch (err) {
+        console.warn('[WS] Erreur syncLocalToServer:', err);
       }
-    };
-    checkSavedAuth();
+    }
+
+    // 2. Envoi HTTP de sécurité
+    try {
+      const isDev = window.location.port === '5173';
+      const syncUrl = isDev
+        ? `http://${window.location.hostname}:3001/api/projects/sync`
+        : '/api/projects/sync';
+      fetch(syncUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: authPasswordRef.current || 'rnf2026',
+          memberId: currentUserRef.current?.id,
+          projects: projs,
+          activeProjectId: activeId,
+          lastModified: now
+        })
+      }).catch(() => {});
+    } catch {}
   }, []);
 
-  // Récupère les infos du serveur pour le partage
+  // Réconciliation intelligente des projets entrants (HTTP, INIT_STATE, STATE_UPDATED)
+  const handleIncomingState = useCallback((
+    incomingProjects: Project[],
+    incomingActiveId: string | undefined,
+    incomingLastModified: string | undefined,
+    source: 'HTTP' | 'INIT_STATE' | 'STATE_UPDATED'
+  ) => {
+    if (!incomingProjects || !Array.isArray(incomingProjects) || incomingProjects.length === 0) return;
+
+    const validProjects = incomingProjects
+      .filter((p: Project) => p.id !== 'proj-gea-2026')
+      .map((p: Project) => {
+        const events = (p.events && p.events.length > 0) ? p.events : (DEFAULT_PROJECT.events || []);
+        const tasks = (p.tasks && p.tasks.length > 0) ? p.tasks : DEFAULT_PROJECT.tasks;
+        const members = (p.members && p.members.length > 0 ? p.members : DEFAULT_TEAM_MEMBERS);
+        return {
+          ...p,
+          updatedAt: p.updatedAt || incomingLastModified || new Date().toISOString(),
+          members: members.map(normalizeMember),
+          tasks: tasks.map(normalizeTask),
+          events: normalizeRetroEvents(events)
+        };
+      });
+
+    if (validProjects.length === 0) return;
+
+    const targetActiveId = (incomingActiveId && incomingActiveId !== 'proj-gea-2026')
+      ? incomingActiveId
+      : DEFAULT_PROJECT.id;
+
+    // Si c'est un STATE_UPDATED en direct d'un collègue
+    if (source === 'STATE_UPDATED') {
+      isBroadcastingRef.current = true;
+      setProjects(validProjects);
+      setActiveProjectId(targetActiveId);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(validProjects));
+        localStorage.setItem(ACTIVE_PROJ_KEY, targetActiveId);
+      } catch {}
+      setTimeout(() => {
+        isBroadcastingRef.current = false;
+      }, 50);
+      return;
+    }
+
+    // Pour initialisation (HTTP ou INIT_STATE), vérifier les horodatages
+    const serverTime = incomingLastModified
+      ? new Date(incomingLastModified).getTime()
+      : getLatestProjectTimestamp(validProjects);
+    const clientTime = getLatestProjectTimestamp(projectsRef.current);
+
+    // Si le client local possède des données plus récentes (ex: serveur Render redémarré avec un état disque antérieur)
+    if (clientTime > serverTime && clientTime > 0) {
+      console.log(`[Sync] Le client local possède des données plus récentes (${new Date(clientTime).toISOString()}) que le serveur (${new Date(serverTime).toISOString()}). Restauration vers le serveur.`);
+      syncLocalToServer(projectsRef.current, activeProjectIdRef.current);
+    } else {
+      console.log(`[Sync] Application des données du serveur (${source}).`);
+      setProjects(validProjects);
+      setActiveProjectId(targetActiveId);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(validProjects));
+        localStorage.setItem(ACTIVE_PROJ_KEY, targetActiveId);
+      } catch {}
+    }
+  }, [syncLocalToServer]);
+
+
+
+  // Récupération initiale via HTTP (chargement immédiat et protection anti-perte Render)
   useEffect(() => {
-    const fetchInfo = async () => {
+    let isCancelled = false;
+    const fetchInitialProjects = async () => {
       try {
         const isDev = window.location.port === '5173';
         const apiUrl = isDev
-          ? `http://${window.location.hostname}:3001/api/info`
-          : '/api/info';
+          ? `http://${window.location.hostname}:3001/api/projects`
+          : '/api/projects';
         const res = await fetch(apiUrl);
-        if (res.ok) {
+        if (res.ok && !isCancelled) {
           const data = await res.json();
-          setServerInfo({ localIp: data.localIp, port: data.clientPort });
+          if (data && data.projects && data.projects.length > 0) {
+            handleIncomingState(data.projects, data.activeProjectId, data.lastModified, 'HTTP');
+          }
         }
       } catch (err) {
-        // Mode hors ligne / pas encore de serveur actif
+        // Mode hors ligne ou attente démarrage serveur
       }
     };
-    fetchInfo();
-  }, []);
+    fetchInitialProjects();
+    return () => {
+      isCancelled = true;
+    };
+  }, [handleIncomingState]);
 
   // Connexion WebSocket temps réel compatible Render (WSS / HTTPS)
   useEffect(() => {
@@ -470,46 +578,22 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             const data = JSON.parse(event.data);
             if (data.type === 'INIT_STATE' && data.payload) {
               if (data.payload.projects && data.payload.projects.length > 0) {
-                const refreshed = data.payload.projects
-                  .filter((p: Project) => p.id !== 'proj-gea-2026')
-                  .map((p: Project) => {
-                    let events = p.events;
-                    if (!events || events.length === 0 || (p.id === 'proj-rnf-2026' && events.length < 4)) {
-                      events = DEFAULT_PROJECT.events;
-                    }
-                    return {
-                      ...p,
-                      members: (p.members || []).map(normalizeMember),
-                      tasks: (p.tasks || []).map(normalizeTask),
-                      events: normalizeRetroEvents(events || [])
-                    };
-                  });
-                const finalProjects = refreshed.length > 0 ? refreshed : [DEFAULT_PROJECT];
-                setProjects(finalProjects);
-                const targetActiveId = (data.payload.activeProjectId && data.payload.activeProjectId !== 'proj-gea-2026')
-                  ? data.payload.activeProjectId
-                  : DEFAULT_PROJECT.id;
-                setActiveProjectId(targetActiveId);
+                handleIncomingState(
+                  data.payload.projects,
+                  data.payload.activeProjectId,
+                  data.payload.lastModified,
+                  'INIT_STATE'
+                );
               }
             } else if (data.type === 'STATE_UPDATED' && data.payload) {
-              isBroadcastingRef.current = true;
-              const refreshed = (data.payload.projects || [])
-                .filter((p: Project) => p.id !== 'proj-gea-2026')
-                .map((p: Project) => ({
-                  ...p,
-                  members: (p.members || []).map(normalizeMember),
-                  tasks: (p.tasks || []).map(normalizeTask),
-                  events: normalizeRetroEvents(p.events || [])
-                }));
-              const finalProjects = refreshed.length > 0 ? refreshed : [DEFAULT_PROJECT];
-              setProjects(finalProjects);
-              const targetActiveId = (data.payload.activeProjectId && data.payload.activeProjectId !== 'proj-gea-2026')
-                ? data.payload.activeProjectId
-                : DEFAULT_PROJECT.id;
-              setActiveProjectId(targetActiveId);
-              setTimeout(() => {
-                isBroadcastingRef.current = false;
-              }, 50);
+              if (data.payload.projects && data.payload.projects.length > 0) {
+                handleIncomingState(
+                  data.payload.projects,
+                  data.payload.activeProjectId,
+                  data.payload.lastModified,
+                  'STATE_UPDATED'
+                );
+              }
             } else if (data.type === 'PRESENCE') {
               setOnlineCount(data.count || 1);
               if (Array.isArray(data.users)) {
@@ -583,9 +667,15 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Synchronisation des modifications vers les autres clients
   const broadcastState = (newProjects: Project[], newActiveId: string) => {
-    // Sauvegarde locale
+    const now = new Date().toISOString();
+    const stampedProjects = newProjects.map((p) => ({
+      ...p,
+      updatedAt: p.id === newActiveId ? now : (p.updatedAt || now)
+    }));
+
+    // Sauvegarde locale immédiate
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newProjects));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(stampedProjects));
       localStorage.setItem(ACTIVE_PROJ_KEY, newActiveId);
     } catch (e) {
       console.error(e);
@@ -593,18 +683,42 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     // Diffusion WebSocket aux collègues
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN && !isBroadcastingRef.current) {
-      socketRef.current.send(
-        JSON.stringify({
-          type: 'SYNC_PROJECTS',
-          password: authPassword,
-          memberId: currentUser?.id,
-          payload: {
-            projects: newProjects,
-            activeProjectId: newActiveId
-          }
-        })
-      );
+      try {
+        socketRef.current.send(
+          JSON.stringify({
+            type: 'SYNC_PROJECTS',
+            password: authPassword || 'rnf2026',
+            memberId: currentUser?.id,
+            payload: {
+              projects: stampedProjects,
+              activeProjectId: newActiveId,
+              lastModified: now
+            }
+          })
+        );
+      } catch (err) {
+        console.warn('[WS] Erreur send broadcastState:', err);
+      }
     }
+
+    // Sauvegarde HTTP de sécurité (fallback si WebSocket reconnecte)
+    try {
+      const isDev = window.location.port === '5173';
+      const syncUrl = isDev
+        ? `http://${window.location.hostname}:3001/api/projects/sync`
+        : '/api/projects/sync';
+      fetch(syncUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: authPassword || 'rnf2026',
+          memberId: currentUser?.id,
+          projects: stampedProjects,
+          activeProjectId: newActiveId,
+          lastModified: now
+        })
+      }).catch(() => {});
+    } catch {}
   };
 
   const unlockEditMode = async (password: string, user?: ConnectedUser): Promise<boolean> => {

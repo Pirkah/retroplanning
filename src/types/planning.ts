@@ -63,6 +63,7 @@ export interface Project {
   name: string;
   description?: string;
   createdAt: string;
+  updatedAt?: string;
   tasks: Task[];
   members?: TeamMember[];
   events?: RetroplanningEvent[];

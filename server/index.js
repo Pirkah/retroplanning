@@ -65,14 +65,19 @@ const DEFAULT_PASSWORD = process.env.EDIT_PASSWORD || 'rnf2026';
 
 let store = loadStore();
 
-// Assure la présence de la section sécurité
+// Assure la présence de la section sécurité et du timestamp de modification
 if (!store) {
   store = {
     projects: [],
     activeProjectId: null,
+    lastModified: new Date().toISOString(),
     security: { editPassword: DEFAULT_PASSWORD, userPasswords: {} }
   };
 } else {
+  if (!store.lastModified) {
+    store.lastModified = new Date().toISOString();
+    saveStore(store);
+  }
   if (!store.security) {
     store.security = { editPassword: DEFAULT_PASSWORD, userPasswords: {} };
     saveStore(store);
@@ -95,10 +100,49 @@ app.get('/api/projects', (req, res) => {
   // Masque le mot de passe dans le retour public
   if (store) {
     const { security, ...safeStore } = store;
-    res.json(safeStore);
+    res.json({
+      ...safeStore,
+      lastModified: store.lastModified || new Date().toISOString()
+    });
   } else {
-    res.json({ projects: [], activeProjectId: null });
+    res.json({ projects: [], activeProjectId: null, lastModified: new Date().toISOString() });
   }
+});
+
+// Synchronisation HTTP de sécurité (fallback si WebSocket temporairement déconnecté)
+app.post('/api/projects/sync', (req, res) => {
+  const { password, memberId, projects, activeProjectId, lastModified } = req.body || {};
+  const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
+  const memberPassword = (memberId && store?.security?.userPasswords?.[memberId]) || masterPassword;
+
+  if (password && password !== memberPassword && password !== masterPassword) {
+    return res.status(401).json({ success: false, message: 'Mot de passe incorrect pour la synchronisation' });
+  }
+
+  if (Array.isArray(projects) && projects.length > 0) {
+    const now = lastModified || new Date().toISOString();
+    store = {
+      ...store,
+      projects,
+      activeProjectId: activeProjectId || store.activeProjectId,
+      lastModified: now
+    };
+    saveStore(store);
+
+    const { security, ...safeStore } = store;
+    broadcast({
+      type: 'STATE_UPDATED',
+      payload: {
+        ...safeStore,
+        lastModified: now
+      },
+      senderName: 'Sauvegarde Cloud HTTP'
+    });
+
+    return res.json({ success: true, lastModified: now });
+  }
+
+  return res.status(400).json({ success: false, message: 'Données de projets invalides' });
 });
 
 // Vérification du mot de passe de modification (général ou spécifique utilisateur)
@@ -171,7 +215,10 @@ wss.on('connection', (ws) => {
     const { security, ...safeStore } = store;
     ws.send(JSON.stringify({
       type: 'INIT_STATE',
-      payload: safeStore
+      payload: {
+        ...safeStore,
+        lastModified: store.lastModified || new Date().toISOString()
+      }
     }));
   }
 
@@ -201,11 +248,14 @@ wss.on('connection', (ws) => {
           return;
         }
 
-        // Sauvegarde avec préservation de la sécurité
+        const now = data.payload.lastModified || new Date().toISOString();
+
+        // Sauvegarde avec préservation de la sécurité et timestamp
         const updatedStore = {
           ...store,
           projects: data.payload.projects,
-          activeProjectId: data.payload.activeProjectId
+          activeProjectId: data.payload.activeProjectId,
+          lastModified: now
         };
         store = updatedStore;
         saveStore(store);
@@ -213,7 +263,10 @@ wss.on('connection', (ws) => {
         const { security, ...safeStore } = store;
         broadcast({
           type: 'STATE_UPDATED',
-          payload: safeStore,
+          payload: {
+            ...safeStore,
+            lastModified: now
+          },
           senderName: data.senderName || 'Un collaborateur'
         }, ws);
       }
