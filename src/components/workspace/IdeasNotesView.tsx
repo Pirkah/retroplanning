@@ -53,7 +53,7 @@ export const IdeasNotesView: React.FC = () => {
   const [tagsInput, setTagsInput] = useState('');
 
   const filteredIdeas = useMemo(() => {
-    return ideas.filter((idea) => {
+    const list = ideas.filter((idea) => {
       if (selectedCategory !== 'all' && idea.category !== selectedCategory) return false;
       if (selectedStatus !== 'all' && idea.status !== selectedStatus) return false;
       if (searchQuery.trim()) {
@@ -66,6 +66,7 @@ export const IdeasNotesView: React.FC = () => {
       }
       return true;
     });
+    return [...list].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
   }, [ideas, selectedCategory, selectedStatus, searchQuery]);
 
   const handleCreateIdea = (e: React.FormEvent) => {

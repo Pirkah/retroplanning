@@ -14,7 +14,7 @@ import { HomeHubView } from './components/workspace/HomeHubView';
 import { IdeasNotesView } from './components/workspace/IdeasNotesView';
 import { TeamMessagesView } from './components/workspace/TeamMessagesView';
 import { CheckCircle2, Clock, Sparkles, Eye, Lock } from 'lucide-react';
-import { formatDateFr } from './utils/scheduler';
+import { formatDateFr, sortTasksChronologically } from './utils/scheduler';
 
 const MainLayout: React.FC = () => {
   const { viewMode, currentProject, members, isAuthorized, openAuthModal } = usePlanning();
@@ -22,7 +22,9 @@ const MainLayout: React.FC = () => {
   const totalTasks = currentProject.tasks.length;
   const completedTasks = currentProject.tasks.filter((t) => t.status === 'completed').length;
   const inProgressTasks = currentProject.tasks.filter((t) => t.status === 'in_progress').length;
-  const nextMilestone = currentProject.tasks.find((t) => t.isMilestone && t.status !== 'completed');
+  const nextMilestone = sortTasksChronologically(
+    currentProject.tasks.filter((t) => t.isMilestone && t.status !== 'completed')
+  )[0];
 
   return (
     <div className="min-h-screen bg-slate-100/70 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-200">

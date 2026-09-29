@@ -1,14 +1,8 @@
-import { Project, DEFAULT_TEAM_MEMBERS } from '../types/planning';
-import { getCategoryColor } from '../utils/categories';
+import { Project, DEFAULT_TEAM_MEMBERS, Task, RetroplanningEvent } from '../types/planning';
+import { sortTasksChronologically, sortRetroEventsChronologically } from '../utils/scheduler';
 
-export const DEFAULT_PROJECT: Project = {
-  id: 'proj-rnf-2026',
-  name: 'Rétroplanning Course R&F 2026 - 2027',
-  description: 'Rétroplanning prévisionnel complet de la course et des actions associatives avec suivi en temps réel.',
-  createdAt: '2026-09-23T08:00:00.000Z',
-  members: DEFAULT_TEAM_MEMBERS,
-  tasks: [
-    // --- TÂCHES HISTORIQUES EFFECTUÉES (DIAGRAMME GANTT JUIN - AOÛT 2026) ---
+const DEFAULT_TASKS: Task[] = [
+  // --- TÂCHES HISTORIQUES EFFECTUÉES (DIAGRAMME GANTT JUIN - AOÛT 2026) ---
     {
       id: 'task-hist-1',
       title: 'Récupération du site internet',
@@ -590,8 +584,9 @@ export const DEFAULT_PROJECT: Project = {
       assigneeId: 'm-vianney',
       isMilestone: true
     }
-  ],
-  events: [
+];
+
+const DEFAULT_EVENTS: RetroplanningEvent[] = [
     {
       id: 'event-rnf-passation',
       title: 'Passation & Conformité Administrative',
@@ -680,6 +675,15 @@ export const DEFAULT_PROJECT: Project = {
         { id: 't-crs-16', weekLabel: 'S14', category: 'Post-événement', action: 'Bilan comptable final de la course, diffusion de l’aftermovie vidéo et remerciements', assignee: 'Julien Nicolle', status: 'todo' }
       ]
     }
-  ]
+  ];
+
+export const DEFAULT_PROJECT: Project = {
+  id: 'proj-rnf-2026',
+  name: 'Rétroplanning Course R&F 2026 - 2027',
+  description: 'Rétroplanning prévisionnel complet de la course et des actions associatives avec suivi en temps réel.',
+  createdAt: '2026-09-23T08:00:00.000Z',
+  members: DEFAULT_TEAM_MEMBERS,
+  tasks: sortTasksChronologically(DEFAULT_TASKS),
+  events: sortRetroEventsChronologically(DEFAULT_EVENTS)
 };
 

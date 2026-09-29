@@ -20,7 +20,11 @@ import {
 } from 'lucide-react';
 import { printRetroplanning, exportRetroplanningToPdf } from '../utils/pdfExport';
 import { RETRO_CATEGORIES, getCategoryStyle } from '../utils/categories';
-import { sortRetroEventsChronologically } from '../utils/scheduler';
+import {
+  sortRetroEventsChronologically,
+  sortRetroTasksChronologically,
+  sortRetroWeekLabelsChronologically
+} from '../utils/scheduler';
 
 export const RetroplanningView: React.FC = () => {
   const {
@@ -76,16 +80,22 @@ export const RetroplanningView: React.FC = () => {
   const [taskFormIsEvent, setTaskFormIsEvent] = useState(false);
   const [isCustomTaskCat, setIsCustomTaskCat] = useState(false);
 
-  // Événement actif si ce n'est pas 'overview'
+  // Événement actif si ce n'est pas 'overview', avec tâches strictement triées par ordre chronologique
   const currentEvent = useMemo(() => {
     if (activeTab === 'overview') return null;
-    return events.find((e) => e.id === activeTab) || null;
+    const evt = events.find((e) => e.id === activeTab) || null;
+    if (!evt) return null;
+    return {
+      ...evt,
+      tasks: sortRetroTasksChronologically(evt.tasks || [])
+    };
   }, [events, activeTab]);
 
-  // Liste ordonnée unique des semaines mentionnées dans cet événement pour la frise
+  // Liste ordonnée chronologiquement des semaines mentionnées dans cet événement pour la frise
   const eventWeeks = useMemo(() => {
     if (!currentEvent) return [];
-    const rawWeeks = currentEvent.tasks.map((t) => t.weekLabel.trim()).filter(Boolean);
+    const sortedTasks = sortRetroTasksChronologically(currentEvent.tasks || []);
+    const rawWeeks = sortedTasks.map((t) => t.weekLabel.trim()).filter(Boolean);
     const seen = new Set<string>();
     const unique: string[] = [];
     rawWeeks.forEach((w) => {
@@ -95,7 +105,8 @@ export const RetroplanningView: React.FC = () => {
         unique.push(w);
       }
     });
-    return unique.length > 0 ? unique : ['S39', 'S40', 'S41', 'S42 (12 oct.)', 'S43'];
+    const result = unique.length > 0 ? unique : ['S39', 'S40', 'S41', 'S42 (12 oct.)', 'S43'];
+    return sortRetroWeekLabelsChronologically(result);
   }, [currentEvent]);
 
   // Chaîne des membres d'équipe pour la bannière

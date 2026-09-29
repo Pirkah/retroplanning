@@ -13,7 +13,7 @@ import {
   isValid
 } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Task, WeekColumn, RetroplanningEvent } from '../types/planning';
+import { Task, WeekColumn, RetroplanningEvent, RetroplanningTask } from '../types/planning';
 
 export interface CategoryClass {
   id: string;
@@ -421,12 +421,8 @@ export function parseRetroEventDate(dateStr: string, event?: RetroplanningEvent)
   // 4. Fallback basé sur les semaines de tâches
   if (event?.tasks && event.tasks.length > 0) {
     for (const t of event.tasks) {
-      const wMatch = t.weekLabel.match(/S(\d{1,2})/i);
-      if (wMatch) {
-        const wNum = parseInt(wMatch[1], 10);
-        const year = wNum >= 24 ? 2026 : 2027;
-        return new Date(year, 0, 1 + wNum * 7).getTime();
-      }
+      const ts = parseRetroWeekTimestamp(t.weekLabel);
+      if (ts < 9999999999999) return ts;
     }
   }
 
@@ -434,10 +430,90 @@ export function parseRetroEventDate(dateStr: string, event?: RetroplanningEvent)
 }
 
 /**
- * Trie une liste d'événements de rétroplanning par ordre chronologique
+ * Convertit un label de semaine de rétroplanning (ex: "S24", "S39 (28 sept.)", "S01", "S12 (22 mars)")
+ * en timestamp exact en tenant compte de l'année scolaire 2026-2027.
+ */
+export function parseRetroWeekTimestamp(weekLabel: string): number {
+  if (!weekLabel || !weekLabel.trim()) return 9999999999999;
+
+  const clean = weekLabel.trim().toLowerCase();
+
+  // 1. Recherche d'une date explicite avec jour et mois (ex: "28 sept", "08 oct", "15 janv", "22 mars")
+  const dateMatch = clean.match(/(\d{1,2})\s+([a-zàâéèêëîïôùûüç.]+)/i);
+  if (dateMatch) {
+    const day = parseInt(dateMatch[1], 10);
+    const monthRaw = dateMatch[2].normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\./g, '');
+    let monthIndex = -1;
+    for (const [key, idx] of Object.entries(FRENCH_MONTHS)) {
+      const cleanKey = key.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      if (monthRaw.startsWith(cleanKey) || cleanKey.startsWith(monthRaw)) {
+        monthIndex = idx;
+        break;
+      }
+    }
+    if (monthIndex !== -1) {
+      // Année scolaire : Juin (5) à Décembre (11) -> 2026, Janvier (0) à Mai (4) -> 2027
+      const year = monthIndex >= 5 ? 2026 : 2027;
+      return new Date(year, monthIndex, day).getTime();
+    }
+  }
+
+  // 2. Extraction du numéro de semaine ISO Sxx (ex: "S24", "S39", "S01", "S12")
+  const wMatch = clean.match(/s(\d{1,2})/i);
+  if (wMatch) {
+    const weekNum = parseInt(wMatch[1], 10);
+    // Semaines 23 à 53 appartiennent à 2026, semaines 1 à 22 à 2027
+    const year = weekNum >= 23 ? 2026 : 2027;
+    // Début de semaine ISO (lundi)
+    const simple = new Date(Date.UTC(year, 0, 4));
+    const dayOfWeek = simple.getUTCDay() || 7;
+    const week1Monday = new Date(Date.UTC(year, 0, 4 - dayOfWeek + 1));
+    return week1Monday.getTime() + (weekNum - 1) * 7 * 24 * 60 * 60 * 1000;
+  }
+
+  return 9999999999999;
+}
+
+/**
+ * Trie une liste d'étiquettes de semaines dans l'ordre chronologique strict
+ */
+export function sortRetroWeekLabelsChronologically(labels: string[]): string[] {
+  return [...labels].sort((a, b) => {
+    const timeA = parseRetroWeekTimestamp(a);
+    const timeB = parseRetroWeekTimestamp(b);
+    if (timeA !== timeB) return timeA - timeB;
+    return a.localeCompare(b);
+  });
+}
+
+/**
+ * Trie automatiquement et strictement les tâches de rétroplanning dans l'ordre chronologique
+ */
+export function sortRetroTasksChronologically(tasks: RetroplanningTask[]): RetroplanningTask[] {
+  return [...tasks].sort((a, b) => {
+    const timeA = parseRetroWeekTimestamp(a.weekLabel);
+    const timeB = parseRetroWeekTimestamp(b.weekLabel);
+    if (timeA !== timeB) {
+      return timeA - timeB;
+    }
+    // Si même semaine / date : priorité aux tâches préparatoires, puis à l'événement jalon
+    if (a.isEventHighlight && !b.isEventHighlight) return 1;
+    if (!a.isEventHighlight && b.isEventHighlight) return -1;
+    return a.action.localeCompare(b.action);
+  });
+}
+
+/**
+ * Trie une liste d'événements de rétroplanning par ordre chronologique,
+ * et trie également les tâches internes de chaque événement par ordre chronologique.
  */
 export function sortRetroEventsChronologically(events: RetroplanningEvent[]): RetroplanningEvent[] {
-  return [...events].sort((a, b) => {
-    return parseRetroEventDate(a.date, a) - parseRetroEventDate(b.date, b);
-  });
+  return [...events]
+    .map((e) => ({
+      ...e,
+      tasks: sortRetroTasksChronologically(e.tasks || [])
+    }))
+    .sort((a, b) => {
+      return parseRetroEventDate(a.date, a) - parseRetroEventDate(b.date, b);
+    });
 }

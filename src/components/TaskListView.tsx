@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { usePlanning } from '../context/PlanningContext';
-import { formatDateFr, getDurationDays } from '../utils/scheduler';
+import { formatDateFr, getDurationDays, sortTasksChronologically } from '../utils/scheduler';
 import {
   Calendar,
   Clock,
@@ -28,15 +28,18 @@ export const TaskListView: React.FC = () => {
     openAuthModal
   } = usePlanning();
 
-  const filteredTasks = currentProject.tasks.filter((task) => {
-    const matchSearch =
-      searchQuery === '' ||
-      task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.assignee?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchColor = !selectedColor || task.color.toLowerCase() === selectedColor.toLowerCase();
-    return matchSearch && matchColor;
-  });
+  const filteredTasks = useMemo(() => {
+    const list = currentProject.tasks.filter((task) => {
+      const matchSearch =
+        searchQuery === '' ||
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        task.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        task.assignee?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchColor = !selectedColor || task.color.toLowerCase() === selectedColor.toLowerCase();
+      return matchSearch && matchColor;
+    });
+    return sortTasksChronologically(list);
+  }, [currentProject.tasks, searchQuery, selectedColor]);
 
   const getStatusBadge = (status: Task['status']) => {
     switch (status) {

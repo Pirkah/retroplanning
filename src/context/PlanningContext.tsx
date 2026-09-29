@@ -11,7 +11,7 @@ import {
   RetroplanningTask
 } from '../types/planning';
 import { DEFAULT_PROJECT } from '../data/defaultProject';
-import { sortTasksChronologically, sortRetroEventsChronologically } from '../utils/scheduler';
+import { sortTasksChronologically, sortRetroEventsChronologically, sortRetroTasksChronologically } from '../utils/scheduler';
 import { getCategoryDefinition, getCategoryColor, STANDARD_CATEGORIES } from '../utils/categories';
 
 interface PlanningContextType {
@@ -208,10 +208,12 @@ const normalizeTask = (t: Task): Task => {
 const normalizeRetroEvents = (events: RetroplanningEvent[]): RetroplanningEvent[] => {
   return (events || []).map((e) => ({
     ...e,
-    tasks: (e.tasks || []).map((t) => ({
-      ...t,
-      assignee: t.assignee?.toLowerCase() === 'tetew' ? 'Théo' : t.assignee
-    }))
+    tasks: sortRetroTasksChronologically(
+      (e.tasks || []).map((t) => ({
+        ...t,
+        assignee: t.assignee?.toLowerCase() === 'tetew' ? 'Théo' : t.assignee
+      }))
+    )
   }));
 };
 
@@ -519,8 +521,8 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           ...p,
           updatedAt: p.updatedAt || incomingLastModified || new Date().toISOString(),
           members: members.map(normalizeMember),
-          tasks: tasks.map(normalizeTask),
-          events: normalizeRetroEvents(events)
+          tasks: sortTasksChronologically(tasks.map(normalizeTask)),
+          events: sortRetroEventsChronologically(normalizeRetroEvents(events))
         };
       });
 
@@ -1093,7 +1095,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             if (e.id === eventId) {
               return {
                 ...e,
-                tasks: [...(e.tasks || []), newTask]
+                tasks: sortRetroTasksChronologically([...(e.tasks || []), newTask])
               };
             }
             return e;
@@ -1115,7 +1117,9 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             if (e.id === eventId) {
               return {
                 ...e,
-                tasks: (e.tasks || []).map((t) => (t.id === updatedTask.id ? updatedTask : t))
+                tasks: sortRetroTasksChronologically(
+                  (e.tasks || []).map((t) => (t.id === updatedTask.id ? updatedTask : t))
+                )
               };
             }
             return e;

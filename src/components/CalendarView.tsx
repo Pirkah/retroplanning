@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { usePlanning } from '../context/PlanningContext';
 import {
   startOfMonth,
@@ -18,6 +18,7 @@ import {
 import { fr } from 'date-fns/locale';
 import { ChevronLeft, ChevronRight, Plus, Sparkles } from 'lucide-react';
 import { Task } from '../types/planning';
+import { sortTasksChronologically } from '../utils/scheduler';
 
 export const CalendarView: React.FC = () => {
   const {
@@ -42,15 +43,18 @@ export const CalendarView: React.FC = () => {
   const prevMonth = () => setCurrentMonthDate(subMonths(currentMonthDate, 1));
   const resetToToday = () => setCurrentMonthDate(new Date());
 
-  // Filtrage
-  const filteredTasks = currentProject.tasks.filter((task) => {
-    const matchSearch =
-      searchQuery === '' ||
-      task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      task.category?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchColor = !selectedColor || task.color.toLowerCase() === selectedColor.toLowerCase();
-    return matchSearch && matchColor;
-  });
+  // Filtrage et tri chronologique strict
+  const filteredTasks = useMemo(() => {
+    const list = currentProject.tasks.filter((task) => {
+      const matchSearch =
+        searchQuery === '' ||
+        task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        task.category?.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchColor = !selectedColor || task.color.toLowerCase() === selectedColor.toLowerCase();
+      return matchSearch && matchColor;
+    });
+    return sortTasksChronologically(list);
+  }, [currentProject.tasks, searchQuery, selectedColor]);
 
   // Tâches actives pour chaque jour
   const getTasksForDay = (day: Date): Task[] => {

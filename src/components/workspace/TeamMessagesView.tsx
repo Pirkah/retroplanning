@@ -56,7 +56,9 @@ export const TeamMessagesView: React.FC = () => {
   });
 
   const activeChannel = visibleChannels.find((c) => c.id === activeChannelId) || visibleChannels[0] || channels[0];
-  const channelMessages = messages.filter((m) => m.channelId === activeChannel.id);
+  const channelMessages = messages
+    .filter((m) => m.channelId === activeChannel.id)
+    .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
 
   const filteredMessages = channelMessages.filter((m) => {
     if (!searchQuery.trim()) return true;
