@@ -518,32 +518,44 @@ export const HomeHubView: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            {latestMessages.map((msg) => (
-              <div
-                key={msg.id}
-                onClick={() => {
-                  setActiveChannelId(msg.channelId);
-                  setViewMode('messages');
-                }}
-                className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-slate-100/80 dark:hover:bg-slate-800 cursor-pointer transition flex items-start gap-2.5"
-              >
-                <div
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-[10px] shrink-0 mt-0.5"
-                  style={{ backgroundColor: msg.authorColor }}
+            {latestMessages.length === 0 ? (
+              <div className="py-6 text-center text-slate-400 dark:text-slate-500">
+                <p className="text-xs">Aucun message pour le moment</p>
+                <button
+                  onClick={() => setViewMode('messages')}
+                  className="mt-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
                 >
-                  {msg.authorInitials}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-1">
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{msg.authorName}</span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500">
-                      {new Date(msg.timestamp).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-1 mt-0.5">{msg.content}</p>
-                </div>
+                  Envoyer un premier message
+                </button>
               </div>
-            ))}
+            ) : (
+              latestMessages.map((msg) => (
+                <div
+                  key={msg.id}
+                  onClick={() => {
+                    setActiveChannelId(msg.channelId);
+                    setViewMode('messages');
+                  }}
+                  className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-slate-100/80 dark:hover:bg-slate-800 cursor-pointer transition flex items-start gap-2.5"
+                >
+                  <div
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-[10px] shrink-0 mt-0.5"
+                    style={{ backgroundColor: msg.authorColor }}
+                  >
+                    {msg.authorInitials}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{msg.authorName}</span>
+                      <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                        {new Date(msg.timestamp).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-1 mt-0.5">{msg.content}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
 

@@ -22,7 +22,7 @@ interface WorkspaceContextType {
 
 const WorkspaceContext = createContext<WorkspaceContextType | undefined>(undefined);
 
-const STORAGE_MESSAGES = 'rnf_team_messages_v3';
+const STORAGE_MESSAGES = 'rnf_team_messages_v4';
 const STORAGE_IDEAS = 'rnf_team_ideas_v3';
 
 export const getClientSessionId = (): string => {
@@ -44,43 +44,20 @@ export const WorkspaceProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [channels] = useState<ChatChannel[]>(DEFAULT_CHANNELS);
   const [activeChannelId, setActiveChannelId] = useState<string>(DEFAULT_CHANNELS[0].id);
 
-  // Messages
+  // Messages (initialement vide, suppression de tous les messages de test)
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
-    const normalizeStoredMsg = (m: ChatMessage): ChatMessage => {
-      let updated = { ...m };
-      const name = (updated.authorName || '').toLowerCase();
-      if (name.includes('julien')) updated.authorId = updated.authorId || 'm-julien';
-      if (name.includes('vianney')) updated.authorId = updated.authorId || 'm-vianney';
-      if (name.includes('mathias')) updated.authorId = updated.authorId || 'm-mathias';
-      if (name.includes('sina')) updated.authorId = updated.authorId || 'm-sina';
-      if (name === 'tetew' || name.includes('theo') || name.includes('théo')) {
-        updated.authorId = 'm-theo';
-        updated.authorName = 'Théo';
-        updated.authorInitials = 'TH';
-      }
-      if (updated.id === 'msg-2' && !updated.replyTo) {
-        updated.replyTo = {
-          id: 'msg-1',
-          authorName: 'Vianney Urbanick',
-          content: 'Salut l’équipe ! Bienvenue sur notre espace collaboratif R&F 2026...'
-        };
-      }
-      if (updated.id === 'msg-5' && !updated.replyTo) {
-        updated.replyTo = {
-          id: 'msg-4',
-          authorName: 'Théo',
-          content: 'J’ai commencé à tracer la proposition de boucle pour le parcours de 5 km et 10 km...'
-        };
-      }
-      return updated;
-    };
-
     try {
+      // Nettoyage immédiat des versions précédentes qui contenaient les messages de test
+      localStorage.removeItem('rnf_team_messages_v1');
+      localStorage.removeItem('rnf_team_messages_v2');
+      localStorage.removeItem('rnf_team_messages_v3');
+
       const saved = localStorage.getItem(STORAGE_MESSAGES);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map(normalizeStoredMsg);
+          const mockIds = ['msg-1', 'msg-2', 'msg-3', 'msg-4', 'msg-5', 'msg-6', 'msg-sup-1', 'msg-sup-2', 'msg-sup-3'];
+          return parsed.filter((m: ChatMessage) => !mockIds.includes(m.id));
         }
       }
     } catch (e) {
