@@ -349,9 +349,7 @@ export const AuthModal: React.FC = () => {
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
-                <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                  Chaque membre a son propre mot de passe (par défaut : <code className="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded font-mono text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">rnf2026</code>)
-                </p>
+
               </div>
 
               {/* Boutons d'action */}

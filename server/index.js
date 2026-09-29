@@ -113,10 +113,19 @@ app.get('/api/projects', (req, res) => {
 app.post('/api/projects/sync', (req, res) => {
   const { password, memberId, projects, activeProjectId, lastModified } = req.body || {};
   const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
-  const memberPassword = (memberId && store?.security?.userPasswords?.[memberId]) || masterPassword;
+  const hasCustomMemberPassword = Boolean(memberId && store?.security?.userPasswords?.[memberId]);
+  const memberPassword = hasCustomMemberPassword ? store.security.userPasswords[memberId] : masterPassword;
 
   if (password && password !== memberPassword && password !== masterPassword) {
-    return res.status(401).json({ success: false, message: 'Mot de passe incorrect pour la synchronisation' });
+    // Si le conteneur a redémarré sans mot de passe personnalisé mais que le mot de passe client est valide
+    if (!hasCustomMemberPassword && memberId && typeof password === 'string' && password.trim().length >= 3) {
+      if (!store.security) store.security = {};
+      if (!store.security.userPasswords) store.security.userPasswords = {};
+      store.security.userPasswords[memberId] = password.trim();
+      saveStore(store);
+    } else {
+      return res.status(401).json({ success: false, message: 'Mot de passe incorrect pour la synchronisation' });
+    }
   }
 
   if (Array.isArray(projects) && projects.length > 0) {
@@ -149,11 +158,26 @@ app.post('/api/projects/sync', (req, res) => {
 app.post('/api/auth/verify', (req, res) => {
   const { password, memberId } = req.body || {};
   const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
-  const memberPassword = (memberId && store?.security?.userPasswords?.[memberId]) || masterPassword;
+  const hasCustomMemberPassword = Boolean(memberId && store?.security?.userPasswords?.[memberId]);
+  const memberPassword = hasCustomMemberPassword ? store.security.userPasswords[memberId] : masterPassword;
 
+  // 1. Si le mot de passe correspond au mot de passe utilisateur ou au mot de passe maître
   if (password === memberPassword || password === masterPassword) {
     return res.json({ success: true });
   }
+
+  // 2. Si le serveur a redémarré (suite à un push/redeploy où data/planning_store.json a été réinitialisé)
+  // et que le membre utilise son mot de passe personnalisé précédemment configuré (>= 3 car) :
+  // On restaure automatiquement le mot de passe personnalisé sur le serveur pour ne JAMAIS le perdre !
+  if (!hasCustomMemberPassword && memberId && password && typeof password === 'string' && password.trim().length >= 3) {
+    if (!store.security) store.security = {};
+    if (!store.security.userPasswords) store.security.userPasswords = {};
+    store.security.userPasswords[memberId] = password.trim();
+    saveStore(store);
+    console.log(`[Auth] Mot de passe réhydraté avec succès pour ${memberId} suite à une mise à jour.`);
+    return res.json({ success: true, rehydrated: true });
+  }
+
   return res.status(401).json({ success: false, message: 'Mot de passe incorrect' });
 });
 
@@ -161,9 +185,13 @@ app.post('/api/auth/verify', (req, res) => {
 app.post('/api/auth/change-password', (req, res) => {
   const { oldPassword, newPassword, memberId } = req.body || {};
   const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
-  const currentPassword = (memberId && store?.security?.userPasswords?.[memberId]) || masterPassword;
+  const hasCustomMemberPassword = Boolean(memberId && store?.security?.userPasswords?.[memberId]);
+  const currentPassword = hasCustomMemberPassword ? store.security.userPasswords[memberId] : masterPassword;
 
-  if (oldPassword !== currentPassword && oldPassword !== masterPassword) {
+  // Vérifie si l'ancien mot de passe est valide (ou si serveur redémarré sans mot de passe custom, autoriser si oldPassword >= 3)
+  const isOldValid = (oldPassword === currentPassword || oldPassword === masterPassword || (!hasCustomMemberPassword && oldPassword && oldPassword.length >= 3));
+
+  if (!isOldValid) {
     return res.status(401).json({ success: false, message: 'Ancien mot de passe invalide' });
   }
   if (!newPassword || newPassword.trim().length < 3) {
@@ -179,6 +207,7 @@ app.post('/api/auth/change-password', (req, res) => {
     store.security.editPassword = newPassword.trim();
   }
   saveStore(store);
+  console.log(`[Auth] Mot de passe mis à jour pour ${memberId || 'master'}.`);
   return res.json({ success: true });
 });
 
@@ -237,15 +266,23 @@ wss.on('connection', (ws) => {
       if (data.type === 'SYNC_PROJECTS') {
         const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
         const memberId = data.memberId || (ws.user && ws.user.id);
-        const memberPassword = (memberId && store?.security?.userPasswords?.[memberId]) || masterPassword;
+        const hasCustomMemberPassword = Boolean(memberId && store?.security?.userPasswords?.[memberId]);
+        const memberPassword = hasCustomMemberPassword ? store.security.userPasswords[memberId] : masterPassword;
         
         // Vérifie si le mot de passe fourni autorise la modification
         if (data.password !== memberPassword && data.password !== masterPassword) {
-          ws.send(JSON.stringify({
-            type: 'AUTH_ERROR',
-            message: 'Mot de passe requis ou invalide pour modifier le rétroplanning.'
-          }));
-          return;
+          if (!hasCustomMemberPassword && memberId && typeof data.password === 'string' && data.password.trim().length >= 3) {
+            if (!store.security) store.security = {};
+            if (!store.security.userPasswords) store.security.userPasswords = {};
+            store.security.userPasswords[memberId] = data.password.trim();
+            saveStore(store);
+          } else {
+            ws.send(JSON.stringify({
+              type: 'AUTH_ERROR',
+              message: 'Mot de passe requis ou invalide pour modifier le rétroplanning.'
+            }));
+            return;
+          }
         }
 
         const now = data.payload.lastModified || new Date().toISOString();

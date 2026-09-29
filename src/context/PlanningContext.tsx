@@ -371,8 +371,53 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [authPassword, setAuthPassword] = useState<string>(() => {
     return localStorage.getItem(AUTH_KEY) || '';
   });
-  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(() => {
+    try {
+      const savedPass = localStorage.getItem(AUTH_KEY);
+      const savedUser = localStorage.getItem(USER_KEY);
+      return Boolean(savedPass && savedUser);
+    } catch {
+      return false;
+    }
+  });
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+
+  // Vérification & réhydratation automatique du mot de passe sur le serveur au démarrage
+  useEffect(() => {
+    const verifySavedAuth = async () => {
+      const savedPass = localStorage.getItem(AUTH_KEY);
+      const savedUserStr = localStorage.getItem(USER_KEY);
+      let savedMemberId: string | undefined = undefined;
+      try {
+        if (savedUserStr) {
+          const parsed = JSON.parse(savedUserStr);
+          savedMemberId = parsed?.id;
+        }
+      } catch {}
+
+      if (savedPass && savedMemberId) {
+        try {
+          const isDev = window.location.port === '5173';
+          const apiUrl = isDev
+            ? `http://${window.location.hostname}:3001/api/auth/verify`
+            : '/api/auth/verify';
+          const res = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: savedPass, memberId: savedMemberId })
+          });
+          if (res.ok) {
+            setIsAuthorized(true);
+            setAuthPassword(savedPass);
+          }
+        } catch {
+          // Serveur en cours de démarrage ou hors-ligne, conserver l'authentification locale
+          setIsAuthorized(true);
+        }
+      }
+    };
+    verifySavedAuth();
+  }, []);
 
   // États WebSocket & Présence
   const [onlineCount, setOnlineCount] = useState<number>(1);
@@ -749,6 +794,14 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setIsAuthorized(true);
         setAuthPassword(password);
         localStorage.setItem(AUTH_KEY, password);
+        if (user?.id) {
+          try {
+            const userPasswordsKey = 'rnf_user_passwords_v1';
+            const parsed = JSON.parse(localStorage.getItem(userPasswordsKey) || '{}');
+            parsed[user.id] = password;
+            localStorage.setItem(userPasswordsKey, JSON.stringify(parsed));
+          } catch {}
+        }
         applyUser();
         setIsAuthModalOpen(false);
         return true;
