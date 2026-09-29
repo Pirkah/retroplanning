@@ -21,6 +21,7 @@ import {
   Plus
 } from 'lucide-react';
 import { sortRetroEventsChronologically, formatDateFr } from '../../utils/scheduler';
+import { PersonalTasksHub } from './PersonalTasksHub';
 
 export const HomeHubView: React.FC = () => {
   const {
@@ -109,7 +110,10 @@ export const HomeHubView: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. GRILLE DES 4 GRANDS MODULES ("OÙ VOULEZ-VOUS ALLER ?") */}
+      {/* 2. ESPACE TÂCHES PERSONNELLES ("MES TÂCHES SANS CELLES DES AUTRES") */}
+      <PersonalTasksHub />
+
+      {/* 3. GRILLE DES MODULES DE TRAVAIL ("OÙ VOULEZ-VOUS ALLER ?") */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
