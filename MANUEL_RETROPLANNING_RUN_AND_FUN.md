@@ -3,7 +3,7 @@
 > **Événement :** Course Solidaire Run & Fun — 10ème Édition  
 > **Organisation :** Équipe étudiante IUT GEA, Équipe pédagogique & Bureau Des Étudiants (BDE)  
 > **Lien du projet & Code source :** [https://github.com/Pirkah/retroplanning](https://github.com/Pirkah/retroplanning)  
-> **Lien de l'application en ligne :** [https://retroplanning-equipe.onrender.com](https://retroplanning-collaboratif.onrender.com) *(ou via le raccourci local `start.command`)*
+> **Lien de l'application en ligne :** [https://retroplanning-equipe.onrender.com](https://retroplanning-equipe.onrender.com) *(ou via le raccourci local `start.command`)*
 
 > [!NOTE]
 > **Temps de chargement au premier clic (Hébergement Cloud Render) :**  
