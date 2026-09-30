@@ -5,6 +5,10 @@
 > **Lien du projet & Code source :** [https://github.com/Pirkah/retroplanning](https://github.com/Pirkah/retroplanning)  
 > **Lien de l'application en ligne :** [https://retroplanning-collaboratif.onrender.com](https://retroplanning-collaboratif.onrender.com) *(ou via le raccourci local `start.command`)*
 
+> [!NOTE]
+> **Temps de chargement au premier clic (Hébergement Cloud Render) :**  
+> Lorsque vous cliquez sur le lien après une période d'inactivité, il se peut qu'un écran de chargement Render apparaisse pendant environ **30 à 50 secondes**. C'est **tout à fait normal** : le serveur gratuit se met en veille pour économiser l'énergie quand personne ne l'utilise. **Il suffit de patienter quelques secondes sans fermer la page** : le serveur se réveille automatiquement et le rétroplanning s'affiche ! Toutes les consultations suivantes seront ensuite immédiates.
+
 ---
 
 ## 📑 Sommaire
@@ -207,6 +211,9 @@ Non. Le système est conçu pour synchroniser chaque tâche indépendamment. Si 
 
 ### ❓ Est-ce que le BDE peut supprimer des tâches par erreur ?
 Non. Le compte BDE est configuré avec un statut de consultation stricte. Même s'ils se connectent, les boutons de suppression ou de modification de planning leur sont masqués.
+
+### ❓ Le site affiche un écran de chargement Render pendant 30 à 50 secondes, est-ce normal ?
+**Oui, c'est tout à fait normal !** Comme l'application est hébergée sur l'offre gratuite de Render, le serveur s'endort automatiquement lorsqu'il n'y a pas eu d'activité pendant plus de 15 minutes (afin d'économiser l'énergie). Dès que quelqu'un clique sur le lien, Render réveille le serveur. Il suffit de **patienter environ 30 à 50 secondes** sans rafraîchir frénétiquement : dès que le serveur est réveillé, le rétroplanning s'affiche et restera ultra-rapide pour toutes vos actions suivantes.
 
 ### ❓ Comment accéder à l'application depuis un autre ordinateur ?
 Il vous suffit d'ouvrir le lien web partagé dans votre navigateur :
