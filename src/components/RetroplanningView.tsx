@@ -16,9 +16,11 @@ import {
   ChevronRight,
   Info,
   Download,
-  Loader2
+  Loader2,
+  FileSpreadsheet
 } from 'lucide-react';
 import { printRetroplanning, exportRetroplanningToPdf } from '../utils/pdfExport';
+import { exportRetroplanningToExcel } from '../utils/excelExport';
 import { RETRO_CATEGORIES, getCategoryStyle } from '../utils/categories';
 import {
   sortRetroEventsChronologically,
@@ -248,6 +250,7 @@ export const RetroplanningView: React.FC = () => {
   };
 
   const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingExcel, setIsExportingExcel] = useState(false);
 
   const handlePrint = () => {
     printRetroplanning();
@@ -266,6 +269,22 @@ export const RetroplanningView: React.FC = () => {
       alert("Erreur lors de la génération du PDF.");
     } finally {
       setIsExportingPdf(false);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      setIsExportingExcel(true);
+      await exportRetroplanningToExcel({
+        projectName: currentProject.name,
+        events: events,
+        members: members
+      });
+    } catch (e) {
+      console.error(e);
+      alert("Erreur lors de la génération du classeur Excel.");
+    } finally {
+      setIsExportingExcel(false);
     }
   };
 
@@ -288,6 +307,16 @@ export const RetroplanningView: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2.5 no-print">
+          <button
+            onClick={handleExportExcel}
+            disabled={isExportingExcel}
+            className="px-3.5 py-1.5 bg-green-700 hover:bg-green-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs border border-green-500/40"
+            title="Télécharger tout le rétroplanning en classeur Excel (.xlsx) avec feuille récapitulative et feuilles par événement"
+          >
+            {isExportingExcel ? <Loader2 size={14} className="animate-spin" /> : <FileSpreadsheet size={14} />}
+            <span>Exporter Excel (.xlsx)</span>
+          </button>
+
           <button
             onClick={handlePrint}
             className="px-3.5 py-1.5 bg-blue-700 hover:bg-blue-600 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-xs border border-blue-500/40"
@@ -337,13 +366,25 @@ export const RetroplanningView: React.FC = () => {
                     Tableau Récapitulatif des Événements & Objectifs
                   </span>
                 </div>
-                <button
-                  onClick={handleOpenNewEvent}
-                  className="px-3 py-1 bg-white text-amber-900 hover:bg-amber-50 rounded-lg text-xs font-black transition flex items-center gap-1.5 shadow-xs"
-                >
-                  <Plus size={14} />
-                  <span>Ajouter un événement</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleExportExcel}
+                    disabled={isExportingExcel}
+                    className="px-3 py-1 bg-green-700 hover:bg-green-600 text-white rounded-lg text-xs font-black transition flex items-center gap-1.5 shadow-xs border border-green-500/40"
+                    title="Télécharger tous les rétroplannings dans un classeur Excel complet"
+                  >
+                    {isExportingExcel ? <Loader2 size={13} className="animate-spin" /> : <FileSpreadsheet size={13} />}
+                    <span>Exporter Classeur Excel (.xlsx)</span>
+                  </button>
+
+                  <button
+                    onClick={handleOpenNewEvent}
+                    className="px-3 py-1 bg-white text-amber-900 hover:bg-amber-50 rounded-lg text-xs font-black transition flex items-center gap-1.5 shadow-xs"
+                  >
+                    <Plus size={14} />
+                    <span>Ajouter un événement</span>
+                  </button>
+                </div>
               </div>
 
               <div className="overflow-x-auto">
