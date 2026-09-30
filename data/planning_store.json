@@ -8,59 +8,59 @@
       "members": [
         {
           "id": "m-vianney",
-          "name": "Vianney Urbanick",
+          "name": "Président",
           "role": "Président",
           "color": "#3B82F6",
-          "initials": "VI",
+          "initials": "PR",
           "generation": "10ème équipe"
         },
         {
           "id": "m-julien",
-          "name": "Julien Nicolle",
+          "name": "Vice-président",
           "role": "Vice-président",
           "color": "#6366F1",
-          "initials": "JU",
+          "initials": "VP",
           "generation": "10ème équipe"
         },
         {
           "id": "m-theo",
-          "name": "Théo",
+          "name": "Com interne",
           "role": "Chargé de communication interne",
           "color": "#EC4899",
-          "initials": "TH",
+          "initials": "CI",
           "generation": "10ème équipe"
         },
         {
           "id": "m-mathias",
-          "name": "Mathias Samson",
+          "name": "Com externe 1",
           "role": "Chargé de communication externe",
           "color": "#F59E0B",
-          "initials": "MA",
+          "initials": "CE1",
           "generation": "10ème équipe"
         },
         {
           "id": "m-sina",
-          "name": "Sina Abdoul Bastoi",
+          "name": "Com externe 2",
           "role": "Chargé de communication externe",
           "color": "#10B981",
-          "initials": "SI",
+          "initials": "CE2",
           "generation": "10ème équipe"
         },
         {
           "id": "m-christelle",
-          "name": "Christelle Voisin",
+          "name": "Enseignant encadrant 1",
           "role": "Professeure encadrante",
           "color": "#8B5CF6",
-          "initials": "CV",
+          "initials": "E1",
           "generation": "Équipe pédagogique",
           "isSupervisor": true
         },
         {
           "id": "m-marius",
-          "name": "Marius Chevalier",
+          "name": "Enseignant encadrant 2",
           "role": "Professeur encadrant",
           "color": "#0EA5E9",
-          "initials": "MC",
+          "initials": "E2",
           "generation": "Équipe pédagogique",
           "isSupervisor": true
         },
@@ -87,7 +87,7 @@
           "priority": "high",
           "progress": 100,
           "category": "communication",
-          "assignee": "Julien Nicolle",
+          "assignee": "Vice-président",
           "assigneeId": "m-julien"
         },
         {
@@ -101,7 +101,7 @@
           "priority": "high",
           "progress": 100,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -115,7 +115,7 @@
           "priority": "high",
           "progress": 100,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -129,7 +129,7 @@
           "priority": "high",
           "progress": 100,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -143,7 +143,7 @@
           "priority": "high",
           "progress": 100,
           "category": "finance",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -157,7 +157,7 @@
           "priority": "high",
           "progress": 100,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -171,7 +171,7 @@
           "priority": "high",
           "progress": 100,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -185,7 +185,7 @@
           "priority": "high",
           "progress": 100,
           "category": "communication",
-          "assignee": "Mathias Samson",
+          "assignee": "Com externe 1",
           "assigneeId": "m-mathias"
         },
         {
@@ -199,7 +199,7 @@
           "priority": "high",
           "progress": 100,
           "category": "association",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -213,7 +213,7 @@
           "priority": "high",
           "progress": 100,
           "category": "evenements",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -227,7 +227,7 @@
           "priority": "medium",
           "progress": 100,
           "category": "fournisseurs",
-          "assignee": "Julien Nicolle",
+          "assignee": "Vice-président",
           "assigneeId": "m-julien"
         },
         {
@@ -241,7 +241,7 @@
           "priority": "high",
           "progress": 100,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -255,7 +255,7 @@
           "priority": "medium",
           "progress": 100,
           "category": "réseaux sociaux",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -269,7 +269,7 @@
           "priority": "high",
           "progress": 100,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -283,7 +283,7 @@
           "priority": "medium",
           "progress": 0,
           "category": "fournisseurs",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -297,7 +297,7 @@
           "priority": "medium",
           "progress": 0,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -311,7 +311,7 @@
           "priority": "medium",
           "progress": 0,
           "category": "autres BDE",
-          "assignee": "Julien Nicolle",
+          "assignee": "Vice-président",
           "assigneeId": "m-julien"
         },
         {
@@ -325,7 +325,7 @@
           "priority": "high",
           "progress": 50,
           "category": "partenaires",
-          "assignee": "Mathias Samson",
+          "assignee": "Com externe 1",
           "assigneeId": "m-mathias"
         },
         {
@@ -339,7 +339,7 @@
           "priority": "medium",
           "progress": 0,
           "category": "communication",
-          "assignee": "Mathias Samson",
+          "assignee": "Com externe 1",
           "assigneeId": "m-mathias"
         },
         {
@@ -353,7 +353,7 @@
           "priority": "high",
           "progress": 0,
           "category": "evenements",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -367,7 +367,7 @@
           "priority": "medium",
           "progress": 50,
           "category": "autres BDE",
-          "assignee": "Julien Nicolle",
+          "assignee": "Vice-président",
           "assigneeId": "m-julien"
         },
         {
@@ -381,7 +381,7 @@
           "priority": "high",
           "progress": 0,
           "category": "informatique",
-          "assignee": "Julien Nicolle",
+          "assignee": "Vice-président",
           "assigneeId": "m-julien"
         },
         {
@@ -395,7 +395,7 @@
           "priority": "high",
           "progress": 0,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -409,7 +409,7 @@
           "priority": "medium",
           "progress": 0,
           "category": "partenaires",
-          "assignee": "Julien Nicolle",
+          "assignee": "Vice-président",
           "assigneeId": "m-julien"
         },
         {
@@ -423,7 +423,7 @@
           "priority": "medium",
           "progress": 0,
           "category": "banque assurance",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -437,7 +437,7 @@
           "priority": "medium",
           "progress": 0,
           "category": "réseaux sociaux",
-          "assignee": "Sina Abdoul Bastoi",
+          "assignee": "Com externe 2",
           "assigneeId": "m-sina"
         },
         {
@@ -451,7 +451,7 @@
           "priority": "medium",
           "progress": 0,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -465,7 +465,7 @@
           "priority": "medium",
           "progress": 40,
           "category": "partenaires",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -479,7 +479,7 @@
           "priority": "medium",
           "progress": 0,
           "category": "administratif",
-          "assignee": "Théo",
+          "assignee": "Com interne",
           "assigneeId": "m-theo"
         },
         {
@@ -493,7 +493,7 @@
           "priority": "high",
           "progress": 0,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -507,7 +507,7 @@
           "priority": "medium",
           "progress": 0,
           "category": "réseaux sociaux",
-          "assignee": "Sina Abdoul Bastoi",
+          "assignee": "Com externe 2",
           "assigneeId": "m-sina"
         },
         {
@@ -521,7 +521,7 @@
           "priority": "high",
           "progress": 0,
           "category": "association",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney",
           "isMilestone": true
         },
@@ -536,7 +536,7 @@
           "priority": "high",
           "progress": 0,
           "category": "partenaires",
-          "assignee": "Mathias Samson",
+          "assignee": "Com externe 1",
           "assigneeId": "m-mathias"
         },
         {
@@ -550,7 +550,7 @@
           "priority": "high",
           "progress": 0,
           "category": "administratif",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney"
         },
         {
@@ -564,7 +564,7 @@
           "priority": "high",
           "progress": 0,
           "category": "logistique",
-          "assignee": "Théo",
+          "assignee": "Com interne",
           "assigneeId": "m-theo"
         },
         {
@@ -578,7 +578,7 @@
           "priority": "high",
           "progress": 0,
           "category": "logistique",
-          "assignee": "Théo",
+          "assignee": "Com interne",
           "assigneeId": "m-theo"
         },
         {
@@ -592,7 +592,7 @@
           "priority": "high",
           "progress": 0,
           "category": "communication",
-          "assignee": "Sina Abdoul Bastoi",
+          "assignee": "Com externe 2",
           "assigneeId": "m-sina"
         },
         {
@@ -606,7 +606,7 @@
           "priority": "high",
           "progress": 0,
           "category": "Communication & Médias",
-          "assignee": "Julien Nicolle",
+          "assignee": "Vice-président",
           "assigneeId": "m-julien"
         },
         {
@@ -620,7 +620,7 @@
           "priority": "high",
           "progress": 100,
           "category": "Administratif & Juridique",
-          "assignee": "Christelle Voisin",
+          "assignee": "Enseignant encadrant 1",
           "assigneeId": "m-christelle"
         },
         {
@@ -634,7 +634,7 @@
           "priority": "high",
           "progress": 100,
           "category": "Logistique & Sécurité",
-          "assignee": "Marius Chevalier",
+          "assignee": "Enseignant encadrant 2",
           "assigneeId": "m-marius"
         },
         {
@@ -648,7 +648,7 @@
           "priority": "high",
           "progress": 0,
           "category": "evenements",
-          "assignee": "Vianney Urbanick",
+          "assignee": "Président",
           "assigneeId": "m-vianney",
           "isMilestone": true
         }
@@ -667,7 +667,7 @@
               "weekLabel": "S36",
               "category": "Association",
               "action": "Appelée Gravir pour Guérir (dispo le 8 octobre)",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -675,7 +675,7 @@
               "weekLabel": "S36",
               "category": "Événement",
               "action": "Trouver une activité pour le 17 septembre",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -683,7 +683,7 @@
               "weekLabel": "S37",
               "category": "Fournisseurs",
               "action": "Envoyer un mail à DPB pour les 5 t-shirts et négocier",
-              "assignee": "Julien Nicolle",
+              "assignee": "Vice-président",
               "status": "completed"
             },
             {
@@ -691,7 +691,7 @@
               "weekLabel": "S37",
               "category": "Administratif",
               "action": "Carte bleue association reçue le 19 septembre",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -699,7 +699,7 @@
               "weekLabel": "S38",
               "category": "Communication",
               "action": "Créer le club Strava et préparer la première page",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -707,7 +707,7 @@
               "weekLabel": "S38",
               "category": "Administratif",
               "action": "Demande de salle pour la remise de chèque à l’administration",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -715,7 +715,7 @@
               "weekLabel": "S39",
               "category": "Fournisseurs",
               "action": "Envoyer un mail aux fournisseurs pour les inviter à la remise de chèque",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -723,7 +723,7 @@
               "weekLabel": "S39",
               "category": "Administratif",
               "action": "Aller chercher le chèque grand format pour la remise",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -731,7 +731,7 @@
               "weekLabel": "S39",
               "category": "Communication",
               "action": "Faire l’affiche pour le hall de GEA",
-              "assignee": "Mathias Samson",
+              "assignee": "Com externe 1",
               "status": "completed"
             },
             {
@@ -739,7 +739,7 @@
               "weekLabel": "S40",
               "category": "Partenaires",
               "action": "Rappel invitation des partenaires de l’an dernier pour la remise",
-              "assignee": "Julien Nicolle",
+              "assignee": "Vice-président",
               "status": "completed"
             },
             {
@@ -756,7 +756,7 @@
               "weekLabel": "S42",
               "category": "Post-événement",
               "action": "Post et photos sur les réseaux sociaux pour la remise de chèque",
-              "assignee": "Sina Abdoul Bastoi",
+              "assignee": "Com externe 2",
               "status": "todo"
             }
           ]
@@ -774,7 +774,7 @@
               "weekLabel": "S24",
               "category": "Communication",
               "action": "Récupération du site internet (accès administration et code source)",
-              "assignee": "Julien Nicolle",
+              "assignee": "Vice-président",
               "status": "completed"
             },
             {
@@ -782,7 +782,7 @@
               "weekLabel": "S28",
               "category": "Administratif",
               "action": "Assemblée générale pour la passation et élection du bureau",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -790,7 +790,7 @@
               "weekLabel": "S29",
               "category": "Administratif",
               "action": "Valider la passation et signature des procès-verbaux",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -798,7 +798,7 @@
               "weekLabel": "S29",
               "category": "Administratif",
               "action": "Passation administrative à la préfecture et statuts modifiés",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -806,7 +806,7 @@
               "weekLabel": "S32",
               "category": "Finance",
               "action": "Passation banque et assurance (rendez-vous bancaire)",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -814,7 +814,7 @@
               "weekLabel": "S32",
               "category": "Finance",
               "action": "Changement de nom du président sur le compte bancaire",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -822,7 +822,7 @@
               "weekLabel": "S33",
               "category": "Administratif",
               "action": "Changement de nom au niveau du contrat d’assurance",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -830,7 +830,7 @@
               "weekLabel": "S35",
               "category": "Communication",
               "action": "Récupération des comptes réseaux sociaux de l’association",
-              "assignee": "Mathias Samson",
+              "assignee": "Com externe 1",
               "status": "completed"
             },
             {
@@ -847,7 +847,7 @@
               "weekLabel": "S40",
               "category": "Finance",
               "action": "Appeler SMACL pour avenant manifestation et responsabilités",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "todo"
             },
             {
@@ -855,7 +855,7 @@
               "weekLabel": "S40",
               "category": "Administratif",
               "action": "Effectuer la demande de permanence et de TPE (terminal carte)",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "todo"
             },
             {
@@ -863,7 +863,7 @@
               "weekLabel": "S40",
               "category": "Administratif",
               "action": "S’informer sur la vente d’alcool, autorisation et réglementation buvette",
-              "assignee": "Théo",
+              "assignee": "Com interne",
               "status": "todo"
             },
             {
@@ -871,7 +871,7 @@
               "weekLabel": "S41",
               "category": "Finance",
               "action": "Préparer le dossier de subvention et budget prévisionnel",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "todo"
             }
           ]
@@ -889,7 +889,7 @@
               "weekLabel": "S39",
               "category": "Partenaires",
               "action": "Contact des BDE pour partenariat et synergie inter-promos",
-              "assignee": "Julien Nicolle",
+              "assignee": "Vice-président",
               "status": "in_progress"
             },
             {
@@ -897,7 +897,7 @@
               "weekLabel": "S39",
               "category": "Partenaires",
               "action": "Rédiger la liste des partenaires potentiels à contacter (sponsors)",
-              "assignee": "Mathias Samson",
+              "assignee": "Com externe 1",
               "status": "in_progress"
             },
             {
@@ -905,7 +905,7 @@
               "weekLabel": "S39",
               "category": "Partenaires",
               "action": "Parler avec ACTU pour les événements passés et communication croisée",
-              "assignee": "Julien Nicolle",
+              "assignee": "Vice-président",
               "status": "in_progress"
             },
             {
@@ -913,7 +913,7 @@
               "weekLabel": "S39",
               "category": "Communication",
               "action": "Renouveler le site internet de la course (mentions, design)",
-              "assignee": "Julien Nicolle",
+              "assignee": "Vice-président",
               "status": "todo"
             },
             {
@@ -921,7 +921,7 @@
               "weekLabel": "S39",
               "category": "Administratif",
               "action": "Contacter la mairie pour les autorisations d’occupation",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "todo"
             },
             {
@@ -929,7 +929,7 @@
               "weekLabel": "S40",
               "category": "Communication",
               "action": "Faire un premier TikTok de présentation de l’équipe",
-              "assignee": "Sina Abdoul Bastoi",
+              "assignee": "Com externe 2",
               "status": "todo"
             },
             {
@@ -937,7 +937,7 @@
               "weekLabel": "S40",
               "category": "Partenaires",
               "action": "Appeler les pompiers de l’urgence internationale (suivi partenariat)",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "in_progress"
             },
             {
@@ -945,7 +945,7 @@
               "weekLabel": "S41",
               "category": "Partenaires",
               "action": "Démarchages actifs pour la recherche de partenaires et sponsors",
-              "assignee": "Mathias Samson",
+              "assignee": "Com externe 1",
               "status": "in_progress"
             },
             {
@@ -953,7 +953,7 @@
               "weekLabel": "S44",
               "category": "Administratif",
               "action": "Demande officielle de manifestation sportive à la mairie",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "todo"
             },
             {
@@ -961,7 +961,7 @@
               "weekLabel": "S45",
               "category": "Logistique",
               "action": "Balisage & contact organisme de secourisme (Croix-Rouge)",
-              "assignee": "Théo",
+              "assignee": "Com interne",
               "status": "todo"
             },
             {
@@ -988,7 +988,7 @@
               "weekLabel": "S39",
               "category": "Événement",
               "action": "Choisir une date officielle pour la course solidaire",
-              "assignee": "Vianney Urbanick",
+              "assignee": "Président",
               "status": "completed"
             },
             {
@@ -996,7 +996,7 @@
               "weekLabel": "S50",
               "category": "Logistique",
               "action": "Recherche et recrutement des bénévoles (signaleurs, ravitaillement)",
-              "assignee": "Théo",
+              "assignee": "Com interne",
               "status": "todo"
             },
             {
@@ -1004,7 +1004,7 @@
               "weekLabel": "S01",
               "category": "Communication",
               "action": "Communication de la course, affichage campus et réseaux",
-              "assignee": "Sina Abdoul Bastoi",
+              "assignee": "Com externe 2",
               "status": "todo"
             },
             {
@@ -1012,7 +1012,7 @@
               "weekLabel": "S02",
               "category": "Communication",
               "action": "Vente de dossards en ligne via HelloAsso et stands IUT",
-              "assignee": "Julien Nicolle",
+              "assignee": "Vice-président",
               "status": "todo"
             },
             {
@@ -1029,7 +1029,7 @@
               "weekLabel": "S11",
               "category": "Logistique",
               "action": "Briefing sécurité avec la Croix-Rouge et l’ensemble des bénévoles",
-              "assignee": "Mathias Samson",
+              "assignee": "Com externe 1",
               "status": "todo"
             },
             {
@@ -1037,7 +1037,7 @@
               "weekLabel": "S12",
               "category": "Logistique",
               "action": "Balisage complet du parcours de la course et installation buvette",
-              "assignee": "Théo",
+              "assignee": "Com interne",
               "status": "todo"
             },
             {

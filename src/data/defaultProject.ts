@@ -14,7 +14,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Communication & Médias',
-      assignee: 'Julien Nicolle',
+      assignee: 'Vice-président',
       assigneeId: 'm-julien'
     },
     {
@@ -28,7 +28,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Administratif & Juridique',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -42,7 +42,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Administratif & Juridique',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -56,7 +56,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Administratif & Juridique',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -70,7 +70,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Finance & Trésorerie',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -84,7 +84,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Finance & Trésorerie',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -98,7 +98,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Administratif & Juridique',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -112,7 +112,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Communication & Médias',
-      assignee: 'Mathias Samson',
+      assignee: 'Com externe 1',
       assigneeId: 'm-mathias'
     },
 
@@ -128,7 +128,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Partenaires & Sponsors',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -142,7 +142,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Événements & Animations',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -156,7 +156,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 100,
       category: 'Fournisseurs & Commandes',
-      assignee: 'Julien Nicolle',
+      assignee: 'Vice-président',
       assigneeId: 'm-julien'
     },
     {
@@ -170,7 +170,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Finance & Trésorerie',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -184,7 +184,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 100,
       category: 'Communication & Médias',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -198,7 +198,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Logistique & Sécurité',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -212,7 +212,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 0,
       category: 'Partenaires & Sponsors',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -226,7 +226,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 0,
       category: 'Fournisseurs & Commandes',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -240,7 +240,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 0,
       category: 'Partenaires & Sponsors',
-      assignee: 'Julien Nicolle',
+      assignee: 'Vice-président',
       assigneeId: 'm-julien'
     },
     {
@@ -254,7 +254,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 50,
       category: 'Partenaires & Sponsors',
-      assignee: 'Mathias Samson',
+      assignee: 'Com externe 1',
       assigneeId: 'm-mathias'
     },
     {
@@ -268,7 +268,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 0,
       category: 'Communication & Médias',
-      assignee: 'Mathias Samson',
+      assignee: 'Com externe 1',
       assigneeId: 'm-mathias'
     },
     {
@@ -282,7 +282,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Préparation & Cadrage',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -296,7 +296,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 50,
       category: 'Partenaires & Sponsors',
-      assignee: 'Julien Nicolle',
+      assignee: 'Vice-président',
       assigneeId: 'm-julien'
     },
     {
@@ -310,7 +310,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Communication & Médias',
-      assignee: 'Julien Nicolle',
+      assignee: 'Vice-président',
       assigneeId: 'm-julien'
     },
     {
@@ -324,7 +324,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Administratif & Juridique',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -338,7 +338,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 0,
       category: 'Partenaires & Sponsors',
-      assignee: 'Julien Nicolle',
+      assignee: 'Vice-président',
       assigneeId: 'm-julien'
     },
     {
@@ -352,7 +352,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 0,
       category: 'Administratif & Juridique',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -366,7 +366,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 0,
       category: 'Communication & Médias',
-      assignee: 'Sina Abdoul Bastoi',
+      assignee: 'Com externe 2',
       assigneeId: 'm-sina'
     },
     {
@@ -380,7 +380,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 0,
       category: 'Finance & Trésorerie',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -394,7 +394,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 40,
       category: 'Partenaires & Sponsors',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -408,7 +408,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 0,
       category: 'Administratif & Juridique',
-      assignee: 'Théo',
+      assignee: 'Com interne',
       assigneeId: 'm-theo'
     },
     {
@@ -422,7 +422,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Finance & Trésorerie',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -436,7 +436,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'medium',
       progress: 0,
       category: 'Post-événement',
-      assignee: 'Sina Abdoul Bastoi',
+      assignee: 'Com externe 2',
       assigneeId: 'm-sina'
     },
 
@@ -452,7 +452,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Activité / Jour J',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney',
       isMilestone: true
     },
@@ -467,7 +467,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Partenaires & Sponsors',
-      assignee: 'Mathias Samson',
+      assignee: 'Com externe 1',
       assigneeId: 'm-mathias'
     },
     {
@@ -481,7 +481,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Administratif & Juridique',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney'
     },
     {
@@ -495,7 +495,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Logistique & Sécurité',
-      assignee: 'Théo',
+      assignee: 'Com interne',
       assigneeId: 'm-theo'
     },
     {
@@ -509,7 +509,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Logistique & Sécurité',
-      assignee: 'Théo',
+      assignee: 'Com interne',
       assigneeId: 'm-theo'
     },
     {
@@ -523,7 +523,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Communication & Médias',
-      assignee: 'Sina Abdoul Bastoi',
+      assignee: 'Com externe 2',
       assigneeId: 'm-sina'
     },
     {
@@ -537,7 +537,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Communication & Médias',
-      assignee: 'Julien Nicolle',
+      assignee: 'Vice-président',
       assigneeId: 'm-julien'
     },
     // --- SUPERVISION PÉDAGOGIQUE (ENSEIGNANTS SUPERVISEURS) ---
@@ -552,7 +552,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Administratif & Juridique',
-      assignee: 'Christelle Voisin',
+      assignee: 'Enseignant encadrant 1',
       assigneeId: 'm-christelle'
     },
     {
@@ -566,7 +566,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 100,
       category: 'Logistique & Sécurité',
-      assignee: 'Marius Chevalier',
+      assignee: 'Enseignant encadrant 2',
       assigneeId: 'm-marius'
     },
     {
@@ -580,7 +580,7 @@ const DEFAULT_TASKS: Task[] = [
       priority: 'high',
       progress: 0,
       category: 'Activité / Jour J',
-      assignee: 'Vianney Urbanick',
+      assignee: 'Président',
       assigneeId: 'm-vianney',
       isMilestone: true
     }
@@ -595,20 +595,20 @@ const DEFAULT_EVENTS: RetroplanningEvent[] = [
       content: 'Élection du nouveau bureau en AG, déclaration préfecture, transmission des accès site web et réseaux sociaux, mise à jour assurances et activation carte bancaire.',
       color: '#6366F1',
       tasks: [
-        { id: 't-adm-1', weekLabel: 'S24', category: 'Communication & Médias', action: 'Récupération du site internet (accès administration et code source)', assignee: 'Julien Nicolle', status: 'completed' },
-        { id: 't-adm-2', weekLabel: 'S28', category: 'Administratif & Juridique', action: 'Assemblée générale pour la passation et élection du bureau', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-3', weekLabel: 'S29', category: 'Administratif & Juridique', action: 'Valider la passation et signature des procès-verbaux', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-4', weekLabel: 'S29', category: 'Administratif & Juridique', action: 'Passation administrative à la préfecture et statuts modifiés', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-5', weekLabel: 'S32', category: 'Finance & Trésorerie', action: 'Passation banque et rendez-vous pour transfert de signature', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-6', weekLabel: 'S32', category: 'Finance & Trésorerie', action: 'Changement de nom du président sur le compte bancaire', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-7', weekLabel: 'S33', category: 'Administratif & Juridique', action: 'Changement de nom au niveau du contrat d’assurance association', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-adm-8', weekLabel: 'S35', category: 'Communication & Médias', action: 'Récupération des comptes réseaux sociaux de l’association (Instagram, TikTok)', assignee: 'Mathias Samson', status: 'completed' },
-        { id: 't-adm-9', weekLabel: 'S37', category: 'Finance & Trésorerie', action: 'Réception et activation de la carte bancaire de l’association', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-adm-1', weekLabel: 'S24', category: 'Communication & Médias', action: 'Récupération du site internet (accès administration et code source)', assignee: 'Vice-président', status: 'completed' },
+        { id: 't-adm-2', weekLabel: 'S28', category: 'Administratif & Juridique', action: 'Assemblée générale pour la passation et élection du bureau', assignee: 'Président', status: 'completed' },
+        { id: 't-adm-3', weekLabel: 'S29', category: 'Administratif & Juridique', action: 'Valider la passation et signature des procès-verbaux', assignee: 'Président', status: 'completed' },
+        { id: 't-adm-4', weekLabel: 'S29', category: 'Administratif & Juridique', action: 'Passation administrative à la préfecture et statuts modifiés', assignee: 'Président', status: 'completed' },
+        { id: 't-adm-5', weekLabel: 'S32', category: 'Finance & Trésorerie', action: 'Passation banque et rendez-vous pour transfert de signature', assignee: 'Président', status: 'completed' },
+        { id: 't-adm-6', weekLabel: 'S32', category: 'Finance & Trésorerie', action: 'Changement de nom du président sur le compte bancaire', assignee: 'Président', status: 'completed' },
+        { id: 't-adm-7', weekLabel: 'S33', category: 'Administratif & Juridique', action: 'Changement de nom au niveau du contrat d’assurance association', assignee: 'Président', status: 'completed' },
+        { id: 't-adm-8', weekLabel: 'S35', category: 'Communication & Médias', action: 'Récupération des comptes réseaux sociaux de l’association (Instagram, TikTok)', assignee: 'Com externe 1', status: 'completed' },
+        { id: 't-adm-9', weekLabel: 'S37', category: 'Finance & Trésorerie', action: 'Réception et activation de la carte bancaire de l’association', assignee: 'Président', status: 'completed' },
         { id: 't-adm-10', weekLabel: 'S39 (28 sept.)', category: 'Activité / Jour J', action: 'Validation de la Passation Officielle & Statuts déposés en Préfecture', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 't-adm-11', weekLabel: 'S40', category: 'Administratif & Juridique', action: 'Appeler l’assurance SMACL pour avenant manifestation et responsabilités', assignee: 'Vianney Urbanick', status: 'todo' },
-        { id: 't-adm-12', weekLabel: 'S40', category: 'Finance & Trésorerie', action: 'Effectuer la demande de permanence bancaire et de TPE (terminal carte)', assignee: 'Vianney Urbanick', status: 'todo' },
-        { id: 't-adm-13', weekLabel: 'S40', category: 'Administratif & Juridique', action: 'S’informer sur la vente d’alcool, autorisations et réglementation buvette', assignee: 'Théo', status: 'todo' },
-        { id: 't-adm-14', weekLabel: 'S41', category: 'Finance & Trésorerie', action: 'Préparer le dossier de subvention et budget prévisionnel de l’année', assignee: 'Vianney Urbanick', status: 'todo' }
+        { id: 't-adm-11', weekLabel: 'S40', category: 'Administratif & Juridique', action: 'Appeler l’assurance SMACL pour avenant manifestation et responsabilités', assignee: 'Président', status: 'todo' },
+        { id: 't-adm-12', weekLabel: 'S40', category: 'Finance & Trésorerie', action: 'Effectuer la demande de permanence bancaire et de TPE (terminal carte)', assignee: 'Président', status: 'todo' },
+        { id: 't-adm-13', weekLabel: 'S40', category: 'Administratif & Juridique', action: 'S’informer sur la vente d’alcool, autorisations et réglementation buvette', assignee: 'Com interne', status: 'todo' },
+        { id: 't-adm-14', weekLabel: 'S41', category: 'Finance & Trésorerie', action: 'Préparer le dossier de subvention et budget prévisionnel de l’année', assignee: 'Président', status: 'todo' }
       ]
     },
     {
@@ -619,15 +619,15 @@ const DEFAULT_EVENTS: RetroplanningEvent[] = [
       content: 'Organisation de la cérémonie avec les partenaires et la presse, réservation de salle à l’IUT GEA, impression chèque géant, cartons d’invitation et diffusion sur les réseaux.',
       color: '#F59E0B',
       tasks: [
-        { id: 't-rnf-1', weekLabel: 'S36', category: 'Partenaires & Sponsors', action: 'Prise de contact téléphonique avec l’association Gravir pour Guérir (dispo le 8 octobre)', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-2', weekLabel: 'S36', category: 'Événements & Animations', action: 'Conception et calage de l’activité d’animation étudiante du 17 septembre', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-3', weekLabel: 'S38', category: 'Logistique & Sécurité', action: 'Demande de salle pour la remise de chèque auprès de l’administration IUT GEA', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-4', weekLabel: 'S39', category: 'Fournisseurs & Commandes', action: 'Commande et récupération du chèque grand format cartonné pour la remise', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-5', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Envoyer un mail aux fournisseurs et partenaires pour les inviter à la remise', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-rnf-6', weekLabel: 'S39', category: 'Communication & Médias', action: 'Création et pose de l’affiche annonçant l’événement dans le hall de GEA', assignee: 'Mathias Samson', status: 'completed' },
-        { id: 't-rnf-7', weekLabel: 'S40', category: 'Partenaires & Sponsors', action: 'Relance et rappel d’invitation des partenaires et mécènes de l’an dernier', assignee: 'Julien Nicolle', status: 'completed' },
+        { id: 't-rnf-1', weekLabel: 'S36', category: 'Partenaires & Sponsors', action: 'Prise de contact téléphonique avec l’association Gravir pour Guérir (dispo le 8 octobre)', assignee: 'Président', status: 'completed' },
+        { id: 't-rnf-2', weekLabel: 'S36', category: 'Événements & Animations', action: 'Conception et calage de l’activité d’animation étudiante du 17 septembre', assignee: 'Président', status: 'completed' },
+        { id: 't-rnf-3', weekLabel: 'S38', category: 'Logistique & Sécurité', action: 'Demande de salle pour la remise de chèque auprès de l’administration IUT GEA', assignee: 'Président', status: 'completed' },
+        { id: 't-rnf-4', weekLabel: 'S39', category: 'Fournisseurs & Commandes', action: 'Commande et récupération du chèque grand format cartonné pour la remise', assignee: 'Président', status: 'completed' },
+        { id: 't-rnf-5', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Envoyer un mail aux fournisseurs et partenaires pour les inviter à la remise', assignee: 'Président', status: 'completed' },
+        { id: 't-rnf-6', weekLabel: 'S39', category: 'Communication & Médias', action: 'Création et pose de l’affiche annonçant l’événement dans le hall de GEA', assignee: 'Com externe 1', status: 'completed' },
+        { id: 't-rnf-7', weekLabel: 'S40', category: 'Partenaires & Sponsors', action: 'Relance et rappel d’invitation des partenaires et mécènes de l’an dernier', assignee: 'Vice-président', status: 'completed' },
         { id: 't-rnf-8', weekLabel: 'S41 (08 oct.)', category: 'Activité / Jour J', action: 'Cérémonie officielle de remise de chèque à Gravir pour Guérir – 8 octobre 2026', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 't-rnf-9', weekLabel: 'S42', category: 'Post-événement', action: 'Publication des photos et remerciements aux partenaires sur les réseaux sociaux', assignee: 'Sina Abdoul Bastoi', status: 'todo' }
+        { id: 't-rnf-9', weekLabel: 'S42', category: 'Post-événement', action: 'Publication des photos et remerciements aux partenaires sur les réseaux sociaux', assignee: 'Com externe 2', status: 'todo' }
       ]
     },
     {
@@ -638,15 +638,15 @@ const DEFAULT_EVENTS: RetroplanningEvent[] = [
       content: 'Prospection active des sponsors locaux, signature des conventions de mécénat, relations avec les BDE du campus et commande dotations partenaires.',
       color: '#F59E0B',
       tasks: [
-        { id: 't-part-1', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Constitution et rédaction de la liste des partenaires et sponsors potentiels', assignee: 'Mathias Samson', status: 'in_progress' },
-        { id: 't-part-2', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Contact des autres BDE pour partenariat et synergie inter-promos', assignee: 'Julien Nicolle', status: 'in_progress' },
-        { id: 't-part-3', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Échange avec l’association ACTU pour actions communes et retours d’expérience', assignee: 'Julien Nicolle', status: 'in_progress' },
-        { id: 't-part-4', weekLabel: 'S40', category: 'Partenaires & Sponsors', action: 'Prise de contact avec les Pompiers de l’Urgence Internationale (PUI) pour mécénat', assignee: 'Vianney Urbanick', status: 'in_progress' },
-        { id: 't-part-5', weekLabel: 'S41', category: 'Partenaires & Sponsors', action: 'Démarchages actifs, rendez-vous physiques et présentation du dossier sponsoring', assignee: 'Mathias Samson', status: 'in_progress' },
-        { id: 't-part-6', weekLabel: 'S43', category: 'Fournisseurs & Commandes', action: 'Devis et négociation avec DPB pour les t-shirts sponsors et de l’équipe', assignee: 'Julien Nicolle', status: 'in_progress' },
-        { id: 't-part-7', weekLabel: 'S46', category: 'Partenaires & Sponsors', action: 'Finalisation et signature des conventions de partenariat et mécénat', assignee: 'Mathias Samson', status: 'todo' },
+        { id: 't-part-1', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Constitution et rédaction de la liste des partenaires et sponsors potentiels', assignee: 'Com externe 1', status: 'in_progress' },
+        { id: 't-part-2', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Contact des autres BDE pour partenariat et synergie inter-promos', assignee: 'Vice-président', status: 'in_progress' },
+        { id: 't-part-3', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Échange avec l’association ACTU pour actions communes et retours d’expérience', assignee: 'Vice-président', status: 'in_progress' },
+        { id: 't-part-4', weekLabel: 'S40', category: 'Partenaires & Sponsors', action: 'Prise de contact avec les Pompiers de l’Urgence Internationale (PUI) pour mécénat', assignee: 'Président', status: 'in_progress' },
+        { id: 't-part-5', weekLabel: 'S41', category: 'Partenaires & Sponsors', action: 'Démarchages actifs, rendez-vous physiques et présentation du dossier sponsoring', assignee: 'Com externe 1', status: 'in_progress' },
+        { id: 't-part-6', weekLabel: 'S43', category: 'Fournisseurs & Commandes', action: 'Devis et négociation avec DPB pour les t-shirts sponsors et de l’équipe', assignee: 'Vice-président', status: 'in_progress' },
+        { id: 't-part-7', weekLabel: 'S46', category: 'Partenaires & Sponsors', action: 'Finalisation et signature des conventions de partenariat et mécénat', assignee: 'Com externe 1', status: 'todo' },
         { id: 't-part-8', weekLabel: 'S49 (06 déc.)', category: 'Activité / Jour J', action: 'Clôture de la Campagne de Sponsoring & Budgets Partenaires validés', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 't-part-9', weekLabel: 'S50', category: 'Post-événement', action: 'Envoi des attestations de mécénat, factures acquittées et récapitulatif comptable', assignee: 'Vianney Urbanick', status: 'todo' }
+        { id: 't-part-9', weekLabel: 'S50', category: 'Post-événement', action: 'Envoi des attestations de mécénat, factures acquittées et récapitulatif comptable', assignee: 'Président', status: 'todo' }
       ]
     },
     {
@@ -657,22 +657,22 @@ const DEFAULT_EVENTS: RetroplanningEvent[] = [
       content: 'Recrutement des bénévoles, vente de dossards en ligne via HelloAsso, communication sur le campus, balisage du parcours, secours Croix-Rouge et gestion du jour J.',
       color: '#EF4444',
       tasks: [
-        { id: 't-crs-1', weekLabel: 'S39', category: 'Préparation & Cadrage', action: 'Choisir et acter la date définitive de la course avec l’université', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-crs-2', weekLabel: 'S40', category: 'Communication & Médias', action: 'Renouveler et moderniser le site internet de la course (mentions, billetterie)', assignee: 'Julien Nicolle', status: 'todo' },
-        { id: 't-crs-3', weekLabel: 'S41', category: 'Communication & Médias', action: 'Création du club Strava Run & Fun et animation des défis running étudiants', assignee: 'Vianney Urbanick', status: 'completed' },
-        { id: 't-crs-4', weekLabel: 'S42', category: 'Communication & Médias', action: 'Réalisation et diffusion du premier TikTok teaser pour la course solidaire', assignee: 'Sina Abdoul Bastoi', status: 'todo' },
-        { id: 't-crs-5', weekLabel: 'S44', category: 'Administratif & Juridique', action: 'Dépôt officiel en mairie du dossier de manifestation sportive et voirie', assignee: 'Vianney Urbanick', status: 'todo' },
-        { id: 't-crs-6', weekLabel: 'S45', category: 'Logistique & Sécurité', action: 'Devis et convention avec l’organisme de secourisme (Croix-Rouge) et plan secours', assignee: 'Théo', status: 'todo' },
-        { id: 't-crs-7', weekLabel: 'S50', category: 'Logistique & Sécurité', action: 'Campagne de recrutement et affectation des 40 bénévoles (signaleurs, ravitaillement)', assignee: 'Théo', status: 'todo' },
-        { id: 't-crs-8', weekLabel: 'S01', category: 'Communication & Médias', action: 'Grande campagne de communication de la course sur le campus (affiches, réseaux)', assignee: 'Sina Abdoul Bastoi', status: 'todo' },
-        { id: 't-crs-9', weekLabel: 'S02', category: 'Communication & Médias', action: 'Permanences d’information et stands dans le hall de l’IUT', assignee: 'Mathias Samson', status: 'todo' },
+        { id: 't-crs-1', weekLabel: 'S39', category: 'Préparation & Cadrage', action: 'Choisir et acter la date définitive de la course avec l’université', assignee: 'Président', status: 'completed' },
+        { id: 't-crs-2', weekLabel: 'S40', category: 'Communication & Médias', action: 'Renouveler et moderniser le site internet de la course (mentions, billetterie)', assignee: 'Vice-président', status: 'todo' },
+        { id: 't-crs-3', weekLabel: 'S41', category: 'Communication & Médias', action: 'Création du club Strava Run & Fun et animation des défis running étudiants', assignee: 'Président', status: 'completed' },
+        { id: 't-crs-4', weekLabel: 'S42', category: 'Communication & Médias', action: 'Réalisation et diffusion du premier TikTok teaser pour la course solidaire', assignee: 'Com externe 2', status: 'todo' },
+        { id: 't-crs-5', weekLabel: 'S44', category: 'Administratif & Juridique', action: 'Dépôt officiel en mairie du dossier de manifestation sportive et voirie', assignee: 'Président', status: 'todo' },
+        { id: 't-crs-6', weekLabel: 'S45', category: 'Logistique & Sécurité', action: 'Devis et convention avec l’organisme de secourisme (Croix-Rouge) et plan secours', assignee: 'Com interne', status: 'todo' },
+        { id: 't-crs-7', weekLabel: 'S50', category: 'Logistique & Sécurité', action: 'Campagne de recrutement et affectation des 40 bénévoles (signaleurs, ravitaillement)', assignee: 'Com interne', status: 'todo' },
+        { id: 't-crs-8', weekLabel: 'S01', category: 'Communication & Médias', action: 'Grande campagne de communication de la course sur le campus (affiches, réseaux)', assignee: 'Com externe 2', status: 'todo' },
+        { id: 't-crs-9', weekLabel: 'S02', category: 'Communication & Médias', action: 'Permanences d’information et stands dans le hall de l’IUT', assignee: 'Com externe 1', status: 'todo' },
         { id: 't-crs-10', weekLabel: 'S02 (15 janv.)', category: 'Activité / Jour J', action: 'Lancement Officiel de la Billetterie en ligne HelloAsso & Inscriptions Dossards', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 't-crs-11', weekLabel: 'S08', category: 'Fournisseurs & Commandes', action: 'Commande groupée des t-shirts coureurs, médailles, dossards et ravitaillement', assignee: 'Julien Nicolle', status: 'todo' },
-        { id: 't-crs-12', weekLabel: 'S11', category: 'Logistique & Sécurité', action: 'Briefing sécurité général avec la Croix-Rouge, sécurité campus et bénévoles', assignee: 'Mathias Samson', status: 'todo' },
-        { id: 't-crs-13', weekLabel: 'S12', category: 'Logistique & Sécurité', action: 'Balisage complet du parcours de la course, montage des arches et stands', assignee: 'Théo', status: 'todo' },
+        { id: 't-crs-11', weekLabel: 'S08', category: 'Fournisseurs & Commandes', action: 'Commande groupée des t-shirts coureurs, médailles, dossards et ravitaillement', assignee: 'Vice-président', status: 'todo' },
+        { id: 't-crs-12', weekLabel: 'S11', category: 'Logistique & Sécurité', action: 'Briefing sécurité général avec la Croix-Rouge, sécurité campus et bénévoles', assignee: 'Com externe 1', status: 'todo' },
+        { id: 't-crs-13', weekLabel: 'S12', category: 'Logistique & Sécurité', action: 'Balisage complet du parcours de la course, montage des arches et stands', assignee: 'Com interne', status: 'todo' },
         { id: 't-crs-14', weekLabel: 'S12 (22 mars)', category: 'Activité / Jour J', action: 'JOUR J : RUN AND FUN DAY – Grande Course Solidaire 2027 !', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
         { id: 't-crs-15', weekLabel: 'S13', category: 'Post-événement', action: 'Démontage, nettoyage éco-responsable du site, proclamation des podiums et débriefing', assignee: 'Toute l’équipe', status: 'todo' },
-        { id: 't-crs-16', weekLabel: 'S14', category: 'Post-événement', action: 'Bilan comptable final de la course, diffusion de l’aftermovie vidéo et remerciements', assignee: 'Julien Nicolle', status: 'todo' }
+        { id: 't-crs-16', weekLabel: 'S14', category: 'Post-événement', action: 'Bilan comptable final de la course, diffusion de l’aftermovie vidéo et remerciements', assignee: 'Vice-président', status: 'todo' }
       ]
     }
   ];

@@ -51,20 +51,20 @@ export function isTaskAssignedToMember(
 
   const a = taskAssignee.toLowerCase().trim();
   const mName = (member.name || '').toLowerCase().trim();
-  if (a === mName) return true;
+  const mRole = (member.role || '').toLowerCase().trim();
+  const mId = (member.id || '').toLowerCase().trim();
 
-  const firstName = mName.split(' ')[0];
-  if (firstName && firstName.length > 2 && (a === firstName || a.startsWith(firstName) || a.includes(firstName))) {
-    return true;
-  }
+  if (a === mName || a === mRole) return true;
+  if (mName && (a.includes(mName) || mName.includes(a))) return true;
 
-  // Prise en compte Théo / Tetew / Theo
-  if (
-    (mName.includes('théo') || mName.includes('theo') || mName.includes('tetew')) &&
-    (a.includes('théo') || a.includes('theo') || a.includes('tetew'))
-  ) {
-    return true;
-  }
+  // Rapprochement par rôles
+  if ((mId === 'm-vianney' || mName.includes('président')) && (a.includes('président') && !a.includes('vice'))) return true;
+  if ((mId === 'm-julien' || mName.includes('vice')) && a.includes('vice')) return true;
+  if ((mId === 'm-theo' || mName.includes('interne')) && a.includes('interne')) return true;
+  if ((mId === 'm-mathias' || mName.includes('externe 1')) && a.includes('externe 1')) return true;
+  if ((mId === 'm-sina' || mName.includes('externe 2')) && (a.includes('externe 2') || (a.includes('externe') && !a.includes('1')))) return true;
+  if ((mId === 'm-christelle' || mName.includes('encadrant 1')) && a.includes('encadrant 1')) return true;
+  if ((mId === 'm-marius' || mName.includes('encadrant 2')) && a.includes('encadrant 2')) return true;
 
   return false;
 }

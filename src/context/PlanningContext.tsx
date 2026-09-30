@@ -105,40 +105,52 @@ const PlanningContext = createContext<PlanningContextType | undefined>(undefined
 
 const normalizeMember = (m: TeamMember): TeamMember => {
   let updated = { ...m };
-  if (updated.name.toLowerCase() === 'tetew' || updated.id === 'm-tetew') {
-    updated = { ...updated, id: 'm-theo', name: 'Théo', initials: 'TH' };
-  }
   const id = (updated.id || '').toLowerCase();
   const name = (updated.name || '').toLowerCase();
 
-  if (id === 'm-vianney' || name.includes('vianney')) {
-    updated.role = 'Président';
+  if (id === 'm-vianney' || id === 'm-pres' || name.includes('vianney') || name.includes('président')) {
+    updated.name = 'Président';
+    updated.role = 'Présidence';
+    updated.initials = 'PR';
+    updated.color = updated.color || '#3B82F6';
     updated.generation = updated.generation || '10ème équipe';
-  } else if (id === 'm-julien' || name.includes('julien')) {
-    updated.role = 'Vice-président';
+  } else if (id === 'm-julien' || id === 'm-vp' || name.includes('julien') || name.includes('vice')) {
+    updated.name = 'Vice-président';
+    updated.role = 'Vice-présidence';
+    updated.initials = 'VP';
+    updated.color = updated.color || '#6366F1';
     updated.generation = updated.generation || '10ème équipe';
-  } else if (id === 'm-theo' || name.includes('théo') || name.includes('theo')) {
-    updated.role = 'Chargé de communication interne';
+  } else if (id === 'm-theo' || id === 'm-tetew' || id === 'm-com-int' || name.includes('théo') || name.includes('theo') || name.includes('tetew') || name.includes('interne')) {
+    updated.name = 'Com interne';
+    updated.role = 'Communication interne';
+    updated.initials = 'CI';
+    updated.color = updated.color || '#EC4899';
     updated.generation = updated.generation || '10ème équipe';
-  } else if (id === 'm-mathias' || name.includes('mathias')) {
-    updated.role = 'Chargé de communication externe';
+  } else if (id === 'm-mathias' || id === 'm-com-ext1' || name.includes('mathias') || name.includes('externe 1')) {
+    updated.name = 'Com externe 1';
+    updated.role = 'Communication externe';
+    updated.initials = 'CE1';
+    updated.color = updated.color || '#F59E0B';
     updated.generation = updated.generation || '10ème équipe';
-  } else if (id === 'm-sina' || name.includes('sina')) {
-    updated.role = 'Chargé de communication externe';
+  } else if (id === 'm-sina' || id === 'm-com-ext2' || name.includes('sina') || name.includes('externe 2') || (name.includes('externe') && !name.includes('1'))) {
+    updated.name = 'Com externe 2';
+    updated.role = 'Communication externe';
+    updated.initials = 'CE2';
+    updated.color = updated.color || '#10B981';
     updated.generation = updated.generation || '10ème équipe';
-  } else if (id === 'm-christelle' || name.includes('christelle') || name.includes('voisin')) {
+  } else if (id === 'm-christelle' || id === 'm-prof1' || name.includes('christelle') || name.includes('voisin') || name.includes('encadrant 1')) {
     updated.id = 'm-christelle';
-    updated.name = 'Christelle Voisin';
-    updated.role = 'Professeure encadrante';
-    updated.initials = 'CV';
+    updated.name = 'Enseignant encadrant 1';
+    updated.role = 'Professeur encadrant';
+    updated.initials = 'E1';
     updated.color = updated.color || '#8B5CF6';
     updated.generation = 'Équipe pédagogique';
     updated.isSupervisor = true;
-  } else if (id === 'm-marius' || name.includes('marius') || name.includes('chevalier')) {
+  } else if (id === 'm-marius' || id === 'm-prof2' || name.includes('marius') || name.includes('chevalier') || name.includes('encadrant 2')) {
     updated.id = 'm-marius';
-    updated.name = 'Marius Chevalier';
+    updated.name = 'Enseignant encadrant 2';
     updated.role = 'Professeur encadrant';
-    updated.initials = 'MC';
+    updated.initials = 'E2';
     updated.color = updated.color || '#0EA5E9';
     updated.generation = 'Équipe pédagogique';
     updated.isSupervisor = true;
@@ -159,41 +171,46 @@ const normalizeMember = (m: TeamMember): TeamMember => {
 
 const normalizeConnectedUser = (u: ConnectedUser): ConnectedUser => {
   let updated = { ...u };
-  if (updated.name?.toLowerCase() === 'tetew' || updated.id === 'm-tetew') {
-    updated = { ...updated, id: 'm-theo', name: 'Théo', initials: 'TH' };
-  }
   const id = (updated.id || '').toLowerCase();
   const name = (updated.name || '').toLowerCase();
 
-  if (id === 'm-vianney' || name.includes('vianney')) {
-    updated.role = 'Président';
+  if (id === 'm-vianney' || id === 'm-pres' || name.includes('vianney') || name.includes('président')) {
+    updated.name = 'Président';
+    updated.role = 'Présidence';
+    updated.initials = 'PR';
     updated.generation = updated.generation || '10ème équipe';
-  } else if (id === 'm-julien' || name.includes('julien')) {
-    updated.role = 'Vice-président';
+  } else if (id === 'm-julien' || id === 'm-vp' || name.includes('julien') || name.includes('vice')) {
+    updated.name = 'Vice-président';
+    updated.role = 'Vice-présidence';
+    updated.initials = 'VP';
     updated.generation = updated.generation || '10ème équipe';
-  } else if (id === 'm-theo' || name.includes('théo') || name.includes('theo')) {
-    updated.role = 'Chargé de communication interne';
+  } else if (id === 'm-theo' || id === 'm-tetew' || id === 'm-com-int' || name.includes('théo') || name.includes('theo') || name.includes('tetew') || name.includes('interne')) {
+    updated.name = 'Com interne';
+    updated.role = 'Communication interne';
+    updated.initials = 'CI';
     updated.generation = updated.generation || '10ème équipe';
-  } else if (id === 'm-mathias' || name.includes('mathias')) {
-    updated.role = 'Chargé de communication externe';
+  } else if (id === 'm-mathias' || id === 'm-com-ext1' || name.includes('mathias') || name.includes('externe 1')) {
+    updated.name = 'Com externe 1';
+    updated.role = 'Communication externe';
+    updated.initials = 'CE1';
     updated.generation = updated.generation || '10ème équipe';
-  } else if (id === 'm-sina' || name.includes('sina')) {
-    updated.role = 'Chargé de communication externe';
+  } else if (id === 'm-sina' || id === 'm-com-ext2' || name.includes('sina') || name.includes('externe 2') || (name.includes('externe') && !name.includes('1'))) {
+    updated.name = 'Com externe 2';
+    updated.role = 'Communication externe';
+    updated.initials = 'CE2';
     updated.generation = updated.generation || '10ème équipe';
-  } else if (id === 'm-christelle' || name.includes('christelle') || name.includes('voisin')) {
+  } else if (id === 'm-christelle' || id === 'm-prof1' || name.includes('christelle') || name.includes('voisin') || name.includes('encadrant 1')) {
     updated.id = 'm-christelle';
-    updated.name = 'Christelle Voisin';
-    updated.role = 'Professeure encadrante';
-    updated.initials = 'CV';
-    updated.color = updated.color || '#8B5CF6';
+    updated.name = 'Enseignant encadrant 1';
+    updated.role = 'Professeur encadrant';
+    updated.initials = 'E1';
     updated.generation = 'Équipe pédagogique';
     updated.isSupervisor = true;
-  } else if (id === 'm-marius' || name.includes('marius') || name.includes('chevalier')) {
+  } else if (id === 'm-marius' || id === 'm-prof2' || name.includes('marius') || name.includes('chevalier') || name.includes('encadrant 2')) {
     updated.id = 'm-marius';
-    updated.name = 'Marius Chevalier';
+    updated.name = 'Enseignant encadrant 2';
     updated.role = 'Professeur encadrant';
-    updated.initials = 'MC';
-    updated.color = updated.color || '#0EA5E9';
+    updated.initials = 'E2';
     updated.generation = 'Équipe pédagogique';
     updated.isSupervisor = true;
   } else if (id === 'm-bde' || name.includes('bde') || name.includes('bureau des')) {
@@ -201,7 +218,6 @@ const normalizeConnectedUser = (u: ConnectedUser): ConnectedUser => {
     updated.name = 'BDE IUT GEA';
     updated.role = 'Bureau Des Étudiants (Consultation)';
     updated.initials = 'BDE';
-    updated.color = updated.color || '#F59E0B';
     updated.generation = 'Partenaires & BDE';
     updated.isBde = true;
     updated.isReadOnly = true;
@@ -211,15 +227,37 @@ const normalizeConnectedUser = (u: ConnectedUser): ConnectedUser => {
   return updated;
 };
 
+const cleanAssigneeName = (name?: string): string | undefined => {
+  if (!name) return name;
+  const a = name.toLowerCase();
+  if (a.includes('vianney') || a.includes('urbanick') || a.includes('président')) return 'Président';
+  if (a.includes('julien') || a.includes('nicolle') || a.includes('vice')) return 'Vice-président';
+  if (a.includes('théo') || a.includes('theo') || a.includes('tetew') || a.includes('interne')) return 'Com interne';
+  if (a.includes('mathias') || a.includes('samson') || a.includes('externe 1')) return 'Com externe 1';
+  if (a.includes('sina') || a.includes('bastoi') || a.includes('externe 2') || (a.includes('externe') && !a.includes('1'))) return 'Com externe 2';
+  if (a.includes('christelle') || a.includes('voisin') || a.includes('encadrant 1')) return 'Enseignant encadrant 1';
+  if (a.includes('marius') || a.includes('chevalier') || a.includes('encadrant 2')) return 'Enseignant encadrant 2';
+  return name;
+};
+
 const normalizeTask = (t: Task): Task => {
   const catDef = getCategoryDefinition(t.category || STANDARD_CATEGORIES[0].label);
-  const isTetew = t.assignee?.toLowerCase() === 'tetew' || t.assigneeId === 'm-tetew';
+  const cleanAssignee = cleanAssigneeName(t.assignee);
+  let cleanId = t.assigneeId;
+  if (cleanAssignee === 'Président') cleanId = 'm-vianney';
+  else if (cleanAssignee === 'Vice-président') cleanId = 'm-julien';
+  else if (cleanAssignee === 'Com interne') cleanId = 'm-theo';
+  else if (cleanAssignee === 'Com externe 1') cleanId = 'm-mathias';
+  else if (cleanAssignee === 'Com externe 2') cleanId = 'm-sina';
+  else if (cleanAssignee === 'Enseignant encadrant 1') cleanId = 'm-christelle';
+  else if (cleanAssignee === 'Enseignant encadrant 2') cleanId = 'm-marius';
+
   return {
     ...t,
     category: catDef.label,
     color: catDef.color,
-    assignee: isTetew ? 'Théo' : t.assignee,
-    assigneeId: isTetew ? 'm-theo' : t.assigneeId
+    assignee: cleanAssignee,
+    assigneeId: cleanId
   };
 };
 
@@ -229,7 +267,7 @@ const normalizeRetroEvents = (events: RetroplanningEvent[]): RetroplanningEvent[
     tasks: sortRetroTasksChronologically(
       (e.tasks || []).map((t) => ({
         ...t,
-        assignee: t.assignee?.toLowerCase() === 'tetew' ? 'Théo' : t.assignee
+        assignee: cleanAssigneeName(t.assignee) || ''
       }))
     )
   }));

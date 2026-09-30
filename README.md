@@ -8,7 +8,7 @@ Application web complète de rétroplanning prévisionnel collaboratif en temps 
 
 - **Diagramme de Gantt par Semaines (S1 à S52)** : Chaque tâche dispose de **sa propre ligne dédiée en hauteur** (cascade chronologique claire et nette).
 - **Collaboration Temps Réel (Multi-utilisateurs)** : Tout le monde peut modifier le planning en direct via WebSocket ; les changements se répercutent instantanément sur les écrans de tous les collaborateurs connectés sans recharger.
-- **Filtres par Collaborateur** : Isolez instantanément les tâches d'un équipier (Julien, Thomas, Camille, Alice, Marc...) d'un simple clic.
+- **Filtres par Rôle & Collaborateur** : Isolez instantanément les tâches d'un pôle (Présidence, Communication, Logistique...) d'un simple clic.
 - **Prêt pour le Cloud Gratuit (Render)** : Le backend Node.js sert à la fois l'application React et le serveur WebSocket sur un seul port, 100% compatible avec l'hébergement gratuit de Render.
 
 ---

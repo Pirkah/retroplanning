@@ -25,7 +25,7 @@ export const Footer: React.FC = () => {
             title="Contacts développeur & réseaux"
           >
             <Code2 size={12} className="text-slate-400 group-hover:text-indigo-500" />
-            <span>Dev : Julien Nicolle</span>
+            <span>Développement & Liens</span>
           </button>
 
           {/* Popover discret de contact dev */}
@@ -34,7 +34,7 @@ export const Footer: React.FC = () => {
               <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-slate-800 dark:text-slate-200">
                   <Sparkles size={13} className="text-indigo-500" />
-                  <span>Contacts Développeur</span>
+                  <span>Informations & Code source</span>
                 </div>
                 <button
                   onClick={() => setIsDevMenuOpen(false)}
@@ -46,7 +46,7 @@ export const Footer: React.FC = () => {
 
               <div className="pt-2.5 space-y-2 text-xs">
                 <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                  Conçu & développé par <strong>Julien Nicolle</strong> (@Pirkah) pour l'association Run & Fun.
+                  Plateforme collaborative conçue pour l'association Run & Fun (10ème édition).
                 </p>
 
                 <div className="pt-1 flex flex-col gap-1.5">

@@ -360,7 +360,7 @@ export const TeamMessagesView: React.FC = () => {
           <div className="bg-purple-50/70 dark:bg-purple-950/30 border-b border-purple-200/60 dark:border-purple-900/40 px-5 py-2 flex items-center gap-2 text-xs text-purple-900 dark:text-purple-200">
             <Users size={15} className="text-purple-600 dark:text-purple-400 shrink-0" />
             <span>
-              Salon d'échange et de remarques partagé avec les professeurs encadrants (<strong>Christelle Voisin</strong> & <strong>Marius Chevalier</strong>) et le <strong>BDE IUT GEA</strong>.
+              Salon d'échange et de remarques partagé avec les professeurs encadrants et le <strong>BDE IUT GEA</strong>.
             </span>
           </div>
         ) : null}

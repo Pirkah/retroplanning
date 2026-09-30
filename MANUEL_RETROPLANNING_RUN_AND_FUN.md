@@ -80,8 +80,8 @@ Pour concilier transparence et confidentialité, l'application propose **4 nivea
 | Profil | Qui est concerné ? | Droits sur le Rétroplanning & Gantt | Accès Messagerie | Accès Boîte à Idées | Exports (Excel, PDF, Impr.) |
 | :--- | :--- | :---: | :---: | :---: | :---: |
 | **Mode Visiteur (Lecture)** | Toute personne arrivant sur le site sans mot de passe | Consultation seule (aucune modification) | ❌ Masqué & Verrouillé | ❌ Masqué & Verrouillé | ✅ Autorisé |
-| **Membres Organisateurs** | Vianney, Julien, Théo, Mathias, Sina | Modification totale (ajout, statut, dates, assignation) | ✅ Tous les salons d'équipe | ✅ Propositions, votes, statuts | ✅ Autorisé |
-| **Équipe Pédagogique** | Christelle Voisin, Marius Chevalier | Supervision, consultation et modifications | ✅ Salon d'échanges encadrement & général | ✅ Consultation et validation | ✅ Autorisé |
+| **Membres Organisateurs** | Bureau étudiant (Présidence, Vice-présidence, Communication) | Modification totale (ajout, statut, dates, assignation) | ✅ Tous les salons d'équipe | ✅ Propositions, votes, statuts | ✅ Autorisé |
+| **Équipe Pédagogique** | Enseignants encadrants | Supervision, consultation et modifications | ✅ Salon d'échanges encadrement & général | ✅ Consultation et validation | ✅ Autorisé |
 | **Compte BDE** | Bureau Des Étudiants (IUT GEA) | Consultation seule (sécurisé anti-effacement) | ✅ Salon dédié avec l'équipe et les profs | ❌ Masqué & Réservé à l'organisation | ✅ Autorisé |
 
 > [!IMPORTANT]
@@ -130,7 +130,7 @@ Accessible via le menu **Gantt** ou le module 2 :
 - **Jalons clés :**  
   Les étapes majeures (Passation, Réunion sponsors, Jour J...) sont signalées par une icône d'étoile ou un losange doré pour attirer le regard.
 - **Filtres rapides :**  
-  - Vous pouvez filtrer par **collaborateur** (ex: afficher uniquement ce que doit faire Julien).
+  - Vous pouvez filtrer par **rôle** (ex: afficher uniquement ce qui est assigné à la Vice-présidence ou à la Communication).
   - Vous pouvez filtrer par **catégorie** (Communication, Sponsors, Logistique, etc.).
   - Une barre de recherche permet de trouver une tâche par son nom en direct.
 - **Créer une tâche :**  
@@ -207,7 +207,7 @@ Cliquez sur l'icône **Imprimante** : la mise en page supprime automatiquement l
 Le mot de passe maître de secours est **`rnf2026`** pour l'équipe et **`bde2026`** pour le compte BDE. Vous pouvez l'utiliser à tout moment pour vous reconnecter, puis redéfinir votre mot de passe personnalisé.
 
 ### ❓ Est-ce que mes modifications écrasent celles de mes camarades ?
-Non. Le système est conçu pour synchroniser chaque tâche indépendamment. Si Julien modifie une tâche de communication pendant que Vianney valide un jalon logistique, les deux modifications sont fusionnées et enregistrées en direct.
+Non. Le système est conçu pour synchroniser chaque tâche indépendamment. Si un responsable modifie une tâche de communication pendant que le président valide un jalon logistique, les deux modifications sont fusionnées et enregistrées en direct.
 
 ### ❓ Est-ce que le BDE peut supprimer des tâches par erreur ?
 Non. Le compte BDE est configuré avec un statut de consultation stricte. Même s'ils se connectent, les boutons de suppression ou de modification de planning leur sont masqués.
