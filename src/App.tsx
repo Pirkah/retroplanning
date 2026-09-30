@@ -17,7 +17,7 @@ import { CheckCircle2, Clock, Sparkles, Eye, Lock } from 'lucide-react';
 import { formatDateFr, sortTasksChronologically } from './utils/scheduler';
 
 const MainLayout: React.FC = () => {
-  const { viewMode, currentProject, members, isAuthorized, openAuthModal } = usePlanning();
+  const { viewMode, setViewMode, currentProject, members, isAuthorized, currentUser, openAuthModal } = usePlanning();
 
   const totalTasks = currentProject.tasks.length;
   const completedTasks = currentProject.tasks.filter((t) => t.status === 'completed').length;
@@ -79,8 +79,76 @@ const MainLayout: React.FC = () => {
         {viewMode === 'home' && <HomeHubView />}
         {(viewMode === 'gantt' || viewMode === 'timeline') && <GanttChartView />}
         {viewMode === 'retroplanning' && <RetroplanningView />}
-        {viewMode === 'ideas' && <IdeasNotesView />}
-        {viewMode === 'messages' && <TeamMessagesView />}
+        {viewMode === 'ideas' && (
+          isAuthorized ? (
+            <IdeasNotesView />
+          ) : (
+            <div className="flex-1 flex items-center justify-center p-6">
+              <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-center shadow-lg space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mx-auto">
+                  <Lock size={24} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Boîte à Idées Restreinte</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    {currentUser?.isBde
+                      ? "L'accès à la boîte à idées et de brainstorming est réservé à l'équipe organisatrice Run & Fun."
+                      : "En mode lecture, la boîte à idées et de brainstorming est masquée pour préserver la confidentialité du projet."}
+                  </p>
+                </div>
+                <div className="flex items-center justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => setViewMode('home')}
+                    className="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                  >
+                    Retour à l'accueil
+                  </button>
+                  {!currentUser && (
+                    <button
+                      onClick={openAuthModal}
+                      className="px-4 py-2 text-xs font-bold rounded-xl bg-amber-600 hover:bg-amber-700 text-white transition shadow-xs"
+                    >
+                      Se connecter
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        )}
+        {viewMode === 'messages' && (
+          currentUser ? (
+            <TeamMessagesView />
+          ) : (
+            <div className="flex-1 flex items-center justify-center p-6">
+              <div className="max-w-md w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 text-center shadow-lg space-y-4">
+                <div className="w-12 h-12 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
+                  <Lock size={24} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">Messagerie Interne Protégée</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    En mode lecture, l'accès aux canaux de discussion de l'équipe est restreint. Veuillez vous connecter avec un compte membre ou partenaire pour y accéder.
+                  </p>
+                </div>
+                <div className="flex items-center justify-center gap-3 pt-2">
+                  <button
+                    onClick={() => setViewMode('home')}
+                    className="px-4 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                  >
+                    Retour à l'accueil
+                  </button>
+                  <button
+                    onClick={openAuthModal}
+                    className="px-4 py-2 text-xs font-bold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-xs"
+                  >
+                    Se connecter
+                  </button>
+                </div>
+              </div>
+            </div>
+          )
+        )}
         {viewMode === 'calendar' && <CalendarView />}
         {viewMode === 'list' && <TaskListView />}
       </main>

@@ -734,34 +734,40 @@ export const Header: React.FC = () => {
             </button>
           </div>
 
-          {/* Nouveaux Espaces Collaboratifs : Idées & Messagerie */}
-          <div className="flex items-center bg-slate-200/50 dark:bg-slate-800 p-0.5 rounded-xl gap-0.5 border border-transparent dark:border-slate-750">
-            <button
-              onClick={() => setViewMode('ideas')}
-              className={`px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 ${
-                viewMode === 'ideas'
-                  ? 'bg-white dark:bg-slate-700 text-amber-800 dark:text-amber-300 shadow-2xs font-bold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
-              }`}
-              title="Boîte à Idées & Notes collaboratives"
-            >
-              <Lightbulb size={13} className={viewMode === 'ideas' ? 'text-amber-500' : 'text-amber-600 dark:text-amber-400'} />
-              <span>Idées</span>
-            </button>
+          {/* Espaces Collaboratifs réservés : Idées (Équipe) & Messagerie (Membres connectés) */}
+          {(isAuthorized || currentUser) && (
+            <div className="flex items-center bg-slate-200/50 dark:bg-slate-800 p-0.5 rounded-xl gap-0.5 border border-transparent dark:border-slate-750">
+              {isAuthorized && !currentUser?.isBde && (
+                <button
+                  onClick={() => setViewMode('ideas')}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 ${
+                    viewMode === 'ideas'
+                      ? 'bg-white dark:bg-slate-700 text-amber-800 dark:text-amber-300 shadow-2xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
+                  }`}
+                  title="Boîte à Idées & Notes collaboratives"
+                >
+                  <Lightbulb size={13} className={viewMode === 'ideas' ? 'text-amber-500' : 'text-amber-600 dark:text-amber-400'} />
+                  <span>Idées</span>
+                </button>
+              )}
 
-            <button
-              onClick={() => setViewMode('messages')}
-              className={`px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 ${
-                viewMode === 'messages'
-                  ? 'bg-white dark:bg-slate-700 text-emerald-800 dark:text-emerald-300 shadow-2xs font-bold'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
-              }`}
-              title="Messagerie et salons de discussion par sujets"
-            >
-              <MessageSquare size={13} className={viewMode === 'messages' ? 'text-emerald-500' : 'text-emerald-600 dark:text-emerald-400'} />
-              <span>Messagerie</span>
-            </button>
-          </div>
+              {currentUser && (
+                <button
+                  onClick={() => setViewMode('messages')}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs transition flex items-center gap-1.5 ${
+                    viewMode === 'messages'
+                      ? 'bg-white dark:bg-slate-700 text-emerald-800 dark:text-emerald-300 shadow-2xs font-bold'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium'
+                  }`}
+                  title={currentUser.isBde ? 'Salon d’échanges BDE & Encadrement' : 'Messagerie et salons de discussion par sujets'}
+                >
+                  <MessageSquare size={13} className={viewMode === 'messages' ? 'text-emerald-500' : 'text-emerald-600 dark:text-emerald-400'} />
+                  <span>{currentUser.isBde ? 'Échanges' : 'Messagerie'}</span>
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Vues complémentaires compactes */}
           <div className="flex items-center bg-slate-200/40 dark:bg-slate-800 p-0.5 rounded-lg border border-transparent dark:border-slate-750">

@@ -301,6 +301,10 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const [viewMode, setViewModeState] = useState<ViewMode>(() => {
     const saved = localStorage.getItem('rnf_view_mode_v2');
+    const savedUser = localStorage.getItem('rnf_connected_user_v1');
+    if (!savedUser && (saved === 'ideas' || saved === 'messages')) {
+      return 'home';
+    }
     return (saved as ViewMode) || 'home';
   });
 
@@ -880,6 +884,9 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setCurrentUser(null);
     localStorage.removeItem(AUTH_KEY);
     localStorage.removeItem(USER_KEY);
+    if (viewMode === 'ideas' || viewMode === 'messages') {
+      setViewMode('home');
+    }
   };
 
   const changePassword = async (oldPass: string, newPass: string, memberId?: string): Promise<{ success: boolean; message?: string }> => {

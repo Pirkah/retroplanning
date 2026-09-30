@@ -18,7 +18,8 @@ import {
   TrendingUp,
   Heart,
   ChevronRight,
-  Plus
+  Plus,
+  Lock
 } from 'lucide-react';
 import { sortRetroEventsChronologically, formatDateFr } from '../../utils/scheduler';
 import { PersonalTasksHub } from './PersonalTasksHub';
@@ -211,99 +212,123 @@ export const HomeHubView: React.FC = () => {
             </div>
           </div>
 
-          {/* MODULE 3 : BOÎTE À IDÉES & NOTES */}
-          <div
-            onClick={() => setViewMode('ideas')}
-            className="group relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-500 p-5 shadow-xs hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col justify-between"
-          >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-105 group-hover:bg-amber-500 group-hover:text-white transition-all shadow-xs">
-                  <Lightbulb size={24} />
+          {/* MODULE 3 : BOÎTE À IDÉES & NOTES (Masqué en mode lecture et pour le BDE) */}
+          {isAuthorized && !isCurrentUserBde && (
+            <div
+              onClick={() => setViewMode('ideas')}
+              className="group relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 hover:border-amber-400 dark:hover:border-amber-500 p-5 shadow-xs hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-105 group-hover:bg-amber-500 group-hover:text-white transition-all shadow-xs">
+                    <Lightbulb size={24} />
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200">
+                    Brainstorming
+                  </span>
                 </div>
-                <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200">
-                  Brainstorming
-                </span>
-              </div>
 
-              <div>
-                <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                  Boîte à Idées & Notes
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                  Proposez des idées pour la course, les animations, les partenaires, votez et validez-les en équipe.
-                </p>
-              </div>
-
-              <div className="pt-2 flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                <span>{ideas.length} idées déposées et débattues</span>
-              </div>
-            </div>
-
-            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400 group-hover:translate-x-1 transition-transform">
-              <span>Explorer les Idées</span>
-              <ArrowRight size={15} />
-            </div>
-          </div>
-
-          {/* MODULE 4 : MESSAGERIE D'ÉQUIPE PAR SUJETS */}
-          <div
-            onClick={() => setViewMode('messages')}
-            className="group relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-500 p-5 shadow-xs hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col justify-between"
-          >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all shadow-xs ${
-                  isCurrentUserSupervisor
-                    ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 group-hover:bg-purple-600 group-hover:text-white'
-                    : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white'
-                }`}>
-                  <MessageSquare size={24} />
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                    Boîte à Idées & Notes
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    Proposez des idées pour la course, les animations, les partenaires, votez et validez-les en équipe.
+                  </p>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                  isCurrentUserSupervisor
-                    ? 'bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200'
-                    : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200'
-                }`}>
-                  {isCurrentUserSupervisor ? 'Supervision Professeurs' : 'Messagerie Carrée'}
-                </span>
+
+                <div className="pt-2 flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
+                  <span className="w-2 h-2 rounded-full bg-amber-500" />
+                  <span>{ideas.length} idées déposées et débattues</span>
+                </div>
               </div>
 
-              <div>
-                <h3 className={`text-base font-bold text-slate-900 dark:text-white transition-colors ${
-                  isCurrentUserSupervisor
-                    ? 'group-hover:text-purple-600 dark:group-hover:text-purple-400'
-                    : 'group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
-                }`}>
-                  {isCurrentUserSupervisor ? 'Remarques & Suivi Pédagogique' : 'Discussions par Sujets'}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                  {isCurrentUserSupervisor
-                    ? 'Espace réservé pour laisser vos conseils, remarques et suivre les avancées de l’équipe étudiante.'
-                    : 'Salons thématiques (#général, #course, etc.) et salon de suivi avec les professeurs encadrants.'}
-                </p>
-              </div>
-
-              <div className="pt-2 flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
-                <span className={`w-2 h-2 rounded-full ${isCurrentUserSupervisor ? 'bg-purple-500' : 'bg-emerald-500'}`} />
-                <span>
-                  {isCurrentUserSupervisor
-                    ? '1 salon d’encadrement dédié aux retours profs'
-                    : `${channels.length} salons thématiques actifs`}
-                </span>
+              <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400 group-hover:translate-x-1 transition-transform">
+                <span>Explorer les Idées</span>
+                <ArrowRight size={15} />
               </div>
             </div>
+          )}
 
-            <div className={`mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold group-hover:translate-x-1 transition-transform ${
-              isCurrentUserSupervisor
-                ? 'text-purple-600 dark:text-purple-400'
-                : 'text-emerald-600 dark:text-emerald-400'
-            }`}>
-              <span>{isCurrentUserSupervisor ? "Ouvrir l'espace encadrement" : 'Rejoindre les discussions'}</span>
-              <ArrowRight size={15} />
+          {/* MODULE 4 : MESSAGERIE D'ÉQUIPE PAR SUJETS (Masqué en mode lecture seule) */}
+          {currentUser && (
+            <div
+              onClick={() => setViewMode('messages')}
+              className="group relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 hover:border-emerald-400 dark:hover:border-emerald-500 p-5 shadow-xs hover:shadow-lg transition-all duration-200 cursor-pointer flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-105 transition-all shadow-xs ${
+                    isCurrentUserBde
+                      ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 group-hover:bg-amber-600 group-hover:text-white'
+                      : isCurrentUserSupervisor
+                      ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 group-hover:bg-purple-600 group-hover:text-white'
+                      : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white'
+                  }`}>
+                    <MessageSquare size={24} />
+                  </div>
+                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                    isCurrentUserBde
+                      ? 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200'
+                      : isCurrentUserSupervisor
+                      ? 'bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-200'
+                      : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200'
+                  }`}>
+                    {isCurrentUserBde ? 'Partenaires & BDE' : isCurrentUserSupervisor ? 'Supervision Professeurs' : 'Messagerie Carrée'}
+                  </span>
+                </div>
+
+                <div>
+                  <h3 className={`text-base font-bold text-slate-900 dark:text-white transition-colors ${
+                    isCurrentUserBde
+                      ? 'group-hover:text-amber-600 dark:group-hover:text-amber-400'
+                      : isCurrentUserSupervisor
+                      ? 'group-hover:text-purple-600 dark:group-hover:text-purple-400'
+                      : 'group-hover:text-emerald-600 dark:group-hover:text-emerald-400'
+                  }`}>
+                    {isCurrentUserBde
+                      ? 'Salon d’Échanges BDE & Encadrement'
+                      : isCurrentUserSupervisor
+                      ? 'Remarques & Suivi Pédagogique'
+                      : 'Discussions par Sujets'}
+                  </h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    {isCurrentUserBde
+                      ? 'Espace dédié pour échanger directement avec l’équipe organisatrice et les professeurs encadrants.'
+                      : isCurrentUserSupervisor
+                      ? 'Espace réservé pour laisser vos conseils, remarques et suivre les avancées de l’équipe étudiante.'
+                      : 'Salons thématiques (#général, #course, etc.) et salon de suivi avec les professeurs encadrants.'}
+                  </p>
+                </div>
+
+                <div className="pt-2 flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
+                  <span className={`w-2 h-2 rounded-full ${
+                    isCurrentUserBde
+                      ? 'bg-amber-500'
+                      : isCurrentUserSupervisor
+                      ? 'bg-purple-500'
+                      : 'bg-emerald-500'
+                  }`} />
+                  <span>
+                    {isRestrictedViewer
+                      ? '1 salon d’échange direct'
+                      : `${channels.length} salons thématiques actifs`}
+                  </span>
+                </div>
+              </div>
+
+              <div className={`mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs font-bold group-hover:translate-x-1 transition-transform ${
+                isCurrentUserBde
+                  ? 'text-amber-600 dark:text-amber-400'
+                  : isCurrentUserSupervisor
+                  ? 'text-purple-600 dark:text-purple-400'
+                  : 'text-emerald-600 dark:text-emerald-400'
+              }`}>
+                <span>{isCurrentUserBde ? "Accéder au salon d'échanges" : isCurrentUserSupervisor ? "Ouvrir l'espace encadrement" : 'Rejoindre les discussions'}</span>
+                <ArrowRight size={15} />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* MODULE 5 : CALENDRIER */}
           <div
@@ -502,40 +527,47 @@ export const HomeHubView: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. SECTION D'ACTUALITÉS : DERNIERS MESSAGES & TOP IDÉES */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Dernières discussions */}
+      {/* 4. SECTION D'ACTUALITÉS : DERNIERS MESSAGES & TOP IDÉES (Réservé aux membres connectés) */}
+      {!currentUser ? (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="flex items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 flex items-center justify-center shrink-0 shadow-xs">
+              <Lock size={22} />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                Messagerie interne & Boîte à idées protégées
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                En mode lecture seule, les discussions et les propositions de projets sont masquées pour des raisons de confidentialité.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={openAuthModal}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 shadow-xs shrink-0"
+          >
+            <ShieldCheck size={15} />
+            <span>Se connecter</span>
+          </button>
+        </div>
+      ) : isCurrentUserBde ? (
+        /* Pour le compte BDE : uniquement son salon d'échanges BDE & Encadrement */
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                isCurrentUserBde
-                  ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'
-                  : isCurrentUserSupervisor
-                  ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300'
-                  : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
-              }`}>
+              <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center">
                 <MessageSquare size={16} />
               </div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                {isCurrentUserBde
-                  ? 'Derniers échanges BDE & Encadrement'
-                  : isCurrentUserSupervisor
-                  ? 'Dernières remarques & échanges de suivi'
-                  : "Derniers échanges de l'équipe"}
+                Derniers échanges BDE & Encadrement
               </h3>
             </div>
             <button
               onClick={() => setViewMode('messages')}
-              className={`text-xs font-bold ${
-                isCurrentUserBde
-                  ? 'text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300'
-                  : isCurrentUserSupervisor
-                  ? 'text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300'
-                  : 'text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300'
-              }`}
+              className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
             >
-              {isRestrictedViewer ? 'Ouvrir les échanges →' : 'Ouvrir le chat →'}
+              Ouvrir les échanges →
             </button>
           </div>
 
@@ -545,9 +577,9 @@ export const HomeHubView: React.FC = () => {
                 <p className="text-xs">Aucun message pour le moment</p>
                 <button
                   onClick={() => setViewMode('messages')}
-                  className="mt-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                  className="mt-1 text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline"
                 >
-                  Envoyer un premier message
+                  Envoyer un message à l'équipe
                 </button>
               </div>
             ) : (
@@ -580,50 +612,124 @@ export const HomeHubView: React.FC = () => {
             )}
           </div>
         </div>
-
-        {/* Top idées du moment */}
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center">
-                <Lightbulb size={16} />
+      ) : (
+        /* Pour les membres d'équipe & encadrants : Discussions + Top idées */
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Discussions d'équipe */}
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
+                  isCurrentUserSupervisor
+                    ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300'
+                    : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
+                }`}>
+                  <MessageSquare size={16} />
+                </div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  {isCurrentUserSupervisor
+                    ? 'Dernières remarques & échanges de suivi'
+                    : "Derniers échanges de l'équipe"}
+                </h3>
               </div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">Idées les plus plébiscitées</h3>
+              <button
+                onClick={() => setViewMode('messages')}
+                className={`text-xs font-bold ${
+                  isCurrentUserSupervisor
+                    ? 'text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300'
+                    : 'text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300'
+                }`}
+              >
+                {isRestrictedViewer ? 'Ouvrir les échanges →' : 'Ouvrir le chat →'}
+              </button>
             </div>
-            <button
-              onClick={() => setViewMode('ideas')}
-              className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
-            >
-              Voir la boîte →
-            </button>
+
+            <div className="space-y-2">
+              {latestMessages.length === 0 ? (
+                <div className="py-6 text-center text-slate-400 dark:text-slate-500">
+                  <p className="text-xs">Aucun message pour le moment</p>
+                  <button
+                    onClick={() => setViewMode('messages')}
+                    className="mt-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline"
+                  >
+                    Envoyer un premier message
+                  </button>
+                </div>
+              ) : (
+                latestMessages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    onClick={() => {
+                      setActiveChannelId(msg.channelId);
+                      setViewMode('messages');
+                    }}
+                    className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-slate-100/80 dark:hover:bg-slate-800 cursor-pointer transition flex items-start gap-2.5"
+                  >
+                    <div
+                      className="w-7 h-7 rounded-full flex items-center justify-center text-white font-bold text-[10px] shrink-0 mt-0.5"
+                      style={{ backgroundColor: msg.authorColor }}
+                    >
+                      {msg.authorInitials}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-1">
+                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{msg.authorName}</span>
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500">
+                          {new Date(msg.timestamp).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-1 mt-0.5">{msg.content}</p>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
-          <div className="space-y-2">
-            {topIdeas.map((idea) => (
-              <div
-                key={idea.id}
-                onClick={() => setViewMode('ideas')}
-                className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-slate-100/80 dark:hover:bg-slate-800 cursor-pointer transition flex items-start justify-between gap-3"
-              >
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200">
-                      {idea.category}
-                    </span>
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{idea.title}</span>
-                  </div>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">{idea.content}</p>
+          {/* Top idées du moment */}
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 p-5 shadow-xs space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 flex items-center justify-center">
+                  <Lightbulb size={16} />
                 </div>
-
-                <div className="flex items-center gap-1 text-xs font-bold text-rose-500 shrink-0 bg-rose-50 dark:bg-rose-950/50 px-2 py-1 rounded-lg">
-                  <Heart size={12} fill="currentColor" />
-                  <span>{idea.likes}</span>
-                </div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">Idées les plus plébiscitées</h3>
               </div>
-            ))}
+              <button
+                onClick={() => setViewMode('ideas')}
+                className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300"
+              >
+                Voir la boîte →
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              {topIdeas.map((idea) => (
+                <div
+                  key={idea.id}
+                  onClick={() => setViewMode('ideas')}
+                  className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 hover:bg-slate-100/80 dark:hover:bg-slate-800 cursor-pointer transition flex items-start justify-between gap-3"
+                >
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200">
+                        {idea.category}
+                      </span>
+                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">{idea.title}</span>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">{idea.content}</p>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-xs font-bold text-rose-500 shrink-0 bg-rose-50 dark:bg-rose-950/50 px-2 py-1 rounded-lg">
+                    <Heart size={12} fill="currentColor" />
+                    <span>{idea.likes}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

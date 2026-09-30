@@ -342,79 +342,99 @@ export const NavigationSidebar: React.FC = () => {
               </div>
             </div>
 
-            {/* 3. BOÎTE À IDÉES & NOTES */}
-            <div
-              onClick={() => handleNavigateToView('ideas')}
-              className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
-                viewMode === 'ideas'
-                  ? 'bg-amber-50/80 dark:bg-amber-950/50 border-amber-300 dark:border-amber-700 shadow-2xs font-bold text-amber-950 dark:text-amber-200'
-                  : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
-                    viewMode === 'ideas'
-                      ? 'bg-amber-500 text-white shadow-xs'
-                      : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 group-hover:scale-105'
-                  }`}
-                >
-                  <Lightbulb size={16} />
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-xs font-bold">3. Boîte à Idées & Notes</p>
-                    <span className="text-[9px] bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-1 py-0.2 rounded font-extrabold uppercase">
-                      Brainstorming
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-slate-400 dark:text-slate-400">Propositions, votes et statuts</p>
-                </div>
-              </div>
-              <ChevronRight
-                size={16}
-                className={`transition-transform ${
-                  viewMode === 'ideas' ? 'text-amber-600 dark:text-amber-400 translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
+            {/* 3. BOÎTE À IDÉES & NOTES (Réservé à l'équipe organisatrice) */}
+            {isAuthorized && !currentUser?.isBde && (
+              <div
+                onClick={() => handleNavigateToView('ideas')}
+                className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
+                  viewMode === 'ideas'
+                    ? 'bg-amber-50/80 dark:bg-amber-950/50 border-amber-300 dark:border-amber-700 shadow-2xs font-bold text-amber-950 dark:text-amber-200'
+                    : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
                 }`}
-              />
-            </div>
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
+                      viewMode === 'ideas'
+                        ? 'bg-amber-500 text-white shadow-xs'
+                        : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 group-hover:scale-105'
+                    }`}
+                  >
+                    <Lightbulb size={16} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold">3. Boîte à Idées & Notes</p>
+                      <span className="text-[9px] bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-1 py-0.2 rounded font-extrabold uppercase">
+                        Brainstorming
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-400">Propositions, votes et statuts</p>
+                  </div>
+                </div>
+                <ChevronRight
+                  size={16}
+                  className={`transition-transform ${
+                    viewMode === 'ideas' ? 'text-amber-600 dark:text-amber-400 translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
+                  }`}
+                />
+              </div>
+            )}
 
-            {/* 4. MESSAGERIE D'ÉQUIPE PAR SUJETS */}
-            <div
-              onClick={() => handleNavigateToView('messages')}
-              className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
-                viewMode === 'messages'
-                  ? 'bg-emerald-50/80 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-700 shadow-2xs font-bold text-emerald-950 dark:text-emerald-200'
-                  : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
-                    viewMode === 'messages'
-                      ? 'bg-emerald-600 text-white shadow-xs'
-                      : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 group-hover:scale-105'
-                  }`}
-                >
-                  <MessageSquare size={16} />
-                </div>
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-xs font-bold">4. Messagerie par Sujets</p>
-                    <span className="text-[9px] bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200 px-1 py-0.2 rounded font-extrabold uppercase">
-                      Chat
-                    </span>
-                  </div>
-                  <p className="text-[10px] text-slate-400 dark:text-slate-400">Salons #général, #course, #sponsors...</p>
-                </div>
-              </div>
-              <ChevronRight
-                size={16}
-                className={`transition-transform ${
-                  viewMode === 'messages' ? 'text-emerald-600 dark:text-emerald-400 translate-x-0.5' : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
+            {/* 4. MESSAGERIE D'ÉQUIPE PAR SUJETS (Réservé aux membres connectés) */}
+            {currentUser && (
+              <div
+                onClick={() => handleNavigateToView('messages')}
+                className={`p-3 rounded-xl border cursor-pointer transition flex items-center justify-between group ${
+                  viewMode === 'messages'
+                    ? currentUser.isBde
+                      ? 'bg-amber-50/80 dark:bg-amber-950/50 border-amber-300 dark:border-amber-700 shadow-2xs font-bold text-amber-950 dark:text-amber-200'
+                      : 'bg-emerald-50/80 dark:bg-emerald-950/50 border-emerald-300 dark:border-emerald-700 shadow-2xs font-bold text-emerald-950 dark:text-emerald-200'
+                    : 'bg-white dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200'
                 }`}
-              />
-            </div>
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition ${
+                      viewMode === 'messages'
+                        ? currentUser.isBde
+                          ? 'bg-amber-600 text-white shadow-xs'
+                          : 'bg-emerald-600 text-white shadow-xs'
+                        : currentUser.isBde
+                        ? 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 group-hover:scale-105'
+                        : 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 group-hover:scale-105'
+                    }`}
+                  >
+                    <MessageSquare size={16} />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold">{currentUser.isBde ? 'Salon d’Échanges BDE' : '4. Messagerie par Sujets'}</p>
+                      <span className={`text-[9px] px-1 py-0.2 rounded font-extrabold uppercase ${
+                        currentUser.isBde
+                          ? 'bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200'
+                          : 'bg-emerald-100 dark:bg-emerald-900 text-emerald-800 dark:text-emerald-200'
+                      }`}>
+                        Chat
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-400">
+                      {currentUser.isBde ? 'Échanges partagés avec équipe et profs' : 'Salons #général, #course, #sponsors...'}
+                    </p>
+                  </div>
+                </div>
+                <ChevronRight
+                  size={16}
+                  className={`transition-transform ${
+                    viewMode === 'messages'
+                      ? currentUser.isBde
+                        ? 'text-amber-600 dark:text-amber-400 translate-x-0.5'
+                        : 'text-emerald-600 dark:text-emerald-400 translate-x-0.5'
+                      : 'text-slate-300 dark:text-slate-600 group-hover:text-slate-500'
+                  }`}
+                />
+              </div>
+            )}
 
             {/* 5. CALENDRIER */}
             <div
