@@ -142,6 +142,15 @@ const normalizeMember = (m: TeamMember): TeamMember => {
     updated.color = updated.color || '#0EA5E9';
     updated.generation = 'Équipe pédagogique';
     updated.isSupervisor = true;
+  } else if (id === 'm-bde' || name.includes('bde') || name.includes('bureau des')) {
+    updated.id = 'm-bde';
+    updated.name = 'BDE IUT GEA';
+    updated.role = 'Bureau Des Étudiants (Consultation)';
+    updated.initials = 'BDE';
+    updated.color = updated.color || '#F59E0B';
+    updated.generation = 'Partenaires & BDE';
+    updated.isBde = true;
+    updated.isReadOnly = true;
   } else {
     updated.generation = updated.generation || '10ème équipe';
   }
@@ -187,6 +196,15 @@ const normalizeConnectedUser = (u: ConnectedUser): ConnectedUser => {
     updated.color = updated.color || '#0EA5E9';
     updated.generation = 'Équipe pédagogique';
     updated.isSupervisor = true;
+  } else if (id === 'm-bde' || name.includes('bde') || name.includes('bureau des')) {
+    updated.id = 'm-bde';
+    updated.name = 'BDE IUT GEA';
+    updated.role = 'Bureau Des Étudiants (Consultation)';
+    updated.initials = 'BDE';
+    updated.color = updated.color || '#F59E0B';
+    updated.generation = 'Partenaires & BDE';
+    updated.isBde = true;
+    updated.isReadOnly = true;
   } else {
     updated.generation = updated.generation || '10ème équipe';
   }
@@ -377,6 +395,12 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     try {
       const savedPass = localStorage.getItem(AUTH_KEY);
       const savedUser = localStorage.getItem(USER_KEY);
+      if (savedUser) {
+        const parsed = JSON.parse(savedUser);
+        if (parsed?.isReadOnly || parsed?.isBde || parsed?.id === 'm-bde') {
+          return false;
+        }
+      }
       return Boolean(savedPass && savedUser);
     } catch {
       return false;
@@ -390,12 +414,19 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const savedPass = localStorage.getItem(AUTH_KEY);
       const savedUserStr = localStorage.getItem(USER_KEY);
       let savedMemberId: string | undefined = undefined;
+      let isReadOnlyUser = false;
       try {
         if (savedUserStr) {
           const parsed = JSON.parse(savedUserStr);
           savedMemberId = parsed?.id;
+          isReadOnlyUser = Boolean(parsed?.isReadOnly || parsed?.isBde || parsed?.id === 'm-bde');
         }
       } catch {}
+
+      if (isReadOnlyUser) {
+        setIsAuthorized(false);
+        return;
+      }
 
       if (savedPass && savedMemberId) {
         try {
@@ -769,6 +800,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const unlockEditMode = async (password: string, user?: ConnectedUser): Promise<boolean> => {
+    const isReadOnlyUser = Boolean(user?.isReadOnly || (user as any)?.isBde || user?.id === 'm-bde');
     const applyUser = () => {
       if (user) {
         const completeUser: ConnectedUser = {
@@ -793,9 +825,15 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         body: JSON.stringify({ password, memberId: user?.id })
       });
       if (res.ok) {
-        setIsAuthorized(true);
-        setAuthPassword(password);
-        localStorage.setItem(AUTH_KEY, password);
+        if (isReadOnlyUser) {
+          setIsAuthorized(false);
+          setAuthPassword('');
+          localStorage.removeItem(AUTH_KEY);
+        } else {
+          setIsAuthorized(true);
+          setAuthPassword(password);
+          localStorage.setItem(AUTH_KEY, password);
+        }
         if (user?.id) {
           try {
             const userPasswordsKey = 'rnf_user_passwords_v1';
@@ -817,10 +855,17 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (user?.id && parsed[user.id]) localUserPass = parsed[user.id];
       } catch {}
 
-      if (password === localUserPass || password === 'rnf2026') {
-        setIsAuthorized(true);
-        setAuthPassword(password);
-        localStorage.setItem(AUTH_KEY, password);
+      const isDefaultBde = user?.id === 'm-bde' && (password === 'bde2026' || password === 'rnf2026');
+      if (password === localUserPass || isDefaultBde || password === 'rnf2026') {
+        if (isReadOnlyUser) {
+          setIsAuthorized(false);
+          setAuthPassword('');
+          localStorage.removeItem(AUTH_KEY);
+        } else {
+          setIsAuthorized(true);
+          setAuthPassword(password);
+          localStorage.setItem(AUTH_KEY, password);
+        }
         applyUser();
         setIsAuthModalOpen(false);
         return true;

@@ -34,9 +34,9 @@ export const DEFAULT_CHANNELS: ChatChannel[] = [
   },
   {
     id: 'c-supervision',
-    name: 'suivi-pedagogique-remarques',
-    description: 'Remarques, conseils et suivi des professeurs encadrants (Christelle Voisin & Marius Chevalier)',
-    iconName: 'GraduationCap'
+    name: 'échanges-encadrement-bde',
+    description: 'Espace partagé pour échanger avec l’équipe Run & Fun, les professeurs encadrants et le BDE',
+    iconName: 'Users'
   }
 ];
 

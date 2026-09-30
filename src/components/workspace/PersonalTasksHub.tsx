@@ -211,7 +211,7 @@ export const PersonalTasksHub: React.FC = () => {
   // Clic sur la case à cocher (toggle completed / in_progress)
   const handleToggleStatus = (item: PersonalItem, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!isAuthorized) {
+    if (!isAuthorized || currentUser?.isReadOnly) {
       openAuthModal();
       return;
     }
@@ -426,20 +426,22 @@ export const PersonalTasksHub: React.FC = () => {
             <span className="text-[11px] font-medium">Inclure tâches collectives</span>
           </label>
 
-          <button
-            onClick={() => {
-              if (!isAuthorized) {
-                openAuthModal();
-              } else {
-                openNewTaskModal();
-              }
-            }}
-            className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
-            title="Créer une nouvelle tâche dans le planning"
-          >
-            <Plus size={14} />
-            <span className="hidden sm:inline">Ajouter une tâche</span>
-          </button>
+          {!currentUser?.isReadOnly && (
+            <button
+              onClick={() => {
+                if (!isAuthorized) {
+                  openAuthModal();
+                } else {
+                  openNewTaskModal();
+                }
+              }}
+              className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs"
+              title="Créer une nouvelle tâche dans le planning"
+            >
+              <Plus size={14} />
+              <span className="hidden sm:inline">Ajouter une tâche</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -447,19 +449,33 @@ export const PersonalTasksHub: React.FC = () => {
       <div className="divide-y divide-slate-100 dark:divide-slate-800 max-h-[520px] overflow-y-auto">
         {filteredItems.length === 0 ? (
           <div className="py-12 px-6 text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto">
-              {statusFilter === 'todo' ? <Sparkles size={24} /> : <CheckCircle2 size={24} />}
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mx-auto ${
+              activeMember.isBde
+                ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400'
+                : 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
+            }`}>
+              {activeMember.isBde ? (
+                <ShieldCheck size={24} />
+              ) : statusFilter === 'todo' ? (
+                <Sparkles size={24} />
+              ) : (
+                <CheckCircle2 size={24} />
+              )}
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-800 dark:text-white">
-                {statusFilter === 'todo'
+                {activeMember.isBde
+                  ? 'Compte Observateur BDE (Consultation)'
+                  : statusFilter === 'todo'
                   ? '🎉 Aucune tâche à faire en attente !'
                   : statusFilter === 'completed'
                   ? 'Aucune tâche marquée comme terminée.'
                   : 'Aucune tâche trouvée pour ce profil.'}
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
-                {statusFilter === 'todo'
+                {activeMember.isBde
+                  ? 'Le BDE dispose d’un accès complet en consultation sur l’ensemble du projet et aux exports de documents. Utilisez le sélecteur de membre ci-dessus pour consulter les missions des organisateurs.'
+                  : statusFilter === 'todo'
                   ? `Toutes les missions de ${activeMember.name} sont validées ou vous n'avez pas de tâche en cours actuellement.`
                   : 'Modifiez vos filtres ou ajoutez une nouvelle mission pour ce collaborateur.'}
               </p>
@@ -481,12 +497,17 @@ export const PersonalTasksHub: React.FC = () => {
                 {/* Case à cocher pour validation directe */}
                 <button
                   onClick={(e) => handleToggleStatus(item, e)}
+                  disabled={Boolean(currentUser?.isReadOnly)}
                   className={`mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition shrink-0 ${
+                    currentUser?.isReadOnly ? 'cursor-default' : ''
+                  } ${
                     isCompleted
                       ? 'bg-emerald-500 text-white shadow-xs'
+                      : currentUser?.isReadOnly
+                      ? 'border-2 border-slate-200 dark:border-slate-700 text-transparent'
                       : 'border-2 border-slate-300 dark:border-slate-600 hover:border-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 text-transparent hover:text-emerald-500'
                   }`}
-                  title={isCompleted ? 'Marquer comme non terminé' : 'Valider cette tâche (terminée)'}
+                  title={currentUser?.isReadOnly ? (isCompleted ? 'Tâche terminée' : 'Tâche à faire') : (isCompleted ? 'Marquer comme non terminé' : 'Valider cette tâche (terminée)')}
                 >
                   <CheckCircle2 size={16} />
                 </button>

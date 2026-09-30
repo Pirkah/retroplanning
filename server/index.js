@@ -85,6 +85,33 @@ if (!store) {
     store.security.userPasswords = {};
     saveStore(store);
   }
+
+  // Initialisation du mot de passe par défaut pour le BDE (bde2026) s'il n'est pas encore défini
+  if (!store.security.userPasswords['m-bde']) {
+    store.security.userPasswords['m-bde'] = 'bde2026';
+    saveStore(store);
+  }
+
+  // S'assurer que le compte BDE est présent dans la liste des membres des projets
+  if (store.projects && Array.isArray(store.projects)) {
+    let modified = false;
+    store.projects.forEach((p) => {
+      if (p.members && !p.members.some((m) => m.id === 'm-bde')) {
+        p.members.push({
+          id: 'm-bde',
+          name: 'BDE IUT GEA',
+          role: 'Bureau Des Étudiants (Consultation)',
+          color: '#F59E0B',
+          initials: 'BDE',
+          generation: 'Partenaires & BDE',
+          isBde: true,
+          isReadOnly: true
+        });
+        modified = true;
+      }
+    });
+    if (modified) saveStore(store);
+  }
 }
 
 // Routes API
@@ -156,14 +183,20 @@ app.post('/api/projects/sync', (req, res) => {
 
 // Vérification du mot de passe de modification (général ou spécifique utilisateur)
 app.post('/api/auth/verify', (req, res) => {
-  const { password, memberId } = req.body || {};
-  const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
+  const isBde = memberId === 'm-bde';
   const hasCustomMemberPassword = Boolean(memberId && store?.security?.userPasswords?.[memberId]);
-  const memberPassword = hasCustomMemberPassword ? store.security.userPasswords[memberId] : masterPassword;
+  let memberPassword = hasCustomMemberPassword ? store.security.userPasswords[memberId] : masterPassword;
+  if (isBde && !hasCustomMemberPassword) {
+    memberPassword = 'bde2026';
+  }
 
-  // 1. Si le mot de passe correspond au mot de passe utilisateur ou au mot de passe maître
-  if (password === memberPassword || password === masterPassword) {
-    return res.json({ success: true });
+  // 1. Si le mot de passe correspond au mot de passe utilisateur, mot de passe BDE par défaut, ou mot de passe maître
+  if (
+    password === memberPassword ||
+    password === masterPassword ||
+    (isBde && (password === 'bde2026' || (store?.security?.userPasswords && password === store.security.userPasswords['m-bde'])))
+  ) {
+    return res.json({ success: true, isReadOnly: isBde, isBde });
   }
 
   // 2. Si le serveur a redémarré (suite à un push/redeploy où data/planning_store.json a été réinitialisé)
@@ -175,7 +208,7 @@ app.post('/api/auth/verify', (req, res) => {
     store.security.userPasswords[memberId] = password.trim();
     saveStore(store);
     console.log(`[Auth] Mot de passe réhydraté avec succès pour ${memberId} suite à une mise à jour.`);
-    return res.json({ success: true, rehydrated: true });
+    return res.json({ success: true, rehydrated: true, isReadOnly: isBde, isBde });
   }
 
   return res.status(401).json({ success: false, message: 'Mot de passe incorrect' });
@@ -185,11 +218,16 @@ app.post('/api/auth/verify', (req, res) => {
 app.post('/api/auth/change-password', (req, res) => {
   const { oldPassword, newPassword, memberId } = req.body || {};
   const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
-  const hasCustomMemberPassword = Boolean(memberId && store?.security?.userPasswords?.[memberId]);
-  const currentPassword = hasCustomMemberPassword ? store.security.userPasswords[memberId] : masterPassword;
+  const defaultMemberPass = (memberId === 'm-bde') ? 'bde2026' : masterPassword;
+  const currentPassword = hasCustomMemberPassword ? store.security.userPasswords[memberId] : defaultMemberPass;
 
   // Vérifie si l'ancien mot de passe est valide (ou si serveur redémarré sans mot de passe custom, autoriser si oldPassword >= 3)
-  const isOldValid = (oldPassword === currentPassword || oldPassword === masterPassword || (!hasCustomMemberPassword && oldPassword && oldPassword.length >= 3));
+  const isOldValid = (
+    oldPassword === currentPassword ||
+    oldPassword === masterPassword ||
+    oldPassword === defaultMemberPass ||
+    (!hasCustomMemberPassword && oldPassword && oldPassword.length >= 3)
+  );
 
   if (!isOldValid) {
     return res.status(401).json({ success: false, message: 'Ancien mot de passe invalide' });

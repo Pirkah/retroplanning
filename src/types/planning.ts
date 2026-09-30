@@ -9,6 +9,8 @@ export interface TeamMember {
   initials: string;
   generation?: string;
   isSupervisor?: boolean;
+  isBde?: boolean;
+  isReadOnly?: boolean;
 }
 
 export interface ConnectedUser {
@@ -19,6 +21,8 @@ export interface ConnectedUser {
   initials?: string;
   generation?: string;
   isSupervisor?: boolean;
+  isBde?: boolean;
+  isReadOnly?: boolean;
   loggedInAt?: string;
 }
 
@@ -102,6 +106,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
   { id: 'm-sina', name: 'Sina Abdoul Bastoi', role: 'Chargé de communication externe', color: '#10B981', initials: 'SI', generation: '10ème équipe' },
   { id: 'm-christelle', name: 'Christelle Voisin', role: 'Professeure encadrante', color: '#8B5CF6', initials: 'CV', generation: 'Équipe pédagogique', isSupervisor: true },
   { id: 'm-marius', name: 'Marius Chevalier', role: 'Professeur encadrant', color: '#0EA5E9', initials: 'MC', generation: 'Équipe pédagogique', isSupervisor: true },
+  { id: 'm-bde', name: 'BDE IUT GEA', role: 'Bureau Des Étudiants (Consultation)', color: '#F59E0B', initials: 'BDE', generation: 'Partenaires & BDE', isBde: true, isReadOnly: true },
 ];
 
 export interface WeekColumn {

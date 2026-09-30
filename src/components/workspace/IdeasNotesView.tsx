@@ -145,19 +145,21 @@ export const IdeasNotesView: React.FC = () => {
           </p>
         </div>
 
-        <button
-          onClick={() => {
-            if (!isAuthorized) {
-              openAuthModal();
-            } else {
-              setIsModalOpen(true);
-            }
-          }}
-          className="px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl text-xs font-bold shadow-md shadow-amber-100 dark:shadow-none transition flex items-center justify-center gap-2 shrink-0 group"
-        >
-          <Plus size={16} className="group-hover:scale-110 transition-transform" />
-          <span>Proposer une nouvelle idée</span>
-        </button>
+        {!currentUser?.isReadOnly && (
+          <button
+            onClick={() => {
+              if (!isAuthorized) {
+                openAuthModal();
+              } else {
+                setIsModalOpen(true);
+              }
+            }}
+            className="px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl text-xs font-bold shadow-md shadow-amber-100 dark:shadow-none transition flex items-center justify-center gap-2 shrink-0 group"
+          >
+            <Plus size={16} className="group-hover:scale-110 transition-transform" />
+            <span>Proposer une nouvelle idée</span>
+          </button>
+        )}
       </div>
 
       {/* 2. Filtres, Recherche & Catégories */}
@@ -339,20 +341,22 @@ export const IdeasNotesView: React.FC = () => {
 
                   <div className="flex items-center gap-1.5">
                     {/* Bouton concrétiser / réaliser en tâche officielle */}
-                    <button
-                      onClick={() => handleConvertToTask(idea)}
-                      className={`px-2 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-2xs ${
-                        isIdeaPlanned(idea) || idea.status === 'implemented'
-                          ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
-                          : 'bg-slate-50 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/60 text-slate-600 dark:text-slate-300 hover:text-purple-700 dark:hover:text-purple-300 border border-slate-200 dark:border-slate-700'
-                      }`}
-                      title={isIdeaPlanned(idea) || idea.status === 'implemented' ? 'Idée planifiée et réalisée dans le planning' : 'Transformer cette idée en tâche dans le Gantt'}
-                    >
-                      <CalendarPlus size={12} className={isIdeaPlanned(idea) || idea.status === 'implemented' ? 'text-purple-600 dark:text-purple-400' : 'text-slate-400 dark:text-slate-500'} />
-                      <span className="text-[11px] hidden sm:inline">
-                        {isIdeaPlanned(idea) || idea.status === 'implemented' ? 'Réalisée' : 'Faire'}
-                      </span>
-                    </button>
+                    {!currentUser?.isReadOnly && (
+                      <button
+                        onClick={() => handleConvertToTask(idea)}
+                        className={`px-2 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-2xs ${
+                          isIdeaPlanned(idea) || idea.status === 'implemented'
+                            ? 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
+                            : 'bg-slate-50 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/60 text-slate-600 dark:text-slate-300 hover:text-purple-700 dark:hover:text-purple-300 border border-slate-200 dark:border-slate-700'
+                        }`}
+                        title={isIdeaPlanned(idea) || idea.status === 'implemented' ? 'Idée planifiée et réalisée dans le planning' : 'Transformer cette idée en tâche dans le Gantt'}
+                      >
+                        <CalendarPlus size={12} className={isIdeaPlanned(idea) || idea.status === 'implemented' ? 'text-purple-600 dark:text-purple-400' : 'text-slate-400 dark:text-slate-500'} />
+                        <span className="text-[11px] hidden sm:inline">
+                          {isIdeaPlanned(idea) || idea.status === 'implemented' ? 'Réalisée' : 'Faire'}
+                        </span>
+                      </button>
+                    )}
 
                     {/* Bouton voter / aimer */}
                     <button

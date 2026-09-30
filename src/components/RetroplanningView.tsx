@@ -32,6 +32,7 @@ export const RetroplanningView: React.FC = () => {
   const {
     currentProject,
     members,
+    currentUser,
     isAuthorized,
     openAuthModal,
     addRetroEvent,
@@ -111,10 +112,11 @@ export const RetroplanningView: React.FC = () => {
     return sortRetroWeekLabelsChronologically(result);
   }, [currentEvent]);
 
-  // Chaîne des membres d'équipe pour la bannière
+  // Chaîne des membres d'équipe pour la bannière (organisateurs étudiants uniquement)
   const teamBannerString = useMemo(() => {
     if (members.length === 0) return 'Toute l’équipe';
-    return members.map((m) => m.name).join(' | ');
+    const activeStudentMembers = members.filter((m) => !m.isSupervisor && !m.isBde);
+    return (activeStudentMembers.length > 0 ? activeStudentMembers : members).map((m) => m.name).join(' | ');
   }, [members]);
 
   // Handlers pour Événement
@@ -377,13 +379,15 @@ export const RetroplanningView: React.FC = () => {
                     <span>Exporter Classeur Excel (.xlsx)</span>
                   </button>
 
-                  <button
-                    onClick={handleOpenNewEvent}
-                    className="px-3 py-1 bg-white text-amber-900 hover:bg-amber-50 rounded-lg text-xs font-black transition flex items-center gap-1.5 shadow-xs"
-                  >
-                    <Plus size={14} />
-                    <span>Ajouter un événement</span>
-                  </button>
+                  {!currentUser?.isReadOnly && (
+                    <button
+                      onClick={handleOpenNewEvent}
+                      className="px-3 py-1 bg-white text-amber-900 hover:bg-amber-50 rounded-lg text-xs font-black transition flex items-center gap-1.5 shadow-xs"
+                    >
+                      <Plus size={14} />
+                      <span>Ajouter un événement</span>
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -457,21 +461,25 @@ export const RetroplanningView: React.FC = () => {
                               >
                                 <ChevronRight size={16} />
                               </button>
-                              <button
-                                onClick={() => handleOpenEditEvent(evt)}
-                                className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
-                                title="Modifier les infos"
-                              >
-                                <Edit3 size={14} />
-                              </button>
-                              {events.length > 1 && (
-                                <button
-                                  onClick={() => handleDeleteEvent(evt.id, evt.title)}
-                                  className="p-1.5 text-rose-400 dark:text-rose-500 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition"
-                                  title="Supprimer"
-                                >
-                                  <Trash2 size={14} />
-                                </button>
+                              {!currentUser?.isReadOnly && (
+                                <>
+                                  <button
+                                    onClick={() => handleOpenEditEvent(evt)}
+                                    className="p-1.5 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition"
+                                    title="Modifier les infos"
+                                  >
+                                    <Edit3 size={14} />
+                                  </button>
+                                  {events.length > 1 && (
+                                    <button
+                                      onClick={() => handleDeleteEvent(evt.id, evt.title)}
+                                      className="p-1.5 text-rose-400 dark:text-rose-500 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition"
+                                      title="Supprimer"
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                  )}
+                                </>
                               )}
                             </div>
                           </td>
@@ -529,22 +537,24 @@ export const RetroplanningView: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 no-print">
-                  <button
-                    onClick={handleOpenNewTask}
-                    className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-sm transition flex items-center gap-1.5"
-                  >
-                    <Plus size={16} />
-                    <span>Ajouter une action</span>
-                  </button>
-                  <button
-                    onClick={() => handleOpenEditEvent(currentEvent)}
-                    className="px-3 py-2 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
-                  >
-                    <Edit3 size={14} />
-                    <span>Modifier l’événement</span>
-                  </button>
-                </div>
+                {!currentUser?.isReadOnly && (
+                  <div className="flex items-center gap-2 no-print">
+                    <button
+                      onClick={handleOpenNewTask}
+                      className="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-black shadow-sm transition flex items-center gap-1.5"
+                    >
+                      <Plus size={16} />
+                      <span>Ajouter une action</span>
+                    </button>
+                    <button
+                      onClick={() => handleOpenEditEvent(currentEvent)}
+                      className="px-3 py-2 border border-slate-300 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+                    >
+                      <Edit3 size={14} />
+                      <span>Modifier l’événement</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* GRILLE RÉTROPLANNING HAUTE FIDÉLITÉ (PHOTO 2) */}
@@ -700,30 +710,34 @@ export const RetroplanningView: React.FC = () => {
 
                               {/* 7. Actions */}
                               <td className="py-3 px-2 text-center no-print">
-                                <div className="flex items-center justify-center gap-1">
-                                  <button
-                                    onClick={() => handleOpenEditTask(task)}
-                                    className={`p-1 rounded ${
-                                      isEventRow
-                                        ? 'text-white hover:bg-red-700'
-                                        : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
-                                    }`}
-                                    title="Modifier cette action"
-                                  >
-                                    <Edit3 size={13} />
-                                  </button>
-                                  <button
-                                    onClick={() => handleDeleteTask(task.id)}
-                                    className={`p-1 rounded ${
-                                      isEventRow
-                                        ? 'text-white hover:bg-red-700'
-                                        : 'text-rose-400 dark:text-rose-500 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40'
-                                    }`}
-                                    title="Supprimer"
-                                  >
-                                    <Trash2 size={13} />
-                                  </button>
-                                </div>
+                                {!currentUser?.isReadOnly ? (
+                                  <div className="flex items-center justify-center gap-1">
+                                    <button
+                                      onClick={() => handleOpenEditTask(task)}
+                                      className={`p-1 rounded ${
+                                        isEventRow
+                                          ? 'text-white hover:bg-red-700'
+                                          : 'text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                      }`}
+                                      title="Modifier cette action"
+                                    >
+                                      <Edit3 size={13} />
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteTask(task.id)}
+                                      className={`p-1 rounded ${
+                                        isEventRow
+                                          ? 'text-white hover:bg-red-700'
+                                          : 'text-rose-400 dark:text-rose-500 hover:text-rose-700 dark:hover:text-rose-300 hover:bg-rose-50 dark:hover:bg-rose-950/40'
+                                      }`}
+                                      title="Supprimer"
+                                    >
+                                      <Trash2 size={13} />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <span className="text-[10px] text-slate-300 dark:text-slate-600 font-bold">—</span>
+                                )}
                               </td>
                             </tr>
                           );
@@ -777,14 +791,16 @@ export const RetroplanningView: React.FC = () => {
         ))}
 
         {/* Bouton pour créer une nouvelle feuille d'événement */}
-        <button
-          onClick={handleOpenNewEvent}
-          className="px-3 py-1.5 text-xs font-black text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-lg transition flex items-center gap-1 shrink-0 ml-1"
-          title="Ajouter un nouvel événement"
-        >
-          <Plus size={14} />
-          <span>Nouvelle feuille</span>
-        </button>
+        {!currentUser?.isReadOnly && (
+          <button
+            onClick={handleOpenNewEvent}
+            className="px-3 py-1.5 text-xs font-black text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 rounded-lg transition flex items-center gap-1 shrink-0 ml-1"
+            title="Ajouter un nouvel événement"
+          >
+            <Plus size={14} />
+            <span>Nouvelle feuille</span>
+          </button>
+        )}
       </div>
 
       {/* MODALE : CRÉATION / MODIFICATION D'ÉVÉNEMENT */}

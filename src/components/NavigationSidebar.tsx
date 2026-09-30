@@ -128,12 +128,12 @@ export const NavigationSidebar: React.FC = () => {
               )}
             </div>
 
-            {isAuthorized && currentUser ? (
+            {currentUser ? (
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div
                     className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-xs shadow-2xs shrink-0"
-                    style={{ backgroundColor: currentUser.color || '#10B981' }}
+                    style={{ backgroundColor: currentUser.color || '#F59E0B' }}
                   >
                     {currentUser.initials || currentUser.name.slice(0, 2).toUpperCase()}
                   </div>
@@ -142,7 +142,7 @@ export const NavigationSidebar: React.FC = () => {
                       {currentUser.name}
                     </p>
                     <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">
-                      {currentUser.role || 'Éditeur'}
+                      {currentUser.role || (isAuthorized ? 'Éditeur' : 'Lecture seule')}
                     </p>
                   </div>
                 </div>

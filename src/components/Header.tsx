@@ -614,22 +614,36 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Badge Utilisateur Connecté / Connexion */}
-          {isAuthorized && currentUser ? (
+          {currentUser ? (
             <button
               onClick={openAuthModal}
-              className="px-2.5 py-1.5 rounded-xl border border-emerald-300 dark:border-emerald-600 bg-emerald-50/90 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-slate-800 dark:text-slate-200 text-xs font-semibold transition flex items-center gap-2 shadow-2xs group"
-              title="Connecté en mode édition. Cliquez pour modifier le profil ou verrouiller"
+              className={`px-2.5 py-1.5 rounded-xl border text-xs font-semibold transition flex items-center gap-2 shadow-2xs group ${
+                isAuthorized
+                  ? 'border-emerald-300 dark:border-emerald-600 bg-emerald-50/90 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-slate-800 dark:text-slate-200'
+                  : 'border-amber-300 dark:border-amber-600 bg-amber-50/90 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/60 text-slate-800 dark:text-slate-200'
+              }`}
+              title={
+                isAuthorized
+                  ? "Connecté en mode édition. Cliquez pour modifier le profil ou verrouiller"
+                  : "Connecté en lecture seule (BDE / Consultation). Cliquez pour gérer le profil ou se déconnecter"
+              }
             >
               <span
                 className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-2xs shrink-0"
-                style={{ backgroundColor: currentUser.color || '#10B981' }}
+                style={{ backgroundColor: currentUser.color || '#F59E0B' }}
               >
                 {currentUser.initials || currentUser.name.slice(0, 2).toUpperCase()}
               </span>
-              <span className="font-bold text-emerald-950 dark:text-emerald-200 truncate max-w-[130px]">
+              <span className="font-bold truncate max-w-[130px]">
                 {currentUser.name}
               </span>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              {isAuthorized ? (
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              ) : (
+                <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-amber-200/80 dark:bg-amber-900/80 text-amber-900 dark:text-amber-200 shrink-0">
+                  Lecture
+                </span>
+              )}
             </button>
           ) : isAuthorized ? (
             <button
@@ -652,20 +666,22 @@ export const Header: React.FC = () => {
             </button>
           )}
 
-          {/* Bouton Primaire : Nouvelle Tâche */}
-          <button
-            onClick={() => {
-              if (!isAuthorized) {
-                openAuthModal();
-              } else {
-                openNewTaskModal();
-              }
-            }}
-            className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center gap-1.5"
-          >
-            <Plus size={15} />
-            <span>Ajouter une tâche</span>
-          </button>
+          {/* Bouton Primaire : Nouvelle Tâche (masqué pour le compte BDE en lecture seule) */}
+          {!(currentUser?.isReadOnly || currentUser?.isBde) && (
+            <button
+              onClick={() => {
+                if (!isAuthorized) {
+                  openAuthModal();
+                } else {
+                  openNewTaskModal();
+                }
+              }}
+              className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow transition flex items-center gap-1.5"
+            >
+              <Plus size={15} />
+              <span>Ajouter une tâche</span>
+            </button>
+          )}
         </div>
       </div>
 

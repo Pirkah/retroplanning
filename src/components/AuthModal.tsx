@@ -90,7 +90,11 @@ export const AuthModal: React.FC = () => {
         name: member.name,
         role: member.role,
         color: member.color,
-        initials: member.initials
+        initials: member.initials,
+        generation: member.generation,
+        isSupervisor: member.isSupervisor,
+        isBde: member.isBde,
+        isReadOnly: member.isReadOnly
       };
     }
 
@@ -137,6 +141,13 @@ export const AuthModal: React.FC = () => {
     }
 
     const userProfile = getSelectedUserProfile();
+    if (currentUser?.isBde || userProfile.isBde) {
+      setIsSwitchingUser(false);
+      setPassword('');
+      lockEditMode();
+      return;
+    }
+
     const completeUser: ConnectedUser = {
       ...userProfile,
       loggedInAt: new Date().toISOString()
@@ -185,23 +196,37 @@ export const AuthModal: React.FC = () => {
           <div className="flex items-center gap-3">
             <div
               className={`w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-xs ${
-                isAuthorized ? 'bg-emerald-600' : 'bg-indigo-600'
+                currentUser?.isBde
+                  ? 'bg-amber-500'
+                  : currentUser
+                  ? 'bg-emerald-600'
+                  : 'bg-indigo-600'
               }`}
             >
-              {isAuthorized ? <ShieldCheck size={20} /> : <Lock size={18} />}
+              {currentUser?.isBde ? (
+                <ShieldCheck size={20} />
+              ) : currentUser ? (
+                <ShieldCheck size={20} />
+              ) : (
+                <Lock size={18} />
+              )}
             </div>
             <div>
               <h2 className="text-base font-bold text-slate-800 dark:text-white">
-                {isAuthorized
+                {currentUser
                   ? isSwitchingUser
                     ? 'Changer d’utilisateur'
+                    : currentUser.isBde
+                    ? 'Compte BDE actif (Consultation)'
                     : 'Session d’édition active'
                   : 'Connexion & Mode Édition'}
               </h2>
               <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                {isAuthorized
-                  ? 'Connecté au rétroplanning collaboratif'
-                  : 'Identifiez-vous pour modifier le planning'}
+                {currentUser
+                  ? currentUser.isBde
+                    ? 'Accès en consultation, export de documents et salon d’échanges'
+                    : 'Connecté au rétroplanning collaboratif'
+                  : 'Identifiez-vous pour modifier le planning ou accéder au compte BDE'}
               </p>
             </div>
           </div>
@@ -230,7 +255,7 @@ export const AuthModal: React.FC = () => {
           )}
 
           {/* CAS 1 : Non connecté -> Formulaire de connexion (Qui est-ce + mot de passe) */}
-          {!isAuthorized ? (
+          {!currentUser ? (
             <form onSubmit={handleUnlock} className="space-y-4">
               {/* Étape 1 : Qui se connecte ? */}
               <div className="space-y-2">
@@ -265,7 +290,9 @@ export const AuthModal: React.FC = () => {
                             </p>
                             {member.generation && (
                               <span className={`text-[8px] font-bold px-1.5 py-0.2 rounded-full shrink-0 ${
-                                member.isSupervisor || member.generation.includes('pédagogique')
+                                member.isBde
+                                  ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800'
+                                  : member.isSupervisor || member.generation.includes('pédagogique')
                                   ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
                                   : member.generation.includes('10')
                                   ? 'bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800'
@@ -327,7 +354,7 @@ export const AuthModal: React.FC = () => {
               </div>
 
               {/* Étape 2 : Mot de passe personnel */}
-              <div className="space-y-1.5 pt-1 border-t border-slate-100 dark:border-slate-800">
+              <div className="space-y-2 pt-1 border-t border-slate-100 dark:border-slate-800">
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                   <Key size={13} className="text-indigo-600 dark:text-indigo-400" />
                   <span>2. Mot de passe de {activeSelectedUser.name.split(' ')[0] || 'connexion'}</span>
@@ -350,6 +377,12 @@ export const AuthModal: React.FC = () => {
                   </button>
                 </div>
 
+                {activeSelectedUser.isBde && (
+                  <p className="text-[11px] text-amber-700 dark:text-amber-300 flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/50 p-2.5 rounded-xl border border-amber-200 dark:border-amber-800/60">
+                    <ShieldCheck size={14} className="shrink-0 text-amber-600 dark:text-amber-400" />
+                    <span>Compte BDE : Accès en lecture seule à tous les modules, export Excel/PDF et salon d’échanges dédié avec l'équipe et les profs.</span>
+                  </p>
+                )}
               </div>
 
               {/* Boutons d'action */}
@@ -364,12 +397,18 @@ export const AuthModal: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-md shadow-indigo-100 dark:shadow-none transition flex items-center gap-2"
+                  className={`px-5 py-2.5 disabled:opacity-50 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center gap-2 ${
+                    activeSelectedUser.isBde
+                      ? 'bg-amber-600 hover:bg-amber-700 shadow-amber-200 dark:shadow-none'
+                      : 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-100 dark:shadow-none'
+                  }`}
                 >
                   <Unlock size={14} />
                   <span>
                     {isLoading
                       ? 'Connexion...'
+                      : activeSelectedUser.isBde
+                      ? 'Se connecter au compte BDE (Lecture seule)'
                       : `Se connecter en tant que ${activeSelectedUser.name.split(' ')[0] || '...'}`}
                   </span>
                 </button>
@@ -519,38 +558,61 @@ export const AuthModal: React.FC = () => {
           ) : (
             /* CAS 4 : Connecté & Affichage du profil connecté */
             <div className="space-y-4">
-              <div className="p-4 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 rounded-2xl flex items-center gap-3.5">
+              <div className={`p-4 rounded-2xl flex items-center gap-3.5 border ${
+                currentUser?.isBde
+                  ? 'bg-amber-50/90 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/60'
+                  : 'bg-emerald-50/80 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/60'
+              }`}>
                 <div
                   className="w-12 h-12 rounded-2xl flex items-center justify-center text-white font-bold text-base shadow-sm shrink-0"
-                  style={{ backgroundColor: currentUser?.color || '#10B981' }}
+                  style={{ backgroundColor: currentUser?.color || (currentUser?.isBde ? '#F59E0B' : '#10B981') }}
                 >
                   {currentUser?.initials || currentUser?.name?.slice(0, 2).toUpperCase() || 'RNF'}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-bold text-emerald-950 dark:text-emerald-200 truncate">
+                    <h3 className={`text-sm font-bold truncate ${
+                      currentUser?.isBde ? 'text-amber-950 dark:text-amber-200' : 'text-emerald-950 dark:text-emerald-200'
+                    }`}>
                       {currentUser?.name || 'Membre de l’équipe'}
                     </h3>
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200 uppercase tracking-wide">
-                      Connecté
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide ${
+                      currentUser?.isBde
+                        ? 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200'
+                        : 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-200'
+                    }`}>
+                      {currentUser?.isBde ? 'Lecture seule (BDE)' : 'Connecté'}
                     </span>
                   </div>
-                  <p className="text-xs text-emerald-800/80 dark:text-emerald-300 truncate">
+                  <p className={`text-xs truncate ${
+                    currentUser?.isBde ? 'text-amber-800/80 dark:text-amber-300' : 'text-emerald-800/80 dark:text-emerald-300'
+                  }`}>
                     {currentUser?.role || 'Mode Édition Autorisé'}
                   </p>
-                  <p className="text-[10px] text-emerald-700/60 dark:text-emerald-400/80 mt-0.5">
-                    Toutes les modifications seront enregistrées sous ce profil.
+                  <p className={`text-[10px] mt-0.5 ${
+                    currentUser?.isBde ? 'text-amber-700/80 dark:text-amber-400/80' : 'text-emerald-700/60 dark:text-emerald-400/80'
+                  }`}>
+                    {currentUser?.isBde
+                      ? 'Accès en consultation, export Excel/PDF et salon de messagerie d’échanges partagé avec l’équipe et les professeurs.'
+                      : 'Toutes les modifications seront enregistrées sous ce profil.'}
                   </p>
                 </div>
               </div>
 
               <div className="space-y-2 pt-1">
                 <button
-                  onClick={() => setIsSwitchingUser(true)}
+                  onClick={() => {
+                    if (currentUser?.isBde) {
+                      lockEditMode();
+                      setIsSwitchingUser(false);
+                    } else {
+                      setIsSwitchingUser(true);
+                    }
+                  }}
                   className="w-full py-2.5 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition"
                 >
-                  <UserCheck size={15} className="text-indigo-600 dark:text-indigo-400" />
-                  <span>Changer d'utilisateur connecté</span>
+                  <UserCheck size={15} className={currentUser?.isBde ? "text-amber-600 dark:text-amber-400" : "text-indigo-600 dark:text-indigo-400"} />
+                  <span>{currentUser?.isBde ? "Changer de compte utilisateur" : "Changer d'utilisateur connecté"}</span>
                 </button>
 
                 <button

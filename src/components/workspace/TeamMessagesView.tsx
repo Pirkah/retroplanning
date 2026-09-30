@@ -24,7 +24,8 @@ const CHANNEL_ICONS: Record<string, any> = {
   Handshake,
   Megaphone,
   ShieldAlert,
-  GraduationCap
+  GraduationCap,
+  Users
 };
 
 const COMMON_EMOJIS = ['👍', '❤️', '🔥', '🎯', '🎉', '💪', '👏'];
@@ -47,9 +48,19 @@ export const TeamMessagesView: React.FC = () => {
     currentUser?.generation?.toLowerCase().includes('pédagogique')
   );
 
-  // Pour les superviseurs, restreindre les salons visibles uniquement au salon de supervision
+  const isCurrentUserBde = Boolean(
+    currentUser?.isBde ||
+    currentUser?.id === 'm-bde' ||
+    currentUser?.name?.toLowerCase().includes('bde') ||
+    currentUser?.role?.toLowerCase().includes('bde') ||
+    currentUser?.generation?.toLowerCase().includes('bde')
+  );
+
+  const isRestrictedViewer = isCurrentUserSupervisor || isCurrentUserBde;
+
+  // Pour les superviseurs et le BDE, restreindre les salons visibles UNIQUEMENT au salon d'échanges partagé
   const visibleChannels = channels.filter((c) => {
-    if (isCurrentUserSupervisor) {
+    if (isRestrictedViewer) {
       return c.id === 'c-supervision';
     }
     return true;
@@ -71,12 +82,12 @@ export const TeamMessagesView: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [channelMessages.length]);
 
-  // Si superviseur et salon actif non valide, forcer sur visibleChannels
+  // Si superviseur ou BDE et salon actif non valide, forcer sur visibleChannels
   useEffect(() => {
     if (visibleChannels.length > 0 && !visibleChannels.some((c) => c.id === activeChannelId)) {
       setActiveChannelId(visibleChannels[0].id);
     }
-  }, [isCurrentUserSupervisor, visibleChannels, activeChannelId, setActiveChannelId]);
+  }, [isRestrictedViewer, visibleChannels, activeChannelId, setActiveChannelId]);
 
   // Réinitialiser la réponse si on change de canal
   useEffect(() => {
@@ -157,10 +168,15 @@ export const TeamMessagesView: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-3 space-y-4 custom-scrollbar">
           <div className="space-y-1">
             <div className="px-2 py-1 text-[10px] font-black uppercase tracking-wider text-slate-400 dark:text-slate-500 flex items-center justify-between">
-              <span>{isCurrentUserSupervisor ? 'Espace Encadrement' : 'Salons Thématiques'}</span>
+              <span>{isRestrictedViewer ? 'Espace Échanges Partagé' : 'Salons Thématiques'}</span>
               {isCurrentUserSupervisor && (
                 <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300">
                   Professeurs
+                </span>
+              )}
+              {isCurrentUserBde && (
+                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">
+                  BDE
                 </span>
               )}
             </div>
@@ -177,7 +193,9 @@ export const TeamMessagesView: React.FC = () => {
                   onClick={() => setActiveChannelId(channel.id)}
                   className={`w-full text-left px-3 py-2 rounded-xl text-xs transition flex items-center justify-between group ${
                     isActive
-                      ? isSupervision
+                      ? isCurrentUserBde
+                        ? 'bg-amber-600 text-white font-bold shadow-xs'
+                        : isSupervision
                         ? 'bg-purple-600 text-white font-bold shadow-xs'
                         : 'bg-emerald-600 text-white font-bold shadow-xs'
                       : 'text-slate-700 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-800 font-medium'
@@ -189,6 +207,8 @@ export const TeamMessagesView: React.FC = () => {
                       className={
                         isActive
                           ? 'text-white'
+                          : isCurrentUserBde
+                          ? 'text-amber-500 dark:text-amber-400'
                           : isSupervision
                           ? 'text-purple-500 dark:text-purple-400'
                           : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
@@ -199,11 +219,11 @@ export const TeamMessagesView: React.FC = () => {
                       <span
                         className={`text-[8px] font-black px-1.5 py-0.2 rounded-full shrink-0 ${
                           isActive
-                            ? 'bg-purple-700 text-purple-100'
+                            ? 'bg-black/20 text-white'
                             : 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300'
                         }`}
                       >
-                        Encadrement
+                        Profs & BDE
                       </span>
                     )}
                   </div>
@@ -311,13 +331,25 @@ export const TeamMessagesView: React.FC = () => {
           </div>
         </div>
 
-        {/* Bannière d'information pour la supervision pédagogique */}
-        {isCurrentUserSupervisor ? (
+        {/* Bannière d'information pour la supervision pédagogique et le BDE */}
+        {isCurrentUserBde ? (
+          <div className="bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200/80 dark:border-amber-800/60 px-5 py-2.5 flex items-center justify-between text-xs text-amber-900 dark:text-amber-200">
+            <div className="flex items-center gap-2">
+              <Users size={16} className="text-amber-600 dark:text-amber-400 shrink-0" />
+              <span>
+                <strong>Espace Échanges BDE & Encadrement :</strong> Vous pouvez échanger et poser vos questions ici directement avec l’équipe Run & Fun et les professeurs encadrants.
+              </span>
+            </div>
+            <span className="text-[10px] font-bold bg-amber-200/70 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded-full shrink-0">
+              Accès Partenaires BDE
+            </span>
+          </div>
+        ) : isCurrentUserSupervisor ? (
           <div className="bg-purple-50 dark:bg-purple-950/40 border-b border-purple-200/80 dark:border-purple-800/60 px-5 py-2.5 flex items-center justify-between text-xs text-purple-900 dark:text-purple-200">
             <div className="flex items-center gap-2">
               <GraduationCap size={16} className="text-purple-600 dark:text-purple-400 shrink-0" />
               <span>
-                <strong>Espace Supervision Pédagogique :</strong> Vos remarques et conseils sont partagés ici directement avec l'équipe étudiante Run & Fun.
+                <strong>Espace Supervision Pédagogique :</strong> Vos remarques et conseils sont partagés ici directement avec l'équipe étudiante Run & Fun et le BDE.
               </span>
             </div>
             <span className="text-[10px] font-bold bg-purple-200/70 dark:bg-purple-900/60 text-purple-800 dark:text-purple-300 px-2 py-0.5 rounded-full shrink-0">
@@ -326,9 +358,9 @@ export const TeamMessagesView: React.FC = () => {
           </div>
         ) : activeChannel.id === 'c-supervision' ? (
           <div className="bg-purple-50/70 dark:bg-purple-950/30 border-b border-purple-200/60 dark:border-purple-900/40 px-5 py-2 flex items-center gap-2 text-xs text-purple-900 dark:text-purple-200">
-            <GraduationCap size={15} className="text-purple-600 dark:text-purple-400 shrink-0" />
+            <Users size={15} className="text-purple-600 dark:text-purple-400 shrink-0" />
             <span>
-              Salon d'échange et de remarques avec les professeurs encadrants (<strong>Christelle Voisin</strong> & <strong>Marius Chevalier</strong>).
+              Salon d'échange et de remarques partagé avec les professeurs encadrants (<strong>Christelle Voisin</strong> & <strong>Marius Chevalier</strong>) et le <strong>BDE IUT GEA</strong>.
             </span>
           </div>
         ) : null}

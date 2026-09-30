@@ -63,6 +63,16 @@
           "initials": "MC",
           "generation": "Équipe pédagogique",
           "isSupervisor": true
+        },
+        {
+          "id": "m-bde",
+          "name": "BDE IUT GEA",
+          "role": "Bureau Des Étudiants (Consultation)",
+          "color": "#F59E0B",
+          "initials": "BDE",
+          "generation": "Partenaires & BDE",
+          "isBde": true,
+          "isReadOnly": true
         }
       ],
       "tasks": [
@@ -1056,7 +1066,9 @@
   "activeProjectId": "proj-rnf-2026",
   "security": {
     "editPassword": "rnf2026",
-    "userPasswords": {}
+    "userPasswords": {
+      "m-bde": "bde2026"
+    }
   },
   "lastModified": "2026-09-28T13:21:35.901Z"
 }

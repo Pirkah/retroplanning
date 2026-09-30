@@ -49,7 +49,17 @@ export const HomeHubView: React.FC = () => {
     currentUser?.generation?.toLowerCase().includes('pédagogique')
   );
 
-  const visibleMessages = isCurrentUserSupervisor
+  const isCurrentUserBde = Boolean(
+    currentUser?.isBde ||
+    currentUser?.id === 'm-bde' ||
+    currentUser?.name?.toLowerCase().includes('bde') ||
+    currentUser?.role?.toLowerCase().includes('bde') ||
+    currentUser?.generation?.toLowerCase().includes('bde')
+  );
+
+  const isRestrictedViewer = isCurrentUserSupervisor || isCurrentUserBde;
+
+  const visibleMessages = isRestrictedViewer
     ? messages.filter((m) => m.channelId === 'c-supervision')
     : messages;
 
@@ -499,25 +509,33 @@ export const HomeHubView: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                isCurrentUserSupervisor
+                isCurrentUserBde
+                  ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'
+                  : isCurrentUserSupervisor
                   ? 'bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300'
                   : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300'
               }`}>
                 <MessageSquare size={16} />
               </div>
               <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                {isCurrentUserSupervisor ? 'Dernières remarques & échanges de suivi' : "Derniers échanges de l'équipe"}
+                {isCurrentUserBde
+                  ? 'Derniers échanges BDE & Encadrement'
+                  : isCurrentUserSupervisor
+                  ? 'Dernières remarques & échanges de suivi'
+                  : "Derniers échanges de l'équipe"}
               </h3>
             </div>
             <button
               onClick={() => setViewMode('messages')}
               className={`text-xs font-bold ${
-                isCurrentUserSupervisor
+                isCurrentUserBde
+                  ? 'text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300'
+                  : isCurrentUserSupervisor
                   ? 'text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300'
                   : 'text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300'
               }`}
             >
-              {isCurrentUserSupervisor ? 'Ouvrir les échanges →' : 'Ouvrir le chat →'}
+              {isRestrictedViewer ? 'Ouvrir les échanges →' : 'Ouvrir le chat →'}
             </button>
           </div>
 
