@@ -183,6 +183,8 @@ app.post('/api/projects/sync', (req, res) => {
 
 // Vérification du mot de passe de modification (général ou spécifique utilisateur)
 app.post('/api/auth/verify', (req, res) => {
+  const { password, memberId } = req.body || {};
+  const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
   const isBde = memberId === 'm-bde';
   const hasCustomMemberPassword = Boolean(memberId && store?.security?.userPasswords?.[memberId]);
   let memberPassword = hasCustomMemberPassword ? store.security.userPasswords[memberId] : masterPassword;
@@ -218,6 +220,7 @@ app.post('/api/auth/verify', (req, res) => {
 app.post('/api/auth/change-password', (req, res) => {
   const { oldPassword, newPassword, memberId } = req.body || {};
   const masterPassword = store?.security?.editPassword || process.env.EDIT_PASSWORD || 'rnf2026';
+  const hasCustomMemberPassword = Boolean(memberId && store?.security?.userPasswords?.[memberId]);
   const defaultMemberPass = (memberId === 'm-bde') ? 'bde2026' : masterPassword;
   const currentPassword = hasCustomMemberPassword ? store.security.userPasswords[memberId] : defaultMemberPass;
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { usePlanning } from '../context/PlanningContext';
-import { TeamMember, ConnectedUser } from '../types/planning';
+import { TeamMember, ConnectedUser, DEFAULT_TEAM_MEMBERS } from '../types/planning';
 import {
   Lock,
   Unlock,
@@ -30,6 +30,20 @@ export const AuthModal: React.FC = () => {
     setCurrentUser
   } = usePlanning();
 
+  // Liste garantie de tous les membres incluant le BDE et encadrants
+  const allMembers = React.useMemo(() => {
+    const list = [...(members || [])];
+    DEFAULT_TEAM_MEMBERS.forEach((dm) => {
+      const exists = list.some(
+        (m) => m.id === dm.id || (m.name && dm.name && m.name.toLowerCase().trim() === dm.name.toLowerCase().trim())
+      );
+      if (!exists) {
+        list.push(dm);
+      }
+    });
+    return list;
+  }, [members]);
+
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -52,11 +66,11 @@ export const AuthModal: React.FC = () => {
       } else if (currentUser?.name) {
         setSelectedMemberId('custom');
         setCustomName(currentUser.name);
-      } else if (members && members.length > 0) {
-        setSelectedMemberId(members[0].id);
+      } else if (allMembers && allMembers.length > 0) {
+        setSelectedMemberId(allMembers[0].id);
       }
     }
-  }, [isAuthModalOpen, currentUser, members]);
+  }, [isAuthModalOpen, currentUser, allMembers]);
 
   // Mode changement de mot de passe
   const [isChangingPass, setIsChangingPass] = useState(false);
@@ -83,7 +97,7 @@ export const AuthModal: React.FC = () => {
       };
     }
 
-    const member = members.find((m) => m.id === selectedMemberId) || members[0];
+    const member = allMembers.find((m) => m.id === selectedMemberId) || allMembers[0];
     if (member) {
       return {
         id: member.id,
@@ -265,7 +279,7 @@ export const AuthModal: React.FC = () => {
                 </label>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {members.map((member) => {
+                  {allMembers.map((member) => {
                     const isSelected = selectedMemberId === member.id;
                     return (
                       <div
@@ -423,7 +437,7 @@ export const AuthModal: React.FC = () => {
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {members.map((member) => {
+                  {allMembers.map((member) => {
                     const isSelected = selectedMemberId === member.id;
                     return (
                       <div

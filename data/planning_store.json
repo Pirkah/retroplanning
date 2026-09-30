@@ -1067,7 +1067,8 @@
   "security": {
     "editPassword": "rnf2026",
     "userPasswords": {
-      "m-bde": "bde2026"
+      "m-bde": "bde2026",
+      "m-julien": "rnf2026"
     }
   },
   "lastModified": "2026-09-28T13:21:35.901Z"
