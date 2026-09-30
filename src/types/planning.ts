@@ -47,7 +47,7 @@ export interface RetroplanningTask {
   weekLabel: string; // e.g. "S39", "S40", "S42 (12 oct.)"
   category: string;  // e.g. "Communication", "Logistique", "Activité", "Événement", "Post-événement"
   action: string;
-  assignee: string;  // e.g. "Vice-président", "Toute l'équipe"
+  assignee: string;  // e.g. "Julien Nicolle", "Toute l'équipe"
   status: 'todo' | 'in_progress' | 'completed' | 'event';
   isEventHighlight?: boolean;
 }
@@ -99,13 +99,13 @@ export const COLOR_PRESETS: ColorPreset[] = [
 ];
 
 export const DEFAULT_TEAM_MEMBERS: TeamMember[] = [
-  { id: 'm-vianney', name: 'Président', role: 'Présidence', color: '#3B82F6', initials: 'PR', generation: '10ème équipe' },
-  { id: 'm-julien', name: 'Vice-président', role: 'Vice-présidence', color: '#6366F1', initials: 'VP', generation: '10ème équipe' },
-  { id: 'm-theo', name: 'Com interne', role: 'Communication interne', color: '#EC4899', initials: 'CI', generation: '10ème équipe' },
-  { id: 'm-mathias', name: 'Com externe 1', role: 'Communication externe', color: '#F59E0B', initials: 'CE1', generation: '10ème équipe' },
-  { id: 'm-sina', name: 'Com externe 2', role: 'Communication externe', color: '#10B981', initials: 'CE2', generation: '10ème équipe' },
-  { id: 'm-christelle', name: 'Enseignant encadrant 1', role: 'Professeur encadrant', color: '#8B5CF6', initials: 'E1', generation: 'Équipe pédagogique', isSupervisor: true },
-  { id: 'm-marius', name: 'Enseignant encadrant 2', role: 'Professeur encadrant', color: '#0EA5E9', initials: 'E2', generation: 'Équipe pédagogique', isSupervisor: true },
+  { id: 'm-vianney', name: 'Vianney Urbanick', role: 'Président', color: '#3B82F6', initials: 'VI', generation: '10ème équipe' },
+  { id: 'm-julien', name: 'Julien Nicolle', role: 'Vice-président', color: '#6366F1', initials: 'JU', generation: '10ème équipe' },
+  { id: 'm-theo', name: 'Théo', role: 'Chargé de communication interne', color: '#EC4899', initials: 'TH', generation: '10ème équipe' },
+  { id: 'm-mathias', name: 'Mathias Samson', role: 'Chargé de communication externe', color: '#F59E0B', initials: 'MA', generation: '10ème équipe' },
+  { id: 'm-sina', name: 'Sina Abdoul Bastoi', role: 'Chargé de communication externe', color: '#10B981', initials: 'SI', generation: '10ème équipe' },
+  { id: 'm-christelle', name: 'Christelle Voisin', role: 'Professeure encadrante', color: '#8B5CF6', initials: 'CV', generation: 'Équipe pédagogique', isSupervisor: true },
+  { id: 'm-marius', name: 'Marius Chevalier', role: 'Professeur encadrant', color: '#0EA5E9', initials: 'MC', generation: 'Équipe pédagogique', isSupervisor: true },
   { id: 'm-bde', name: 'BDE IUT GEA', role: 'Bureau Des Étudiants (Consultation)', color: '#F59E0B', initials: 'BDE', generation: 'Partenaires & BDE', isBde: true, isReadOnly: true },
 ];
 

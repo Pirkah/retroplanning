@@ -367,7 +367,7 @@ export const GanttExportCanvas: React.FC<GanttExportCanvasProps> = ({ project, m
           <span className="font-black text-slate-900">Rétroplanning Course R&F 2026 - 2027</span> • Document de synthèse prévisionnelle officiel
         </div>
         <div className="flex items-center gap-3">
-          <span>Plateforme officielle <strong className="text-slate-950">Run & Fun</strong></span>
+          <span>Développé par <strong className="text-slate-950">Julien (@Pirkah)</strong></span>
           <span>•</span>
           <span className="font-black text-indigo-700">github.com/Pirkah</span>
           <span>•</span>
