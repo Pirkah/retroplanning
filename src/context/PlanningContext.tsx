@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef, useCallb
 import {
   Project,
   Task,
+  TaskStatus,
   ViewMode,
   TimelineZoom,
   TeamMember,
@@ -11,7 +12,7 @@ import {
   RetroplanningTask
 } from '../types/planning';
 import { DEFAULT_PROJECT } from '../data/defaultProject';
-import { sortTasksChronologically, sortRetroEventsChronologically, sortRetroTasksChronologically } from '../utils/scheduler';
+import { sortTasksChronologically, sortRetroEventsChronologically, sortRetroTasksChronologically, weekLabelToDates } from '../utils/scheduler';
 import { getCategoryDefinition, getCategoryColor, STANDARD_CATEGORIES } from '../utils/categories';
 import { parseExcelPlanning } from '../utils/excelImport';
 
@@ -1136,13 +1137,53 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const addTask = (taskData: Omit<Task, 'id'>) => {
     const catDef = getCategoryDefinition(taskData.category || STANDARD_CATEGORIES[0].label);
+    const newGanttId = 'task_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+    const newRetroId = taskData.eventId ? `rtask-${Date.now()}` : undefined;
+
     const newTask: Task = {
       ...taskData,
+      id: newGanttId,
       category: catDef.label,
       color: taskData.color || catDef.color,
-      id: 'task_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7)
+      retroTaskId: newRetroId
     };
-    updateCurrentProjectTasks((prev) => [...prev, newTask]);
+
+    const updatedProjects = projects.map((p) => {
+      if (p.id === activeProjectId) {
+        let updatedEvents = p.events || [];
+        if (newTask.eventId) {
+          const targetEvt = updatedEvents.find((e) => e.id === newTask.eventId);
+          if (targetEvt) {
+            newTask.eventTitle = targetEvt.title;
+            const newRetroTask: RetroplanningTask = {
+              id: newRetroId!,
+              weekLabel: newTask.weekLabel || 'S40',
+              category: newTask.category || 'Autres Tâches',
+              action: newTask.title,
+              assignee: newTask.assignee || 'Toute l’équipe',
+              status: newTask.isMilestone ? 'event' : newTask.status === 'completed' ? 'completed' : newTask.status === 'in_progress' ? 'in_progress' : 'todo',
+              isEventHighlight: Boolean(newTask.isMilestone),
+              ganttTaskId: newGanttId
+            };
+            updatedEvents = updatedEvents.map((e) =>
+              e.id === newTask.eventId
+                ? { ...e, tasks: sortRetroTasksChronologically([...(e.tasks || []), newRetroTask]) }
+                : e
+            );
+          }
+        }
+        return {
+          ...p,
+          updatedAt: new Date().toISOString(),
+          tasks: sortTasksChronologically([...(p.tasks || []), newTask]),
+          events: updatedEvents
+        };
+      }
+      return p;
+    });
+
+    setProjects(updatedProjects);
+    broadcastState(updatedProjects, activeProjectId);
   };
 
   const updateTask = (updatedTask: Task) => {
@@ -1152,13 +1193,91 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       category: catDef.label,
       color: updatedTask.color || catDef.color
     };
-    updateCurrentProjectTasks((prev) =>
-      prev.map((t) => (t.id === normalizedTask.id ? normalizedTask : t))
-    );
+
+    const updatedProjects = projects.map((p) => {
+      if (p.id === activeProjectId) {
+        let updatedEvents = p.events || [];
+
+        // Synchroniser vers le rétroplanning si la tâche est rattachée à un événement
+        if (normalizedTask.eventId) {
+          const targetEvt = updatedEvents.find((e) => e.id === normalizedTask.eventId);
+          if (targetEvt) {
+            normalizedTask.eventTitle = targetEvt.title;
+            updatedEvents = updatedEvents.map((e) => {
+              if (e.id === normalizedTask.eventId) {
+                const retroExists = (e.tasks || []).some(
+                  (rt) => rt.id === normalizedTask.retroTaskId || rt.ganttTaskId === normalizedTask.id || rt.id === normalizedTask.id
+                );
+
+                if (retroExists) {
+                  return {
+                    ...e,
+                    tasks: sortRetroTasksChronologically(
+                      (e.tasks || []).map((rt) => {
+                        if (rt.id === normalizedTask.retroTaskId || rt.ganttTaskId === normalizedTask.id || rt.id === normalizedTask.id) {
+                          return {
+                            ...rt,
+                            action: normalizedTask.title,
+                            category: normalizedTask.category || rt.category || 'Autres Tâches',
+                            assignee: normalizedTask.assignee || rt.assignee,
+                            weekLabel: normalizedTask.weekLabel || rt.weekLabel,
+                            status: normalizedTask.status === 'completed'
+                              ? 'completed'
+                              : normalizedTask.status === 'in_progress'
+                              ? 'in_progress'
+                              : rt.status === 'event'
+                              ? 'event'
+                              : 'todo',
+                            ganttTaskId: normalizedTask.id
+                          };
+                        }
+                        return rt;
+                      })
+                    )
+                  };
+                }
+              }
+              return e;
+            });
+          }
+        }
+
+        return {
+          ...p,
+          updatedAt: new Date().toISOString(),
+          tasks: sortTasksChronologically(
+            (p.tasks || []).map((t) => (t.id === normalizedTask.id ? normalizedTask : t))
+          ),
+          events: updatedEvents
+        };
+      }
+      return p;
+    });
+
+    setProjects(updatedProjects);
+    broadcastState(updatedProjects, activeProjectId);
   };
 
   const deleteTask = (taskId: string) => {
-    updateCurrentProjectTasks((prev) => prev.filter((t) => t.id !== taskId));
+    const updatedProjects = projects.map((p) => {
+      if (p.id === activeProjectId) {
+        return {
+          ...p,
+          updatedAt: new Date().toISOString(),
+          tasks: (p.tasks || []).filter((t) => t.id !== taskId),
+          events: (p.events || []).map((e) => ({
+            ...e,
+            tasks: (e.tasks || []).filter(
+              (rt) => rt.ganttTaskId !== taskId && rt.id !== taskId
+            )
+          }))
+        };
+      }
+      return p;
+    });
+
+    setProjects(updatedProjects);
+    broadcastState(updatedProjects, activeProjectId);
   };
 
   const duplicateTask = (taskId: string) => {
@@ -1315,19 +1434,53 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const addRetroTask = (eventId: string, taskData: Omit<RetroplanningTask, 'id'>) => {
-    const newTask: RetroplanningTask = {
-      ...taskData,
-      id: `rtask-${Date.now()}`
-    };
+    const newRetroId = `rtask-${Date.now()}`;
+    const newGanttId = `gtask-${Date.now()}`;
+    const dates = weekLabelToDates(taskData.weekLabel);
+    const catDef = getCategoryDefinition(taskData.category || STANDARD_CATEGORIES[0].label);
+
     const updatedProjects = projects.map((p) => {
       if (p.id === activeProjectId) {
+        const targetEvent = (p.events || []).find((e) => e.id === eventId);
+        const eventTitle = targetEvent?.title || '';
+
+        const newRetroTask: RetroplanningTask = {
+          ...taskData,
+          id: newRetroId,
+          ganttTaskId: newGanttId
+        };
+
+        const newGanttTask: Task = {
+          id: newGanttId,
+          title: taskData.action,
+          startDate: dates.startDate,
+          endDate: dates.endDate,
+          color: catDef.color,
+          status: (taskData.status === 'completed' || taskData.status === 'event'
+            ? 'completed'
+            : taskData.status === 'in_progress'
+            ? 'in_progress'
+            : 'todo') as TaskStatus,
+          priority: 'medium',
+          progress: taskData.status === 'completed' || taskData.status === 'event' ? 100 : taskData.status === 'in_progress' ? 50 : 0,
+          category: catDef.label,
+          assignee: cleanAssigneeName(taskData.assignee) || taskData.assignee,
+          isMilestone: Boolean(taskData.isEventHighlight || taskData.status === 'event'),
+          eventId: eventId,
+          eventTitle: eventTitle,
+          weekLabel: taskData.weekLabel,
+          retroTaskId: newRetroId
+        };
+
         return {
           ...p,
+          updatedAt: new Date().toISOString(),
+          tasks: sortTasksChronologically([...(p.tasks || []), newGanttTask]),
           events: (p.events || []).map((e) => {
             if (e.id === eventId) {
               return {
                 ...e,
-                tasks: sortRetroTasksChronologically([...(e.tasks || []), newTask])
+                tasks: sortRetroTasksChronologically([...(e.tasks || []), newRetroTask])
               };
             }
             return e;
@@ -1336,6 +1489,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
       return p;
     });
+
     setProjects(updatedProjects);
     broadcastState(updatedProjects, activeProjectId);
   };
@@ -1343,8 +1497,50 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const updateRetroTask = (eventId: string, updatedTask: RetroplanningTask) => {
     const updatedProjects = projects.map((p) => {
       if (p.id === activeProjectId) {
+        const targetEvent = (p.events || []).find((e) => e.id === eventId);
+        const eventTitle = targetEvent?.title || '';
+
+        // Synchronisation vers Gantt
+        const updatedTasks = (p.tasks || []).map((gt) => {
+          if (gt.retroTaskId === updatedTask.id || gt.id === updatedTask.ganttTaskId || gt.id === updatedTask.id) {
+            const catDef = getCategoryDefinition(updatedTask.category || gt.category || STANDARD_CATEGORIES[0].label);
+            const dates = updatedTask.weekLabel && updatedTask.weekLabel !== gt.weekLabel
+              ? weekLabelToDates(updatedTask.weekLabel)
+              : { startDate: gt.startDate, endDate: gt.endDate };
+
+            return {
+              ...gt,
+              title: updatedTask.action,
+              category: catDef.label,
+              color: catDef.color,
+              assignee: cleanAssigneeName(updatedTask.assignee) || gt.assignee,
+              startDate: dates.startDate,
+              endDate: dates.endDate,
+              weekLabel: updatedTask.weekLabel,
+              eventId: eventId,
+              eventTitle: eventTitle,
+              status: (updatedTask.status === 'completed'
+                ? 'completed'
+                : updatedTask.status === 'in_progress'
+                ? 'in_progress'
+                : updatedTask.status === 'event'
+                ? 'completed'
+                : 'todo') as TaskStatus,
+              progress: updatedTask.status === 'completed' || updatedTask.status === 'event'
+                ? 100
+                : updatedTask.status === 'in_progress'
+                ? (gt.progress === 100 ? 50 : gt.progress || 50)
+                : 0,
+              isMilestone: Boolean(updatedTask.isEventHighlight || updatedTask.status === 'event')
+            };
+          }
+          return gt;
+        });
+
         return {
           ...p,
+          updatedAt: new Date().toISOString(),
+          tasks: sortTasksChronologically(updatedTasks),
           events: (p.events || []).map((e) => {
             if (e.id === eventId) {
               return {
@@ -1360,6 +1556,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
       return p;
     });
+
     setProjects(updatedProjects);
     broadcastState(updatedProjects, activeProjectId);
   };
@@ -1369,6 +1566,9 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (p.id === activeProjectId) {
         return {
           ...p,
+          updatedAt: new Date().toISOString(),
+          // Supprime aussi la tâche Gantt liée
+          tasks: (p.tasks || []).filter((t) => t.retroTaskId !== taskId && t.id !== taskId),
           events: (p.events || []).map((e) => {
             if (e.id === eventId) {
               return {
@@ -1382,6 +1582,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
       return p;
     });
+
     setProjects(updatedProjects);
     broadcastState(updatedProjects, activeProjectId);
   };

@@ -127,10 +127,19 @@ export const TaskListView: React.FC = () => {
                           style={{ backgroundColor: task.color }}
                         />
                         <div className="min-w-0">
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="font-semibold text-slate-800 dark:text-slate-100 text-sm group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
                               {task.title}
                             </span>
+                            {task.eventTitle ? (
+                              <span className="text-[10px] bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 font-semibold px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-800">
+                                🎯 {task.eventTitle}
+                              </span>
+                            ) : (
+                              <span className="text-[10px] bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 font-semibold px-1.5 py-0.5 rounded border border-purple-200 dark:border-purple-800">
+                                Mission générale
+                              </span>
+                            )}
                             {task.isMilestone && (
                               <span className="text-[10px] bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 font-semibold px-1.5 py-0.5 rounded flex items-center gap-0.5">
                                 <Sparkles size={10} /> Jalon

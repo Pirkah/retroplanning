@@ -27,7 +27,8 @@ import {
   CalendarDays,
   Lock,
   Unlock,
-  ChevronDown
+  ChevronDown,
+  FileSpreadsheet
 } from 'lucide-react';
 import { getDurationDays } from '../utils/scheduler';
 import {
@@ -66,6 +67,7 @@ export const TaskModal: React.FC = () => {
   const [category, setCategory] = useState('');
   const [assigneeId, setAssigneeId] = useState('');
   const [isMilestone, setIsMilestone] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string>('');
   const [inputMode, setInputMode] = useState<'weeks' | 'days'>('weeks');
 
   const availableCategories = useMemo(() => {
@@ -89,6 +91,7 @@ export const TaskModal: React.FC = () => {
       setCategory(initialCat);
       setAssigneeId(editingTask.assigneeId || '');
       setIsMilestone(!!editingTask.isMilestone);
+      setSelectedEventId(editingTask.eventId || '');
       setIsCustomCategoryMode(false);
     } else {
       const baseDate = defaultDateForNewTask || todayStr;
@@ -105,6 +108,7 @@ export const TaskModal: React.FC = () => {
       setProgress(0);
       setAssigneeId(members[0]?.id || '');
       setIsMilestone(false);
+      setSelectedEventId('');
       setIsCustomCategoryMode(false);
     }
   }, [editingTask, defaultDateForNewTask, isTaskModalOpen, currentProject]);
@@ -175,6 +179,7 @@ export const TaskModal: React.FC = () => {
     if (!title.trim()) return;
 
     const assignedMember = members.find((m) => m.id === assigneeId);
+    const chosenEvent = (currentProject?.events || []).find((e) => e.id === selectedEventId);
 
     const taskPayload = {
       title: title.trim(),
@@ -188,7 +193,11 @@ export const TaskModal: React.FC = () => {
       category: category.trim() || undefined,
       assignee: assignedMember ? assignedMember.name : undefined,
       assigneeId: assigneeId || undefined,
-      isMilestone
+      isMilestone,
+      eventId: selectedEventId || undefined,
+      eventTitle: chosenEvent?.title || undefined,
+      weekLabel: editingTask?.weekLabel || `S${startWeekNum}`,
+      retroTaskId: editingTask?.retroTaskId
     };
 
     if (editingTask) {
@@ -637,6 +646,34 @@ export const TaskModal: React.FC = () => {
               onChange={(e) => setDescription(e.target.value)}
               className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500"
             />
+          </div>
+
+          {/* Événement rattaché (Optionnel) */}
+          <div className="bg-indigo-50/60 dark:bg-indigo-950/40 p-3.5 rounded-xl border border-indigo-200/80 dark:border-indigo-900/60 space-y-1.5">
+            <label className="block text-xs font-semibold text-indigo-900 dark:text-indigo-200 uppercase tracking-wider flex items-center justify-between">
+              <span className="flex items-center gap-1.5">
+                <FileSpreadsheet size={13} className="text-indigo-600 dark:text-indigo-400" />
+                <span>Événement associé (Rétroplanning)</span>
+              </span>
+              <span className="text-[10px] text-indigo-500/80 font-normal lowercase">Optionnel</span>
+            </label>
+            <select
+              value={selectedEventId}
+              onChange={(e) => setSelectedEventId(e.target.value)}
+              className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-indigo-200 dark:border-indigo-800 rounded-xl text-xs text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-indigo-500 font-medium"
+            >
+              <option value="">Aucun événement (Tâche générale du projet - ex: Mail prof, encadrement)</option>
+              {(currentProject?.events || []).map((evt) => (
+                <option key={evt.id} value={evt.id}>
+                  🎯 {evt.title} ({evt.date})
+                </option>
+              ))}
+            </select>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              {selectedEventId
+                ? 'Cette tâche sera synchronisée dans la vue Rétroplanning de cet événement et dans le diagramme Gantt.'
+                : 'Tâche générale autonome : elle apparaîtra dans le Gantt et vos tâches personnelles, mais ne sera pas dans le rétroplanning.'}
+            </p>
           </div>
         </fieldset>
       </form>

@@ -517,3 +517,23 @@ export function sortRetroEventsChronologically(events: RetroplanningEvent[]): Re
       return parseRetroEventDate(a.date, a) - parseRetroEventDate(b.date, b);
     });
 }
+
+/**
+ * Calcule automatiquement la date de début et la date de fin à partir d'un label de semaine
+ * (ex: "S39", "S40", "S42 (12 oct.)", "S02 (15 janv.)", etc.)
+ */
+export function weekLabelToDates(weekLabel: string): { startDate: string; endDate: string } {
+  const ts = parseRetroWeekTimestamp(weekLabel);
+  if (ts >= 9999999999999) {
+    const today = new Date();
+    return {
+      startDate: format(startOfISOWeek(today), 'yyyy-MM-dd'),
+      endDate: format(endOfISOWeek(today), 'yyyy-MM-dd')
+    };
+  }
+  const date = new Date(ts);
+  return {
+    startDate: format(startOfISOWeek(date), 'yyyy-MM-dd'),
+    endDate: format(endOfISOWeek(date), 'yyyy-MM-dd')
+  };
+}

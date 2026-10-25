@@ -40,6 +40,10 @@ export interface Task {
   assignee?: string;
   assigneeId?: string;
   isMilestone?: boolean;
+  eventId?: string;      // ID de l'événement associé (si rattaché au rétroplanning)
+  eventTitle?: string;   // Nom de l'événement associé
+  weekLabel?: string;    // Semaine associée (ex: S39, S40)
+  retroTaskId?: string;  // ID de la tâche correspondante dans le rétroplanning
 }
 
 export interface RetroplanningTask {
@@ -50,6 +54,7 @@ export interface RetroplanningTask {
   assignee: string;  // e.g. "Julien Nicolle", "Toute l'équipe"
   status: 'todo' | 'in_progress' | 'completed' | 'event';
   isEventHighlight?: boolean;
+  ganttTaskId?: string; // ID de la tâche correspondante dans le Gantt
 }
 
 export interface RetroplanningEvent {

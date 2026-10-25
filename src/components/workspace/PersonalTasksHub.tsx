@@ -139,25 +139,32 @@ export const PersonalTasksHub: React.FC = () => {
      currentUser.name.toLowerCase().trim() === activeMember.name.toLowerCase().trim())
   );
 
-  // Extraction de toutes les tâches personnelles (Gantt + Rétroplanning)
+  // Extraction de toutes les tâches personnelles (Gantt contient 100% des tâches, avec ou sans événement)
   const allPersonalItems = useMemo(() => {
     if (!activeMember) return [];
     const items: PersonalItem[] = [];
 
-    // 1. Tâches du planning principal (Gantt)
+    // Tâches du planning principal (Gantt contient 100% des tâches du projet)
     (currentProject.tasks || []).forEach((t) => {
       const isDirect = isTaskAssignedToMember(t.assignee, t.assigneeId, activeMember);
       const isTeam = (t.assignee?.toLowerCase().includes('équipe') || t.assignee?.toLowerCase().includes('equipe')) ?? false;
 
       if (isDirect || (includeTeamTasks && isTeam)) {
         const startTs = t.startDate ? new Date(t.startDate).getTime() : 9999999999999;
-        const dateStr = t.endDate && t.endDate !== t.startDate
-          ? `${formatDateFr(t.startDate, 'dd MMM')} - ${formatDateFr(t.endDate, 'dd MMM yyyy')}`
-          : formatDateFr(t.startDate, 'dd MMM yyyy');
+        const dateStr = t.weekLabel
+          ? (t.endDate && t.endDate !== t.startDate
+              ? `${t.weekLabel} (${formatDateFr(t.startDate, 'dd MMM')} - ${formatDateFr(t.endDate, 'dd MMM yyyy')})`
+              : `${t.weekLabel} (${formatDateFr(t.startDate, 'dd MMM yyyy')})`)
+          : (t.endDate && t.endDate !== t.startDate
+              ? `${formatDateFr(t.startDate, 'dd MMM')} - ${formatDateFr(t.endDate, 'dd MMM yyyy')}`
+              : formatDateFr(t.startDate, 'dd MMM yyyy'));
+
+        const event = t.eventId ? (currentProject.events || []).find((e) => e.id === t.eventId) : null;
+        const eventTitle = t.eventTitle || event?.title;
 
         items.push({
           id: `gantt-${t.id}`,
-          source: 'gantt',
+          source: t.eventId ? 'retro' : 'gantt',
           title: t.title,
           category: t.category,
           dateLabel: dateStr,
@@ -165,35 +172,12 @@ export const PersonalTasksHub: React.FC = () => {
           status: t.status,
           priority: t.priority,
           isMilestone: t.isMilestone,
+          eventId: t.eventId,
+          eventTitle: eventTitle,
           isTeamTask: !isDirect && isTeam,
           rawGanttTask: t
         });
       }
-    });
-
-    // 2. Actions du rétroplanning par événements
-    (currentProject.events || []).forEach((evt) => {
-      (evt.tasks || []).forEach((rt) => {
-        const isDirect = isTaskAssignedToMember(rt.assignee, undefined, activeMember);
-        const isTeam = (rt.assignee?.toLowerCase().includes('équipe') || rt.assignee?.toLowerCase().includes('equipe')) ?? false;
-
-        if (isDirect || (includeTeamTasks && isTeam)) {
-          const ts = parseRetroWeekTimestamp(rt.weekLabel);
-          items.push({
-            id: `retro-${evt.id}-${rt.id}`,
-            source: 'retro',
-            title: rt.action,
-            category: rt.category,
-            dateLabel: rt.weekLabel,
-            timestamp: ts,
-            status: rt.status,
-            eventTitle: evt.title,
-            eventId: evt.id,
-            isTeamTask: !isDirect && isTeam,
-            rawRetroTask: rt
-          });
-        }
-      });
     });
 
     // Tri chronologique strict
@@ -231,7 +215,7 @@ export const PersonalTasksHub: React.FC = () => {
       return;
     }
 
-    if (item.source === 'gantt' && item.rawGanttTask) {
+    if (item.rawGanttTask) {
       const newStatus = item.rawGanttTask.status === 'completed' ? 'in_progress' : 'completed';
       const newProgress = newStatus === 'completed' ? 100 : item.rawGanttTask.progress === 100 ? 50 : item.rawGanttTask.progress;
       updateTask({
@@ -239,22 +223,13 @@ export const PersonalTasksHub: React.FC = () => {
         status: newStatus,
         progress: newProgress
       });
-    } else if (item.source === 'retro' && item.rawRetroTask && item.eventId) {
-      const newStatus = item.rawRetroTask.status === 'completed' ? 'todo' : 'completed';
-      updateRetroTask(item.eventId, {
-        ...item.rawRetroTask,
-        status: newStatus
-      });
     }
   };
 
   // Clic sur une ligne pour ouvrir l'élément
   const handleItemClick = (item: PersonalItem) => {
-    if (item.source === 'gantt' && item.rawGanttTask) {
+    if (item.rawGanttTask) {
       openEditTaskModal(item.rawGanttTask);
-    } else if (item.source === 'retro' && item.eventId) {
-      setViewMode('retroplanning');
-      setRetroActiveTab(item.eventId);
     }
   };
 
@@ -402,18 +377,7 @@ export const PersonalTasksHub: React.FC = () => {
                   : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800'
               }`}
             >
-              Tout
-            </button>
-            <button
-              onClick={() => setSourceFilter('gantt')}
-              className={`px-2.5 py-1 rounded-lg font-semibold transition flex items-center gap-1 ${
-                sourceFilter === 'gantt'
-                  ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-200 font-bold border border-indigo-200 dark:border-indigo-800'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800'
-              }`}
-            >
-              <GanttChartSquare size={13} />
-              <span>Gantt</span>
+              Toutes
             </button>
             <button
               onClick={() => setSourceFilter('retro')}
@@ -424,7 +388,18 @@ export const PersonalTasksHub: React.FC = () => {
               }`}
             >
               <FileSpreadsheet size={13} />
-              <span>Rétroplanning</span>
+              <span>Événements (Rétro)</span>
+            </button>
+            <button
+              onClick={() => setSourceFilter('gantt')}
+              className={`px-2.5 py-1 rounded-lg font-semibold transition flex items-center gap-1 ${
+                sourceFilter === 'gantt'
+                  ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-200 font-bold border border-indigo-200 dark:border-indigo-800'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-200/50 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Sparkles size={13} />
+              <span>Missions Générales</span>
             </button>
           </div>
         </div>
@@ -530,23 +505,23 @@ export const PersonalTasksHub: React.FC = () => {
                 {/* Corps de la tâche */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
-                    {/* Badge source : Gantt ou Rétroplanning */}
+                    {/* Badge source : Événement Rétroplanning ou Mission Générale */}
                     <span
                       className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md flex items-center gap-1 ${
-                        item.source === 'gantt'
-                          ? 'bg-indigo-100 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800'
-                          : 'bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+                        item.source === 'retro'
+                          ? 'bg-blue-100 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800'
+                          : 'bg-purple-100 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800'
                       }`}
                     >
-                      {item.source === 'gantt' ? (
-                        <>
-                          <GanttChartSquare size={10} />
-                          <span>Planning Gantt</span>
-                        </>
-                      ) : (
+                      {item.source === 'retro' ? (
                         <>
                           <FileSpreadsheet size={10} />
                           <span>Rétroplanning</span>
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles size={10} />
+                          <span>Projet Général</span>
                         </>
                       )}
                     </span>
@@ -558,10 +533,10 @@ export const PersonalTasksHub: React.FC = () => {
                       </span>
                     )}
 
-                    {/* Événement parent si rétroplanning */}
+                    {/* Événement parent si lié à un événement du rétroplanning */}
                     {item.eventTitle && (
-                      <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md truncate max-w-[200px]">
-                        {item.eventTitle}
+                      <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800/60 px-2 py-0.5 rounded-md truncate max-w-[220px]">
+                        🎯 {item.eventTitle}
                       </span>
                     )}
 
