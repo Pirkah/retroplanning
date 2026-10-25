@@ -651,6 +651,98 @@
           "assignee": "Vianney Urbanick",
           "assigneeId": "m-vianney",
           "isMilestone": true
+        },
+        {
+          "id": "task-dos-1",
+          "title": "Mise en page du dossier",
+          "startDate": "2026-09-28",
+          "endDate": "2026-10-04",
+          "color": "#EC4899",
+          "status": "todo",
+          "priority": "medium",
+          "progress": 0,
+          "category": "communication",
+          "assignee": "Vianney Urbanick",
+          "assigneeId": "m-vianney"
+        },
+        {
+          "id": "task-dos-2",
+          "title": "Cartographie des parties prenantes externes",
+          "startDate": "2026-10-05",
+          "endDate": "2026-10-11",
+          "color": "#EC4899",
+          "status": "todo",
+          "priority": "high",
+          "progress": 0,
+          "category": "communication",
+          "assignee": "Mathias Samson",
+          "assigneeId": "m-mathias"
+        },
+        {
+          "id": "task-dos-3",
+          "title": "Mise en forme du dossier (première de couverture)",
+          "startDate": "2026-10-05",
+          "endDate": "2026-10-11",
+          "color": "#EC4899",
+          "status": "todo",
+          "priority": "medium",
+          "progress": 0,
+          "category": "communication",
+          "assignee": "Vianney Urbanick",
+          "assigneeId": "m-vianney"
+        },
+        {
+          "id": "task-dos-4",
+          "title": "Partie 1 : Définition des objectifs du projet",
+          "startDate": "2026-10-05",
+          "endDate": "2026-10-11",
+          "color": "#EC4899",
+          "status": "todo",
+          "priority": "high",
+          "progress": 0,
+          "category": "communication",
+          "assignee": "Sina Abdoul Bastoi",
+          "assigneeId": "m-sina"
+        },
+        {
+          "id": "task-dos-5",
+          "title": "Élaboration de la table des matières",
+          "startDate": "2026-10-05",
+          "endDate": "2026-10-11",
+          "color": "#EC4899",
+          "status": "todo",
+          "priority": "low",
+          "progress": 0,
+          "category": "communication",
+          "assignee": "Vianney Urbanick",
+          "assigneeId": "m-vianney"
+        },
+        {
+          "id": "task-dos-6",
+          "title": "Tenu du rapport d’activité sur la période",
+          "startDate": "2026-10-12",
+          "endDate": "2026-10-18",
+          "color": "#EC4899",
+          "status": "todo",
+          "priority": "medium",
+          "progress": 0,
+          "category": "communication",
+          "assignee": "Théo",
+          "assigneeId": "m-theo"
+        },
+        {
+          "id": "task-dos-7",
+          "title": "Jalon : Rendu officiel V1 du 1er Dossier",
+          "startDate": "2026-10-19",
+          "endDate": "2026-10-26",
+          "color": "#EC4899",
+          "status": "todo",
+          "priority": "high",
+          "progress": 0,
+          "category": "communication",
+          "assignee": "Vianney Urbanick",
+          "assigneeId": "m-vianney",
+          "isMilestone": true
         }
       ],
       "events": [
@@ -757,6 +849,30 @@
               "category": "Post-événement",
               "action": "Post et photos sur les réseaux sociaux pour la remise de chèque",
               "assignee": "Sina Abdoul Bastoi",
+              "status": "todo"
+            },
+            {
+              "id": "t-rem-salle-plan",
+              "weekLabel": "S40",
+              "category": "Logistique",
+              "action": "Plan de la salle pour la remise",
+              "assignee": "Vianney Urbanick",
+              "status": "in_progress"
+            },
+            {
+              "id": "t-rem-salle-prep",
+              "weekLabel": "S41",
+              "category": "Partenaires",
+              "action": "Préparer la salle pour la remise de chèque",
+              "assignee": "Vianney Urbanick",
+              "status": "in_progress"
+            },
+            {
+              "id": "t-rem-actu-presse",
+              "weekLabel": "S42",
+              "category": "Communication",
+              "action": "Recontacter ACTU pour la presse",
+              "assignee": "Julien Nicolle, Vianney Urbanick",
               "status": "todo"
             }
           ]
@@ -877,6 +993,73 @@
           ]
         },
         {
+          "id": "event-rnf-dossier-1",
+          "title": "1er Dossier à rendre",
+          "date": "26-oct-26",
+          "objective": "Terminer le premier dossier du projet",
+          "content": "Mise en page du dossier, cartographie des parties prenantes externes, rédaction des objectifs, table des matières, rapport d’activité et rendu officiel de la V1.",
+          "color": "#EC4899",
+          "tasks": [
+            {
+              "id": "t-dos-1",
+              "weekLabel": "S40",
+              "category": "Communication",
+              "action": "Effectuer la mise en page du dossier",
+              "assignee": "Vianney Urbanick",
+              "status": "todo"
+            },
+            {
+              "id": "t-dos-2",
+              "weekLabel": "S41",
+              "category": "Communication",
+              "action": "Cartographie des parties prenantes externes",
+              "assignee": "Mathias Samson, Vianney Urbanick",
+              "status": "todo"
+            },
+            {
+              "id": "t-dos-3",
+              "weekLabel": "S41",
+              "category": "Communication",
+              "action": "Effectuer la mise en forme du dossier première de couverture",
+              "assignee": "Vianney Urbanick",
+              "status": "todo"
+            },
+            {
+              "id": "t-dos-4",
+              "weekLabel": "S41",
+              "category": "Communication",
+              "action": "Effectuer la partie 1 du dossier sur la définition des objectifs du projet",
+              "assignee": "Sina Abdoul Bastoi",
+              "status": "todo"
+            },
+            {
+              "id": "t-dos-5",
+              "weekLabel": "S41",
+              "category": "Communication",
+              "action": "Effectuer la table des matières",
+              "assignee": "Vianney Urbanick",
+              "status": "todo"
+            },
+            {
+              "id": "t-dos-6",
+              "weekLabel": "S42",
+              "category": "Communication",
+              "action": "Tenu du rapport d’activité sur l’ensemble de la période",
+              "assignee": "Théo",
+              "status": "todo"
+            },
+            {
+              "id": "t-dos-7",
+              "weekLabel": "S43 (26 oct.)",
+              "category": "Activité",
+              "action": "★ Rendre la V1 du premier dossier",
+              "assignee": "Vianney Urbanick",
+              "status": "event",
+              "isEventHighlight": true
+            }
+          ]
+        },
+        {
           "id": "event-rnf-partenaires",
           "title": "Partenaires & Sponsors de la Course",
           "date": "06-déc-26",
@@ -930,7 +1113,7 @@
               "category": "Communication",
               "action": "Faire un premier TikTok de présentation de l’équipe",
               "assignee": "Sina Abdoul Bastoi",
-              "status": "todo"
+              "status": "completed"
             },
             {
               "id": "t-part-7",
@@ -1060,7 +1243,7 @@
           ]
         }
       ],
-      "updatedAt": "2026-09-28T13:20:54.795Z"
+      "updatedAt": "2026-10-25T08:56:05.774Z"
     }
   ],
   "activeProjectId": "proj-rnf-2026",
@@ -1071,5 +1254,5 @@
       "m-julien": "rnf2026"
     }
   },
-  "lastModified": "2026-09-28T13:21:35.901Z"
+  "lastModified": "2026-10-25T08:56:05.774Z"
 }
