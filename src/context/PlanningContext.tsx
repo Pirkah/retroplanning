@@ -13,6 +13,17 @@ import {
 import { DEFAULT_PROJECT } from '../data/defaultProject';
 import { sortTasksChronologically, sortRetroEventsChronologically, sortRetroTasksChronologically } from '../utils/scheduler';
 import { getCategoryDefinition, getCategoryColor, STANDARD_CATEGORIES } from '../utils/categories';
+import { parseExcelPlanning } from '../utils/excelImport';
+
+export interface VaultSnapshot {
+  id: string;
+  timestamp: string;
+  label: string;
+  taskCount: number;
+  eventCount: number;
+  projects: Project[];
+  activeProjectId: string;
+}
 
 interface PlanningContextType {
   projects: Project[];
@@ -93,9 +104,15 @@ interface PlanningContextType {
   updateRetroTask: (eventId: string, task: RetroplanningTask) => void;
   deleteRetroTask: (eventId: string, taskId: string) => void;
 
-  // Import / Export
+  // Import / Export & Sauvegardes
   exportProjectJson: () => void;
   importProjectJson: (content: string) => boolean;
+  importProjectFromExcel: (file: File) => Promise<boolean>;
+  vaultSnapshots: VaultSnapshot[];
+  createVaultSnapshot: (label?: string) => void;
+  restoreVaultSnapshot: (id: string) => boolean;
+  isBackupModalOpen: boolean;
+  setIsBackupModalOpen: (open: boolean) => void;
 }
 
 const STORAGE_KEY = 'retroplanning_projects_v4';
@@ -375,6 +392,22 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [defaultDateForNewTask, setDefaultDateForNewTask] = useState<string | null>(null);
 
+  // Modal Sauvegarde & Sécurité
+  const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
+
+  // Coffre-fort local des points de restauration (Sauvegardes automatiques en navigateur)
+  const VAULT_KEY = 'rnf_vault_snapshots_v1';
+  const [vaultSnapshots, setVaultSnapshots] = useState<VaultSnapshot[]>(() => {
+    try {
+      const saved = localStorage.getItem(VAULT_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch {}
+    return [];
+  });
+
   const AUTH_KEY = 'rnf_auth_password_v1';
   const USER_KEY = 'rnf_connected_user_v1';
 
@@ -537,6 +570,60 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     currentUserRef.current = currentUser;
   }, [currentUser]);
 
+  // Calcul du nombre total d'éléments (tâches Gantt + tâches de rétroplanning)
+  const getProjectTotalCount = (projs: Project[]): number => {
+    if (!projs || !Array.isArray(projs)) return 0;
+    return projs.reduce((acc, p) => {
+      const tCount = (p.tasks || []).length;
+      const eCount = (p.events || []).reduce((ea, e) => ea + (e.tasks || []).length, 0);
+      return acc + tCount + eCount;
+    }, 0);
+  };
+
+  // Enregistre un instantané de sécurité dans le coffre-fort local (garder les 15 plus récents)
+  const saveLocalVaultSnapshot = useCallback((projs: Project[], label: string) => {
+    try {
+      if (!projs || projs.length === 0) return;
+      const tCount = projs.reduce((acc, p) => acc + (p.tasks?.length || 0), 0);
+      const eCount = projs.reduce((acc, p) => acc + (p.events?.length || 0), 0);
+      const newSnap: VaultSnapshot = {
+        id: 'snap_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+        timestamp: new Date().toISOString(),
+        label,
+        taskCount: tCount,
+        eventCount: eCount,
+        projects: projs,
+        activeProjectId: activeProjectIdRef.current
+      };
+
+      setVaultSnapshots((prev) => {
+        const next = [newSnap, ...prev.slice(0, 14)];
+        try { localStorage.setItem('rnf_vault_snapshots_v1', JSON.stringify(next)); } catch {}
+        return next;
+      });
+    } catch (err) {
+      console.warn('Erreur sauvegarde point coffre-fort:', err);
+    }
+  }, []);
+
+  const createVaultSnapshot = (label?: string) => {
+    saveLocalVaultSnapshot(projectsRef.current, label || 'Point de restauration manuel');
+  };
+
+  const restoreVaultSnapshot = (id: string): boolean => {
+    const snap = vaultSnapshots.find((s) => s.id === id);
+    if (!snap || !Array.isArray(snap.projects) || snap.projects.length === 0) return false;
+    setProjects(snap.projects);
+    const targetActive = snap.activeProjectId || activeProjectIdRef.current;
+    setActiveProjectId(targetActive);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(snap.projects));
+      localStorage.setItem(ACTIVE_PROJ_KEY, targetActive);
+    } catch {}
+    broadcastState(snap.projects, targetActive);
+    return true;
+  };
+
   // Calcul du timestamp le plus récent parmi une liste de projets
   const getLatestProjectTimestamp = (projs: Project[]): number => {
     if (!projs || !Array.isArray(projs)) return 0;
@@ -619,8 +706,14 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       ? incomingActiveId
       : DEFAULT_PROJECT.id;
 
+    const localTotalCount = getProjectTotalCount(projectsRef.current);
+    const incomingTotalCount = getProjectTotalCount(validProjects);
+
     // Si c'est un STATE_UPDATED en direct d'un collègue
     if (source === 'STATE_UPDATED') {
+      if (localTotalCount > 0) {
+        saveLocalVaultSnapshot(projectsRef.current, `Avant synchro live (${new Date().toLocaleTimeString('fr-FR')})`);
+      }
       isBroadcastingRef.current = true;
       setProjects(validProjects);
       setActiveProjectId(targetActiveId);
@@ -634,17 +727,28 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return;
     }
 
+    // Protection anti-perte Render : Si le client local possède PLUS d'éléments que le serveur
+    // (ex: serveur Render qui a redémarré avec un état éphémère vide ou partiel)
+    if (localTotalCount > incomingTotalCount && localTotalCount > 0) {
+      console.warn(`[Protection Anti-Perte] Le client local possède ${localTotalCount} éléments contre ${incomingTotalCount} sur le serveur. Conservation prioritaire et synchronisation vers le serveur.`);
+      syncLocalToServer(projectsRef.current, activeProjectIdRef.current);
+      return;
+    }
+
     // Pour initialisation (HTTP ou INIT_STATE), vérifier les horodatages
     const serverTime = incomingLastModified
       ? new Date(incomingLastModified).getTime()
       : getLatestProjectTimestamp(validProjects);
     const clientTime = getLatestProjectTimestamp(projectsRef.current);
 
-    // Si le client local possède des données plus récentes (ex: serveur Render redémarré avec un état disque antérieur)
+    // Si le client local possède des données plus récentes
     if (clientTime > serverTime && clientTime > 0) {
       console.log(`[Sync] Le client local possède des données plus récentes (${new Date(clientTime).toISOString()}) que le serveur (${new Date(serverTime).toISOString()}). Restauration vers le serveur.`);
       syncLocalToServer(projectsRef.current, activeProjectIdRef.current);
     } else {
+      if (localTotalCount > 0) {
+        saveLocalVaultSnapshot(projectsRef.current, `Avant chargement serveur (${source})`);
+      }
       console.log(`[Sync] Application des données du serveur (${source}).`);
       setProjects(validProjects);
       setActiveProjectId(targetActiveId);
@@ -653,7 +757,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         localStorage.setItem(ACTIVE_PROJ_KEY, targetActiveId);
       } catch {}
     }
-  }, [syncLocalToServer]);
+  }, [syncLocalToServer, saveLocalVaultSnapshot]);
 
 
 
@@ -1295,25 +1399,99 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const importProjectJson = (content: string): boolean => {
     try {
       const parsed = JSON.parse(content);
-      if (!parsed || !Array.isArray(parsed.tasks)) {
-        throw new Error('Structure JSON invalide (propriété tasks manquante)');
+      if (!parsed) throw new Error('Contenu vide ou invalide');
+
+      // Sauvegarde du point actuel dans le coffre local avant import
+      saveLocalVaultSnapshot(projectsRef.current, 'Avant import JSON');
+
+      // Cas 1 : Export complet de la base de données { projects: [...], activeProjectId: ... }
+      if (Array.isArray(parsed.projects) && parsed.projects.length > 0) {
+        const validProjects = parsed.projects.map((p: Project) => ({
+          ...p,
+          tasks: sortTasksChronologically((p.tasks || []).map(normalizeTask)),
+          members: ensureAllDefaultMembers(p.members),
+          events: sortRetroEventsChronologically(normalizeRetroEvents(p.events || []))
+        }));
+        const targetActive = (parsed.activeProjectId && validProjects.some((p: Project) => p.id === parsed.activeProjectId))
+          ? parsed.activeProjectId
+          : validProjects[0].id;
+
+        setProjects(validProjects);
+        setActiveProjectId(targetActive);
+        broadcastState(validProjects, targetActive);
+        return true;
       }
-      const imported: Project = {
-        id: 'proj_' + Date.now(),
-        name: parsed.name ? `${parsed.name} (Importé)` : 'Planning Importé',
-        description: parsed.description || '',
-        createdAt: new Date().toISOString(),
-        tasks: sortTasksChronologically(parsed.tasks),
-        members: parsed.members || DEFAULT_TEAM_MEMBERS,
-        events: parsed.events || []
-      };
-      const nextProjects = [...projects, imported];
-      setProjects(nextProjects);
-      setActiveProjectId(imported.id);
-      broadcastState(nextProjects, imported.id);
-      return true;
+
+      // Cas 2 : Export d’un projet individuel { tasks: [...], events: [...] }
+      if (Array.isArray(parsed.tasks)) {
+        const imported: Project = {
+          id: parsed.id || 'proj_' + Date.now(),
+          name: parsed.name ? `${parsed.name} (Restauré)` : 'Planning Restauré',
+          description: parsed.description || '',
+          createdAt: parsed.createdAt || new Date().toISOString(),
+          tasks: sortTasksChronologically(parsed.tasks.map(normalizeTask)),
+          members: ensureAllDefaultMembers(parsed.members),
+          events: sortRetroEventsChronologically(normalizeRetroEvents(parsed.events || []))
+        };
+        const nextProjects = [...projects.filter((p) => p.id !== imported.id), imported];
+        setProjects(nextProjects);
+        setActiveProjectId(imported.id);
+        broadcastState(nextProjects, imported.id);
+        return true;
+      }
+
+      throw new Error('Structure JSON non reconnue (manque "projects" ou "tasks")');
     } catch (err) {
-      console.error(err);
+      console.error('[Import JSON] Erreur:', err);
+      return false;
+    }
+  };
+
+  const importProjectFromExcel = async (file: File): Promise<boolean> => {
+    try {
+      const result = await parseExcelPlanning(file);
+      if (!result.success || result.events.length === 0) {
+        alert(result.message);
+        return false;
+      }
+
+      // Sauvegarder l'état actuel dans le coffre local
+      saveLocalVaultSnapshot(projectsRef.current, `Avant import Excel (${file.name})`);
+
+      const updatedProjects = projects.map((p) => {
+        if (p.id !== activeProjectId) return p;
+
+        const currentEvents = p.events || [];
+        const mergedEvents = [...currentEvents];
+
+        result.events.forEach((impEv) => {
+          const existingIdx = mergedEvents.findIndex(
+            (e) => e.id === impEv.id || e.title.toLowerCase().trim() === impEv.title.toLowerCase().trim()
+          );
+          if (existingIdx >= 0) {
+            // Met à jour l'événement existant avec les nouvelles tâches
+            mergedEvents[existingIdx] = {
+              ...mergedEvents[existingIdx],
+              ...impEv,
+              tasks: sortRetroTasksChronologically(impEv.tasks)
+            };
+          } else {
+            mergedEvents.push(impEv);
+          }
+        });
+
+        return {
+          ...p,
+          events: sortRetroEventsChronologically(mergedEvents),
+          updatedAt: new Date().toISOString()
+        };
+      });
+
+      setProjects(updatedProjects);
+      broadcastState(updatedProjects, activeProjectId);
+      return true;
+    } catch (err: any) {
+      console.error('[Import Excel] Erreur:', err);
       return false;
     }
   };
@@ -1382,6 +1560,12 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         deleteRetroTask,
         exportProjectJson,
         importProjectJson,
+        importProjectFromExcel,
+        vaultSnapshots,
+        createVaultSnapshot,
+        restoreVaultSnapshot,
+        isBackupModalOpen,
+        setIsBackupModalOpen,
       }}
     >
       {children}

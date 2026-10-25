@@ -569,6 +569,99 @@ const DEFAULT_TASKS: Task[] = [
       assignee: 'Marius Chevalier',
       assigneeId: 'm-marius'
     },
+    // --- 1ER DOSSIER À RENDRE ---
+    {
+      id: 'task-dos-1',
+      title: 'Mise en page du dossier',
+      startDate: '2026-09-28',
+      endDate: '2026-10-04',
+      color: '#EC4899',
+      status: 'completed',
+      priority: 'medium',
+      progress: 100,
+      category: 'Communication & Médias',
+      assignee: 'Vianney Urbanick',
+      assigneeId: 'm-vianney'
+    },
+    {
+      id: 'task-dos-2',
+      title: 'Cartographie des parties prenantes externes',
+      startDate: '2026-10-05',
+      endDate: '2026-10-11',
+      color: '#EC4899',
+      status: 'completed',
+      priority: 'high',
+      progress: 100,
+      category: 'Communication & Médias',
+      assignee: 'Mathias Samson',
+      assigneeId: 'm-mathias'
+    },
+    {
+      id: 'task-dos-3',
+      title: 'Mise en forme du dossier (première de couverture)',
+      startDate: '2026-10-05',
+      endDate: '2026-10-11',
+      color: '#EC4899',
+      status: 'completed',
+      priority: 'medium',
+      progress: 100,
+      category: 'Communication & Médias',
+      assignee: 'Vianney Urbanick',
+      assigneeId: 'm-vianney'
+    },
+    {
+      id: 'task-dos-4',
+      title: 'Partie 1 : Définition des objectifs du projet',
+      startDate: '2026-10-05',
+      endDate: '2026-10-11',
+      color: '#EC4899',
+      status: 'completed',
+      priority: 'high',
+      progress: 100,
+      category: 'Communication & Médias',
+      assignee: 'Sina Abdoul Bastoi',
+      assigneeId: 'm-sina'
+    },
+    {
+      id: 'task-dos-5',
+      title: 'Élaboration de la table des matières',
+      startDate: '2026-10-05',
+      endDate: '2026-10-11',
+      color: '#EC4899',
+      status: 'completed',
+      priority: 'low',
+      progress: 100,
+      category: 'Communication & Médias',
+      assignee: 'Vianney Urbanick',
+      assigneeId: 'm-vianney'
+    },
+    {
+      id: 'task-dos-6',
+      title: 'Tenu du rapport d’activité sur la période',
+      startDate: '2026-10-12',
+      endDate: '2026-10-18',
+      color: '#EC4899',
+      status: 'completed',
+      priority: 'medium',
+      progress: 100,
+      category: 'Communication & Médias',
+      assignee: 'Théo',
+      assigneeId: 'm-theo'
+    },
+    {
+      id: 'task-dos-7',
+      title: 'Jalon : Rendu officiel V1 du 1er Dossier',
+      startDate: '2026-10-19',
+      endDate: '2026-10-26',
+      color: '#EC4899',
+      status: 'in_progress',
+      priority: 'high',
+      progress: 90,
+      category: 'Activité / Jour J',
+      assignee: 'Vianney Urbanick',
+      assigneeId: 'm-vianney',
+      isMilestone: true
+    },
     {
       id: 'task-gantt-8',
       title: 'Jalon : RUN AND FUN DAY (Jour de la Course)',
@@ -612,6 +705,23 @@ const DEFAULT_EVENTS: RetroplanningEvent[] = [
       ]
     },
     {
+      id: 'event-rnf-dossier-1',
+      title: '1er Dossier à rendre',
+      date: '26-oct-26',
+      objective: 'Terminer le premier dossier du projet',
+      content: 'Mise en page du dossier, cartographie des parties prenantes externes, rédaction des objectifs, table des matières, rapport d’activité et rendu officiel de la V1.',
+      color: '#EC4899',
+      tasks: [
+        { id: 't-dos-1', weekLabel: 'S40', category: 'Communication & Médias', action: 'Effectuer la mise en page du dossier', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-dos-2', weekLabel: 'S41', category: 'Communication & Médias', action: 'Cartographie des parties prenantes externes', assignee: 'Mathias Samson, Vianney Urbanick', status: 'completed' },
+        { id: 't-dos-3', weekLabel: 'S41', category: 'Communication & Médias', action: 'Effectuer la mise en forme du dossier première de couverture', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-dos-4', weekLabel: 'S41', category: 'Communication & Médias', action: 'Effectuer la partie 1 du dossier sur la définition des objectifs du projet', assignee: 'Sina Abdoul Bastoi', status: 'completed' },
+        { id: 't-dos-5', weekLabel: 'S41', category: 'Communication & Médias', action: 'Effectuer la table des matières', assignee: 'Vianney Urbanick', status: 'completed' },
+        { id: 't-dos-6', weekLabel: 'S42', category: 'Communication & Médias', action: 'Tenu du rapport d’activité sur l’ensemble de la période', assignee: 'Théo', status: 'completed' },
+        { id: 't-dos-7', weekLabel: 'S43 (26 oct.)', category: 'Activité / Jour J', action: '★ Rendre la V1 du premier dossier', assignee: 'Vianney Urbanick', status: 'event', isEventHighlight: true }
+      ]
+    },
+    {
       id: 'event-rnf-remise',
       title: 'Remise de Chèque Gravir pour Guérir & Rentrée',
       date: '08-oct-26',
@@ -625,9 +735,12 @@ const DEFAULT_EVENTS: RetroplanningEvent[] = [
         { id: 't-rnf-4', weekLabel: 'S39', category: 'Fournisseurs & Commandes', action: 'Commande et récupération du chèque grand format cartonné pour la remise', assignee: 'Vianney Urbanick', status: 'completed' },
         { id: 't-rnf-5', weekLabel: 'S39', category: 'Partenaires & Sponsors', action: 'Envoyer un mail aux fournisseurs et partenaires pour les inviter à la remise', assignee: 'Vianney Urbanick', status: 'completed' },
         { id: 't-rnf-6', weekLabel: 'S39', category: 'Communication & Médias', action: 'Création et pose de l’affiche annonçant l’événement dans le hall de GEA', assignee: 'Mathias Samson', status: 'completed' },
+        { id: 't-rnf-salle-plan', weekLabel: 'S40', category: 'Logistique & Sécurité', action: 'Plan de la salle pour la remise de chèque', assignee: 'Vianney Urbanick', status: 'completed' },
         { id: 't-rnf-7', weekLabel: 'S40', category: 'Partenaires & Sponsors', action: 'Relance et rappel d’invitation des partenaires et mécènes de l’an dernier', assignee: 'Julien Nicolle', status: 'completed' },
+        { id: 't-rnf-salle-prep', weekLabel: 'S41', category: 'Partenaires & Sponsors', action: 'Préparer la salle pour la remise de chèque', assignee: 'Vianney Urbanick', status: 'completed' },
         { id: 't-rnf-8', weekLabel: 'S41 (08 oct.)', category: 'Activité / Jour J', action: 'Cérémonie officielle de remise de chèque à Gravir pour Guérir – 8 octobre 2026', assignee: 'Toute l’équipe', status: 'event', isEventHighlight: true },
-        { id: 't-rnf-9', weekLabel: 'S42', category: 'Post-événement', action: 'Publication des photos et remerciements aux partenaires sur les réseaux sociaux', assignee: 'Sina Abdoul Bastoi', status: 'todo' }
+        { id: 't-rnf-9', weekLabel: 'S42', category: 'Post-événement', action: 'Publication des photos et remerciements aux partenaires sur les réseaux sociaux', assignee: 'Sina Abdoul Bastoi', status: 'completed' },
+        { id: 't-rnf-actu-presse', weekLabel: 'S42', category: 'Communication & Médias', action: 'Recontacter ACTU pour la presse', assignee: 'Julien Nicolle, Vianney Urbanick', status: 'todo' }
       ]
     },
     {

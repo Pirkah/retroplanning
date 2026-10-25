@@ -6,6 +6,7 @@ import { GanttChartView } from './components/GanttChartView';
 import { CalendarView } from './components/CalendarView';
 import { TaskListView } from './components/TaskListView';
 import { TaskModal } from './components/TaskModal';
+import { BackupModal } from './components/BackupModal';
 import { Footer } from './components/Footer';
 import { GanttExportCanvas } from './components/GanttExportCanvas';
 import { RetroplanningView } from './components/RetroplanningView';
@@ -17,7 +18,17 @@ import { CheckCircle2, Clock, Sparkles, Eye, Lock } from 'lucide-react';
 import { formatDateFr, sortTasksChronologically } from './utils/scheduler';
 
 const MainLayout: React.FC = () => {
-  const { viewMode, setViewMode, currentProject, members, isAuthorized, currentUser, openAuthModal } = usePlanning();
+  const {
+    viewMode,
+    setViewMode,
+    currentProject,
+    members,
+    isAuthorized,
+    currentUser,
+    openAuthModal,
+    isBackupModalOpen,
+    setIsBackupModalOpen
+  } = usePlanning();
 
   const totalTasks = currentProject.tasks.length;
   const completedTasks = currentProject.tasks.filter((t) => t.status === 'completed').length;
@@ -158,6 +169,12 @@ const MainLayout: React.FC = () => {
 
       {/* Modale d'ajout / modification de tâche */}
       <TaskModal />
+
+      {/* Modale de gestion des sauvegardes et sécurité des données */}
+      <BackupModal
+        isOpen={isBackupModalOpen}
+        onClose={() => setIsBackupModalOpen(false)}
+      />
 
       {/* Cible d'export HD complète (invisible à l'écran par défaut, accessible pour le rendu PDF/PNG paysage et impression vectorielle) */}
       <div

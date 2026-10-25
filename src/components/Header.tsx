@@ -33,7 +33,8 @@ import {
   Lightbulb,
   MessageSquare,
   Sun,
-  Moon
+  Moon,
+  ShieldCheck
 } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { TeamModal } from './TeamModal';
@@ -73,7 +74,8 @@ export const Header: React.FC = () => {
     currentUser,
     toggleSidebar,
     theme,
-    toggleTheme
+    toggleTheme,
+    setIsBackupModalOpen
   } = usePlanning();
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -395,6 +397,16 @@ export const Header: React.FC = () => {
           >
             <Share2 size={13} className="text-slate-500 dark:text-slate-400" />
             <span className="hidden sm:inline">Partager</span>
+          </button>
+
+          {/* Bouton Sauvegardes & Sécurité */}
+          <button
+            onClick={() => setIsBackupModalOpen(true)}
+            className="px-2.5 py-1.5 text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 border border-slate-200/80 dark:border-slate-700 shadow-2xs group"
+            title="Ouvrir le centre de sauvegardes, restauration et sécurité des données"
+          >
+            <ShieldCheck size={14} className="text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
+            <span className="hidden sm:inline">Sauvegardes</span>
           </button>
 
           {/* Menu Unique d'Export & Impression (Gantt & Rétroplanning) */}

@@ -19,11 +19,144 @@ const wss = new WebSocketServer({ server, path: '/ws' });
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const DATA_FILE = path.join(DATA_DIR, 'planning_store.json');
+const BACKUPS_DIR = path.join(DATA_DIR, 'backups');
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 
-// Assure que le dossier data existe
+// Assure que les dossiers data et backups existent
 if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+if (!fs.existsSync(BACKUPS_DIR)) {
+  fs.mkdirSync(BACKUPS_DIR, { recursive: true });
+}
+
+// Chargement des variables d'environnement locales (.env) si présent
+function loadLocalEnv() {
+  try {
+    const envPath = path.join(__dirname, '..', '.env');
+    if (fs.existsSync(envPath)) {
+      const lines = fs.readFileSync(envPath, 'utf-8').split('\n');
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
+          const [k, ...v] = trimmed.split('=');
+          const key = k.trim();
+          const val = v.join('=').trim();
+          if (!process.env[key]) {
+            process.env[key] = val;
+          }
+        }
+      }
+    }
+  } catch {}
+}
+loadLocalEnv();
+
+// GitHub Auto-Sync (Sauvegarde Cloud inviolable pour contrer le conteneur éphémère Render)
+const GITHUB_REPO = process.env.GITHUB_REPO || 'Pirkah/retroplanning';
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
+let githubSyncTimeout = null;
+let lastGitHubSyncInfo = {
+  lastSync: null,
+  status: 'idle',
+  error: null
+};
+
+// Fonction pour synchroniser avec GitHub REST API
+async function syncToGitHub(data, forceImmediate = false) {
+  if (!GITHUB_TOKEN || !GITHUB_REPO) return;
+
+  const doSync = async () => {
+    try {
+      lastGitHubSyncInfo.status = 'syncing';
+      const fileUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/data/planning_store.json`;
+      const headers = {
+        'Authorization': `token ${GITHUB_TOKEN}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'Retroplanning-AutoBackup'
+      };
+
+      // 1. Récupérer le SHA actuel du fichier sur GitHub
+      let currentSha = null;
+      try {
+        const getRes = await fetch(fileUrl, { headers });
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          currentSha = fileData.sha;
+        }
+      } catch (err) {
+        console.warn('[GitHub Sync] Impossible de récupérer le SHA actuel:', err.message);
+      }
+
+      // 2. Encoder le contenu en Base64 UTF-8
+      const jsonStr = JSON.stringify(data, null, 2);
+      const contentBase64 = Buffer.from(jsonStr, 'utf-8').toString('base64');
+
+      const body = {
+        message: `chore(backup): sauvegarde automatique des tâches (${new Date().toLocaleString('fr-FR')}) [skip ci]`,
+        content: contentBase64,
+        branch: 'main'
+      };
+      if (currentSha) {
+        body.sha = currentSha;
+      }
+
+      const putRes = await fetch(fileUrl, {
+        method: 'PUT',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (putRes.ok) {
+        lastGitHubSyncInfo.lastSync = new Date().toISOString();
+        lastGitHubSyncInfo.status = 'success';
+        lastGitHubSyncInfo.error = null;
+        console.log(`[GitHub Sync] ✅ Sauvegarde Cloud GitHub réussie à ${lastGitHubSyncInfo.lastSync}`);
+      } else {
+        const errText = await putRes.text();
+        lastGitHubSyncInfo.status = 'error';
+        lastGitHubSyncInfo.error = errText;
+        console.error('[GitHub Sync] ❌ Erreur commit GitHub:', putRes.status, errText);
+      }
+    } catch (err) {
+      lastGitHubSyncInfo.status = 'error';
+      lastGitHubSyncInfo.error = err.message;
+      console.error('[GitHub Sync] ❌ Erreur réseau commit GitHub:', err.message);
+    }
+  };
+
+  if (forceImmediate) {
+    if (githubSyncTimeout) clearTimeout(githubSyncTimeout);
+    await doSync();
+  } else {
+    // Debounce de 15 secondes pour grouper les modifications rapides
+    if (githubSyncTimeout) clearTimeout(githubSyncTimeout);
+    githubSyncTimeout = setTimeout(doSync, 15000);
+  }
+}
+
+// Nettoyage des anciennes sauvegardes locales pour conserver les 50 plus récentes
+function cleanupOldBackups(maxKeep = 50) {
+  try {
+    const files = fs.readdirSync(BACKUPS_DIR)
+      .filter(f => f.startsWith('planning_store_') && f.endsWith('.json'))
+      .map(f => {
+        const fp = path.join(BACKUPS_DIR, f);
+        return { name: f, path: fp, time: fs.statSync(fp).mtime.getTime() };
+      })
+      .sort((a, b) => b.time - a.time);
+
+    if (files.length > maxKeep) {
+      files.slice(maxKeep).forEach(f => {
+        try { fs.unlinkSync(f.path); } catch {}
+      });
+    }
+  } catch (err) {
+    console.warn('[Backups] Erreur nettoyage backups:', err);
+  }
 }
 
 // Fonction pour récupérer l'IP locale (pour réseau local)
@@ -52,10 +185,23 @@ function loadStore() {
   return null;
 }
 
-// Sauvegarde du store
-function saveStore(data) {
+// Sauvegarde du store avec triple sécurité (Disque local, Snapshot horodaté, GitHub Cloud)
+function saveStore(data, skipGitHub = false) {
   try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    const content = JSON.stringify(data, null, 2);
+    // 1. Sauvegarde principale sur disque
+    fs.writeFileSync(DATA_FILE, content, 'utf-8');
+
+    // 2. Sauvegarde horodatée dans backups/
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const backupPath = path.join(BACKUPS_DIR, `planning_store_${timestamp}.json`);
+    fs.writeFileSync(backupPath, content, 'utf-8');
+    cleanupOldBackups(50);
+
+    // 3. Sauvegarde Cloud GitHub automatique
+    if (!skipGitHub) {
+      syncToGitHub(data);
+    }
   } catch (e) {
     console.error('Erreur écriture store JSON:', e);
   }
@@ -134,6 +280,124 @@ app.get('/api/projects', (req, res) => {
   } else {
     res.json({ projects: [], activeProjectId: null, lastModified: new Date().toISOString() });
   }
+});
+
+// --- ROUTES DE SAUVEGARDE & SÉCURITÉ ---
+
+// 1. Liste des sauvegardes disponibles
+app.get('/api/backups', (req, res) => {
+  try {
+    const files = fs.readdirSync(BACKUPS_DIR)
+      .filter(f => f.startsWith('planning_store_') && f.endsWith('.json'))
+      .map(f => {
+        const fp = path.join(BACKUPS_DIR, f);
+        const stats = fs.statSync(fp);
+        let taskCount = 0;
+        let eventCount = 0;
+        try {
+          const content = JSON.parse(fs.readFileSync(fp, 'utf-8'));
+          if (content.projects && Array.isArray(content.projects)) {
+            taskCount = content.projects.reduce((acc, p) => acc + (p.tasks?.length || 0), 0);
+            eventCount = content.projects.reduce((acc, p) => acc + (p.events?.length || 0), 0);
+          }
+        } catch {}
+
+        return {
+          filename: f,
+          size: stats.size,
+          createdAt: stats.mtime.toISOString(),
+          taskCount,
+          eventCount
+        };
+      })
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    res.json({
+      success: true,
+      backups: files,
+      githubSync: lastGitHubSyncInfo,
+      currentProjectsCount: store?.projects?.length || 0,
+      currentLastModified: store?.lastModified || null
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// 2. Téléchargement direct du fichier de sauvegarde JSON complet
+app.get('/api/backup/download', (req, res) => {
+  try {
+    if (!fs.existsSync(DATA_FILE)) {
+      return res.status(404).send('Aucune donnée trouvée');
+    }
+    const dateStr = new Date().toISOString().slice(0, 10);
+    res.setHeader('Content-Disposition', `attachment; filename="retroplanning_sauvegarde_${dateStr}.json"`);
+    res.setHeader('Content-Type', 'application/json');
+    const content = fs.readFileSync(DATA_FILE, 'utf-8');
+    res.send(content);
+  } catch (err) {
+    res.status(500).send('Erreur téléchargement: ' + err.message);
+  }
+});
+
+// 3. Forcer la synchronisation Cloud GitHub
+app.post('/api/backup/sync-github', async (req, res) => {
+  try {
+    await syncToGitHub(store, true);
+    res.json({ success: true, githubSync: lastGitHubSyncInfo });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// 4. Restauration d'une sauvegarde (depuis un fichier disque ou un payload JSON)
+app.post('/api/backups/restore', (req, res) => {
+  const { filename, backupData } = req.body || {};
+  let targetData = null;
+
+  if (filename) {
+    const targetPath = path.join(BACKUPS_DIR, path.basename(filename));
+    if (fs.existsSync(targetPath)) {
+      try {
+        targetData = JSON.parse(fs.readFileSync(targetPath, 'utf-8'));
+      } catch (e) {
+        return res.status(400).json({ success: false, message: 'Fichier de sauvegarde invalide' });
+      }
+    } else {
+      return res.status(404).json({ success: false, message: 'Sauvegarde introuvable' });
+    }
+  } else if (backupData && typeof backupData === 'object') {
+    targetData = backupData;
+  }
+
+  if (!targetData || !Array.isArray(targetData.projects)) {
+    return res.status(400).json({ success: false, message: 'Données de restauration invalides' });
+  }
+
+  // Sauvegarde de sécurité préalable de l'état actuel
+  if (store) {
+    const preRestorePath = path.join(BACKUPS_DIR, `planning_store_pre_restore_${Date.now()}.json`);
+    fs.writeFileSync(preRestorePath, JSON.stringify(store, null, 2), 'utf-8');
+  }
+
+  const now = new Date().toISOString();
+  store = {
+    ...targetData,
+    lastModified: now
+  };
+  saveStore(store);
+
+  const { security, ...safeStore } = store;
+  broadcast({
+    type: 'STATE_UPDATED',
+    payload: {
+      ...safeStore,
+      lastModified: now
+    },
+    senderName: 'Restauration de Sauvegarde'
+  });
+
+  return res.json({ success: true, message: 'Sauvegarde restaurée avec succès', lastModified: now });
 });
 
 // Synchronisation HTTP de sécurité (fallback si WebSocket temporairement déconnecté)
