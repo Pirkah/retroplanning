@@ -14,114 +14,114 @@ export interface CategoryDefinition {
 
 export const STANDARD_CATEGORIES: CategoryDefinition[] = [
   {
-    id: 'administratif',
-    label: 'Administratif & Juridique',
-    description: 'Statuts, préfecture, mairie, autorisations et assurances',
-    color: '#6366F1', // Indigo
-    textColor: '#FFFFFF',
-    bgBadge: 'bg-indigo-100',
-    textBadge: 'text-indigo-800',
-    borderBadge: 'border-indigo-300',
-    blockColor: '#6366F1'
-  },
-  {
     id: 'communication',
-    label: 'Communication & Médias',
+    label: 'Communication',
     description: 'Affiches, vidéo, TikTok, Strava, site internet et réseaux sociaux',
     color: '#10B981', // Émeraude / Vert
     textColor: '#FFFFFF',
-    bgBadge: 'bg-emerald-100',
-    textBadge: 'text-emerald-800',
-    borderBadge: 'border-emerald-300',
+    bgBadge: 'bg-emerald-100 dark:bg-emerald-950/60',
+    textBadge: 'text-emerald-800 dark:text-emerald-300',
+    borderBadge: 'border-emerald-300 dark:border-emerald-800',
     blockColor: '#10B981'
   },
   {
-    id: 'logistique',
-    label: 'Logistique & Sécurité',
-    description: 'Réservation de salles, balisage, secours (Croix-Rouge), bénévoles',
-    color: '#3B82F6', // Bleu Océan
+    id: 'administratif',
+    label: 'Administratif',
+    description: 'Statuts, dossiers, préfecture, mairie, autorisations et cadrage',
+    color: '#6366F1', // Indigo
     textColor: '#FFFFFF',
-    bgBadge: 'bg-sky-100',
-    textBadge: 'text-sky-800',
-    borderBadge: 'border-sky-300',
-    blockColor: '#3B82F6'
+    bgBadge: 'bg-indigo-100 dark:bg-indigo-950/60',
+    textBadge: 'text-indigo-800 dark:text-indigo-300',
+    borderBadge: 'border-indigo-300 dark:border-indigo-800',
+    blockColor: '#6366F1'
+  },
+  {
+    id: 'association',
+    label: 'Association',
+    description: 'Vie associative, assemblée générale, passation et statuts',
+    color: '#F97316', // Orange
+    textColor: '#FFFFFF',
+    bgBadge: 'bg-orange-100 dark:bg-orange-950/60',
+    textBadge: 'text-orange-900 dark:text-orange-300',
+    borderBadge: 'border-orange-300 dark:border-orange-800',
+    blockColor: '#F97316'
   },
   {
     id: 'partenaires',
-    label: 'Partenaires & Sponsors',
-    description: 'Contacts mécènes, sponsors locaux, BDE partenaires, dons, associations',
+    label: 'Partenaires',
+    description: 'Contacts mécènes, sponsors locaux, BDE partenaires et subventions',
     color: '#F59E0B', // Ambre / Or
     textColor: '#FFFFFF',
-    bgBadge: 'bg-amber-100',
-    textBadge: 'text-amber-800',
-    borderBadge: 'border-amber-300',
+    bgBadge: 'bg-amber-100 dark:bg-amber-950/60',
+    textBadge: 'text-amber-800 dark:text-amber-300',
+    borderBadge: 'border-amber-300 dark:border-amber-800',
     blockColor: '#F59E0B'
   },
   {
-    id: 'finance',
-    label: 'Finance & Trésorerie',
-    description: 'Banque, compte, TPE, budget prévisionnel et subventions',
-    color: '#06B6D4', // Cyan
-    textColor: '#FFFFFF',
-    bgBadge: 'bg-cyan-100',
-    textBadge: 'text-cyan-800',
-    borderBadge: 'border-cyan-300',
-    blockColor: '#06B6D4'
-  },
-  {
     id: 'fournisseurs',
-    label: 'Fournisseurs & Commandes',
+    label: 'Fournisseurs',
     description: 'T-shirts (DPB), devis, ravitaillement, matériel et prestataires',
     color: '#14B8A6', // Sarcelle / Teal
     textColor: '#FFFFFF',
-    bgBadge: 'bg-teal-100',
-    textBadge: 'text-teal-800',
-    borderBadge: 'border-teal-300',
+    bgBadge: 'bg-teal-100 dark:bg-teal-950/60',
+    textBadge: 'text-teal-800 dark:text-teal-300',
+    borderBadge: 'border-teal-300 dark:border-teal-800',
     blockColor: '#14B8A6'
   },
   {
-    id: 'activite',
-    label: 'Activité / Jour J',
-    description: 'Événement principal, remise de chèque, course solidaire',
-    color: '#EF4444', // Rouge vif
+    id: 'finance',
+    label: 'Finance',
+    description: 'Banque, compte, TPE, budget prévisionnel et assurances',
+    color: '#84CC16', // Vert Lime
     textColor: '#FFFFFF',
-    bgBadge: 'bg-red-100',
-    textBadge: 'text-red-800',
-    borderBadge: 'border-red-300',
-    blockColor: '#EF4444'
+    bgBadge: 'bg-lime-100 dark:bg-lime-950/60',
+    textBadge: 'text-lime-800 dark:text-lime-300',
+    borderBadge: 'border-lime-300 dark:border-lime-800',
+    blockColor: '#84CC16'
+  },
+  {
+    id: 'logistique',
+    label: 'Logistique',
+    description: 'Réservation de salles, balisage, secours (Croix-Rouge), bénévoles',
+    color: '#3B82F6', // Bleu Océan
+    textColor: '#FFFFFF',
+    bgBadge: 'bg-sky-100 dark:bg-sky-950/60',
+    textBadge: 'text-sky-800 dark:text-sky-300',
+    borderBadge: 'border-sky-300 dark:border-sky-800',
+    blockColor: '#3B82F6'
+  },
+  {
+    id: 'activite',
+    label: 'Activité',
+    description: 'Course solidaire, inscriptions HelloAsso, stands et animations',
+    color: '#D946EF', // Fuchsia
+    textColor: '#FFFFFF',
+    bgBadge: 'bg-fuchsia-100 dark:bg-fuchsia-950/60',
+    textBadge: 'text-fuchsia-800 dark:text-fuchsia-300',
+    borderBadge: 'border-fuchsia-300 dark:border-fuchsia-800',
+    blockColor: '#D946EF'
   },
   {
     id: 'evenement',
-    label: 'Événements & Animations',
-    description: 'Animation sur place, accueil, gestion des stands, buvette',
-    color: '#F43F5E', // Rose corail
+    label: 'Événement',
+    description: 'Jalons majeurs, remise de chèque, jour J de la course',
+    color: '#EF4444', // Rouge vif
     textColor: '#FFFFFF',
-    bgBadge: 'bg-rose-100',
-    textBadge: 'text-rose-800',
-    borderBadge: 'border-rose-300',
-    blockColor: '#F43F5E'
+    bgBadge: 'bg-red-100 dark:bg-red-950/60',
+    textBadge: 'text-red-800 dark:text-red-300',
+    borderBadge: 'border-red-300 dark:border-red-800',
+    blockColor: '#EF4444'
   },
   {
     id: 'post_evenement',
     label: 'Post-événement',
-    description: 'Bilan, questionnaire, remerciements et débriefing',
-    color: '#F97316', // Orange
+    description: 'Démontage, nettoyage, bilan, remerciements et débriefing',
+    color: '#8B5CF6', // Violet
     textColor: '#FFFFFF',
-    bgBadge: 'bg-orange-100',
-    textBadge: 'text-orange-900',
-    borderBadge: 'border-orange-300',
-    blockColor: '#F97316'
-  },
-  {
-    id: 'preparation',
-    label: 'Préparation & Cadrage',
-    description: 'Conception initiale, cadrage, réunions internes et planning',
-    color: '#EC4899', // Rose Fuchsia
-    textColor: '#FFFFFF',
-    bgBadge: 'bg-pink-100',
-    textBadge: 'text-pink-800',
-    borderBadge: 'border-pink-300',
-    blockColor: '#EC4899'
+    bgBadge: 'bg-purple-100 dark:bg-purple-950/60',
+    textBadge: 'text-purple-800 dark:text-purple-300',
+    borderBadge: 'border-purple-300 dark:border-purple-800',
+    blockColor: '#8B5CF6'
   }
 ];
 
@@ -181,6 +181,12 @@ export function getCategoryDefinition(categoryName: string): CategoryDefinition 
 
   // 2. Recherche par mots-clés sémantiques (synonymes récurrents)
   if (
+    norm.includes('asso') && !norm.includes('parten')
+  ) {
+    return STANDARD_CATEGORIES.find((c) => c.id === 'association')!;
+  }
+
+  if (
     norm.includes('admin') ||
     norm.includes('jurid') ||
     norm.includes('prefect') ||
@@ -188,6 +194,8 @@ export function getCategoryDefinition(categoryName: string): CategoryDefinition 
     norm.includes('ag') ||
     norm.includes('bureau') ||
     norm.includes('mairie') ||
+    norm.includes('dossier') ||
+    norm.includes('supervis') ||
     norm.includes('autoris')
   ) {
     return STANDARD_CATEGORIES.find((c) => c.id === 'administratif')!;
@@ -226,8 +234,7 @@ export function getCategoryDefinition(categoryName: string): CategoryDefinition 
     norm.includes('mecen') ||
     norm.includes('bde') ||
     norm.includes('interven') ||
-    norm.includes('gravir') ||
-    norm.includes('assoc')
+    norm.includes('gravir')
   ) {
     return STANDARD_CATEGORIES.find((c) => c.id === 'partenaires')!;
   }
@@ -239,6 +246,8 @@ export function getCategoryDefinition(categoryName: string): CategoryDefinition 
     norm.includes('compte') ||
     norm.includes('tpe') ||
     norm.includes('subvent') ||
+    norm.includes('smacl') ||
+    norm.includes('assur') ||
     norm.includes('budget')
   ) {
     return STANDARD_CATEGORIES.find((c) => c.id === 'finance')!;
@@ -251,23 +260,26 @@ export function getCategoryDefinition(categoryName: string): CategoryDefinition 
     norm.includes('command') ||
     norm.includes('matos') ||
     norm.includes('materiel') ||
-    norm.includes('cheque')
+    norm.includes('devis')
   ) {
     return STANDARD_CATEGORIES.find((c) => c.id === 'fournisseurs')!;
   }
 
   if (
     norm.includes('activ') ||
-    norm.includes('jourj') ||
     norm.includes('course') ||
     norm.includes('billett') ||
-    norm.includes('dossard')
+    norm.includes('dossard') ||
+    norm.includes('rentree')
   ) {
     return STANDARD_CATEGORIES.find((c) => c.id === 'activite')!;
   }
 
   if (
     norm.includes('even') ||
+    norm.includes('cheque') ||
+    norm.includes('jourj') ||
+    norm.includes('jalon') ||
     norm.includes('anim') ||
     norm.includes('buvette') ||
     norm.includes('stand')
@@ -279,6 +291,8 @@ export function getCategoryDefinition(categoryName: string): CategoryDefinition 
     norm.includes('post') ||
     norm.includes('bilan') ||
     norm.includes('debrief') ||
+    norm.includes('nettoy') ||
+    norm.includes('demont') ||
     norm.includes('sondage') ||
     norm.includes('remercie')
   ) {

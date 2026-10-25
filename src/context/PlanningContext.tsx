@@ -295,10 +295,14 @@ const normalizeRetroEvents = (events: RetroplanningEvent[]): RetroplanningEvent[
   return (events || []).map((e) => ({
     ...e,
     tasks: sortRetroTasksChronologically(
-      (e.tasks || []).map((t) => ({
-        ...t,
-        assignee: cleanAssigneeName(t.assignee) || t.assignee || ''
-      }))
+      (e.tasks || []).map((t) => {
+        const catDef = getCategoryDefinition(t.category || STANDARD_CATEGORIES[0].label);
+        return {
+          ...t,
+          category: catDef.label,
+          assignee: cleanAssigneeName(t.assignee) || t.assignee || ''
+        };
+      })
     )
   }));
 };

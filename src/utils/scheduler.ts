@@ -31,66 +31,90 @@ export const CATEGORY_CLASSES: CategoryClass[] = [
   {
     id: 'communication',
     label: 'Communication',
-    color: '#16A34A',
-    bgLight: 'bg-emerald-50',
-    borderLight: 'border-emerald-200',
-    textDark: 'text-emerald-800'
+    color: '#10B981',
+    bgLight: 'bg-emerald-50 dark:bg-emerald-950/40',
+    borderLight: 'border-emerald-200 dark:border-emerald-800',
+    textDark: 'text-emerald-800 dark:text-emerald-300'
+  },
+  {
+    id: 'administratif',
+    label: 'Administratif',
+    color: '#6366F1',
+    bgLight: 'bg-indigo-50 dark:bg-indigo-950/40',
+    borderLight: 'border-indigo-200 dark:border-indigo-800',
+    textDark: 'text-indigo-800 dark:text-indigo-300'
   },
   {
     id: 'association',
     label: 'Association',
     color: '#F97316',
-    bgLight: 'bg-orange-50',
-    borderLight: 'border-orange-200',
-    textDark: 'text-orange-800'
+    bgLight: 'bg-orange-50 dark:bg-orange-950/40',
+    borderLight: 'border-orange-200 dark:border-orange-800',
+    textDark: 'text-orange-800 dark:text-orange-300'
   },
   {
-    id: 'administratif',
-    label: 'Administratif',
-    color: '#0EA5E9',
-    bgLight: 'bg-sky-50',
-    borderLight: 'border-sky-200',
-    textDark: 'text-sky-800'
+    id: 'partenaires',
+    label: 'Partenaires',
+    color: '#F59E0B',
+    bgLight: 'bg-amber-50 dark:bg-amber-950/40',
+    borderLight: 'border-amber-200 dark:border-amber-800',
+    textDark: 'text-amber-800 dark:text-amber-300'
   },
   {
-    id: 'partenaires_fournisseurs',
-    label: 'Partenaire et Fournisseurs',
-    color: '#EAB308',
-    bgLight: 'bg-amber-50',
-    borderLight: 'border-amber-200',
-    textDark: 'text-amber-800'
+    id: 'fournisseurs',
+    label: 'Fournisseurs',
+    color: '#14B8A6',
+    bgLight: 'bg-teal-50 dark:bg-teal-950/40',
+    borderLight: 'border-teal-200 dark:border-teal-800',
+    textDark: 'text-teal-800 dark:text-teal-300'
   },
   {
     id: 'finance',
     label: 'Finance',
     color: '#84CC16',
-    bgLight: 'bg-lime-50',
-    borderLight: 'border-lime-200',
-    textDark: 'text-lime-800'
+    bgLight: 'bg-lime-50 dark:bg-lime-950/40',
+    borderLight: 'border-lime-200 dark:border-lime-800',
+    textDark: 'text-lime-800 dark:text-lime-300'
+  },
+  {
+    id: 'logistique',
+    label: 'Logistique',
+    color: '#3B82F6',
+    bgLight: 'bg-sky-50 dark:bg-sky-950/40',
+    borderLight: 'border-sky-200 dark:border-sky-800',
+    textDark: 'text-sky-800 dark:text-sky-300'
   },
   {
     id: 'activite',
     label: 'Activité',
     color: '#D946EF',
-    bgLight: 'bg-fuchsia-50',
-    borderLight: 'border-fuchsia-200',
-    textDark: 'text-fuchsia-800'
+    bgLight: 'bg-fuchsia-50 dark:bg-fuchsia-950/40',
+    borderLight: 'border-fuchsia-200 dark:border-fuchsia-800',
+    textDark: 'text-fuchsia-800 dark:text-fuchsia-300'
   },
   {
-    id: 'logistique_securite',
-    label: 'Logistique et Sécurité de la course',
+    id: 'evenement',
+    label: 'Événement',
     color: '#EF4444',
-    bgLight: 'bg-rose-50',
-    borderLight: 'border-rose-200',
-    textDark: 'text-rose-800'
+    bgLight: 'bg-rose-50 dark:bg-rose-950/40',
+    borderLight: 'border-rose-200 dark:border-rose-800',
+    textDark: 'text-rose-800 dark:text-rose-300'
+  },
+  {
+    id: 'post_evenement',
+    label: 'Post-événement',
+    color: '#8B5CF6',
+    bgLight: 'bg-purple-50 dark:bg-purple-950/40',
+    borderLight: 'border-purple-200 dark:border-purple-800',
+    textDark: 'text-purple-800 dark:text-purple-300'
   },
   {
     id: 'autre',
     label: 'Autres Tâches',
     color: '#64748B',
-    bgLight: 'bg-slate-50',
-    borderLight: 'border-slate-200',
-    textDark: 'text-slate-800'
+    bgLight: 'bg-slate-50 dark:bg-slate-800',
+    borderLight: 'border-slate-200 dark:border-slate-700',
+    textDark: 'text-slate-800 dark:text-slate-300'
   }
 ];
 
@@ -101,26 +125,35 @@ export function getCategoryClassId(cat?: string): string {
   if (!cat) return 'autre';
   const c = cat.toLowerCase().trim();
 
-  if (c.includes('comm') || c.includes('réseau') || c.includes('reseau') || c.includes('tiktok') || c.includes('info') || c.includes('site') || c.includes('affiche')) {
+  if (c.includes('comm') || c.includes('réseau') || c.includes('reseau') || c.includes('tiktok') || c.includes('info') || c.includes('site') || c.includes('affiche') || c.includes('media') || c.includes('strava')) {
     return 'communication';
   }
   if (c.includes('asso') && !c.includes('passation')) {
     return 'association';
   }
-  if (c.includes('admin') || c.includes('préfect') || c.includes('prefect') || c.includes('compte') || c.includes('mairie') || c.includes('salle') || c.includes('alcool') || c.includes('tpe') || c.includes('subvent')) {
+  if (c.includes('admin') || c.includes('préfect') || c.includes('prefect') || c.includes('mairie') || c.includes('dossier') || c.includes('supervis') || c.includes('statut') || c.includes('jurid')) {
     return 'administratif';
   }
-  if (c.includes('parten') || c.includes('fourn') || c.includes('bde') || c.includes('sponso') || c.includes('dpb') || c.includes('camion') || c.includes('dj') || c.includes('food')) {
-    return 'partenaires_fournisseurs';
+  if (c.includes('fourn') || c.includes('tshirt') || c.includes('t-shirt') || c.includes('dpb') || c.includes('matériel') || c.includes('materiel') || c.includes('devis')) {
+    return 'fournisseurs';
   }
-  if (c.includes('finan') || c.includes('banque') || c.includes('assur') || c.includes('chèque') || c.includes('cheque') || c.includes('smacl')) {
+  if (c.includes('parten') || c.includes('bde') || c.includes('sponso') || c.includes('mécèn') || c.includes('mecen')) {
+    return 'partenaires';
+  }
+  if (c.includes('finan') || c.includes('banque') || c.includes('assur') || c.includes('smacl') || c.includes('tpe') || c.includes('subvent') || c.includes('compte')) {
     return 'finance';
   }
-  if (c.includes('activ') || c.includes('even') || c.includes('évén') || c.includes('strava') || c.includes('run') || c.includes('gateau') || c.includes('bonbon') || c.includes('dossard') || c.includes('course')) {
-    return 'activite';
+  if (c.includes('logist') || c.includes('sécur') || c.includes('secur') || c.includes('benevol') || c.includes('bénévol') || c.includes('balis') || c.includes('pompier') || c.includes('croix') || c.includes('salle')) {
+    return 'logistique';
   }
-  if (c.includes('logist') || c.includes('sécur') || c.includes('secur') || c.includes('benevol') || c.includes('bénévol') || c.includes('balis') || c.includes('pompier') || c.includes('croix')) {
-    return 'logistique_securite';
+  if (c.includes('post') || c.includes('debrief') || c.includes('nettoy') || c.includes('démont')) {
+    return 'post_evenement';
+  }
+  if (c.includes('even') || c.includes('évén') || c.includes('chèque') || c.includes('cheque') || c.includes('jalon') || c.includes('jour j')) {
+    return 'evenement';
+  }
+  if (c.includes('activ') || c.includes('course') || c.includes('dossard') || c.includes('rentrée') || c.includes('rentree')) {
+    return 'activite';
   }
 
   return 'autre';
