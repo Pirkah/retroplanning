@@ -919,11 +919,20 @@ export const RetroplanningView: React.FC = () => {
                   <input
                     type="text"
                     required
-                    placeholder="Ex: S39, S40, S42 (12 oct.)..."
+                    list="retro-weeks-list"
+                    placeholder="Ex: S39, S40, S41, S42 (12 oct.)..."
                     value={taskFormWeek}
                     onChange={(e) => setTaskFormWeek(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"
                   />
+                  <datalist id="retro-weeks-list">
+                    {Array.from({ length: 18 }, (_, i) => `S${35 + i}`).map((w) => (
+                      <option key={w} value={w} />
+                    ))}
+                    {Array.from({ length: 26 }, (_, i) => `S${String(i + 1).padStart(2, '0')}`).map((w) => (
+                      <option key={w} value={w} />
+                    ))}
+                  </datalist>
                 </div>
 
                 <div>
@@ -998,11 +1007,18 @@ export const RetroplanningView: React.FC = () => {
                   </label>
                   <input
                     type="text"
+                    list="retro-assignees-list"
                     placeholder="Ex: Vianney Urbanick, Julien Nicolle, Toute l'équipe..."
                     value={taskFormAssignee}
                     onChange={(e) => setTaskFormAssignee(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500"
                   />
+                  <datalist id="retro-assignees-list">
+                    <option value="Toute l’équipe" />
+                    {members.map((m) => (
+                      <option key={m.id} value={m.name} />
+                    ))}
+                  </datalist>
                 </div>
 
                 <div>

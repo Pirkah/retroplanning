@@ -663,6 +663,23 @@ const DEFAULT_TASKS: Task[] = [
     "retroTaskId": "t-dos-4"
   },
   {
+    "id": "task-dos-enjeux",
+    "title": "Effectuer la partie sur les enjeux",
+    "startDate": "2026-10-05",
+    "endDate": "2026-10-11",
+    "color": "#10B981",
+    "status": "todo",
+    "priority": "medium",
+    "progress": 0,
+    "category": "Communication",
+    "assignee": "Vianney Urbanick",
+    "assigneeId": "m-vianney",
+    "eventId": "event-rnf-dossier-1",
+    "eventTitle": "1er Dossier à rendre",
+    "weekLabel": "S41",
+    "retroTaskId": "t-dos-enjeux"
+  },
+  {
     "id": "task-dos-5",
     "title": "Effectuer la table des matières",
     "startDate": "2026-10-05",
@@ -1341,6 +1358,15 @@ const DEFAULT_EVENTS: RetroplanningEvent[] = [
         "assignee": "Sina Abdoul Bastoi",
         "status": "todo",
         "ganttTaskId": "task-dos-4"
+      },
+      {
+        "id": "t-dos-enjeux",
+        "weekLabel": "S41",
+        "category": "Communication",
+        "action": "Effectuer la partie sur les enjeux",
+        "assignee": "Vianney Urbanick",
+        "status": "todo",
+        "ganttTaskId": "task-dos-enjeux"
       },
       {
         "id": "t-dos-5",

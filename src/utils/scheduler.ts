@@ -491,17 +491,33 @@ export function parseRetroWeekTimestamp(weekLabel: string): number {
     }
   }
 
-  // 2. Extraction du numéro de semaine ISO Sxx (ex: "S24", "S39", "S01", "S12")
-  const wMatch = clean.match(/s(\d{1,2})/i);
+  // 2. Format ISO YYYY-MM-DD
+  const isoMatch = clean.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    return new Date(parseInt(isoMatch[1], 10), parseInt(isoMatch[2], 10) - 1, parseInt(isoMatch[3], 10)).getTime();
+  }
+
+  // 3. Format JJ/MM/AAAA ou JJ/MM/AA
+  const slashMatch = clean.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{2,4})$/);
+  if (slashMatch) {
+    let year = parseInt(slashMatch[3], 10);
+    if (year < 100) year += 2000;
+    return new Date(year, parseInt(slashMatch[2], 10) - 1, parseInt(slashMatch[1], 10)).getTime();
+  }
+
+  // 4. Extraction du numéro de semaine ISO (ex: "S24", "S 41", "Semaine 41", "W41", "41")
+  const wMatch = clean.match(/(?:semaine\s*|w\s*|s\s*|^)(\d{1,2})\b/i);
   if (wMatch) {
     const weekNum = parseInt(wMatch[1], 10);
-    // Semaines 23 à 53 appartiennent à 2026, semaines 1 à 22 à 2027
-    const year = weekNum >= 23 ? 2026 : 2027;
-    // Début de semaine ISO (lundi)
-    const simple = new Date(Date.UTC(year, 0, 4));
-    const dayOfWeek = simple.getUTCDay() || 7;
-    const week1Monday = new Date(Date.UTC(year, 0, 4 - dayOfWeek + 1));
-    return week1Monday.getTime() + (weekNum - 1) * 7 * 24 * 60 * 60 * 1000;
+    if (weekNum >= 1 && weekNum <= 53) {
+      // Semaines 23 à 53 appartiennent à 2026, semaines 1 à 22 à 2027
+      const year = weekNum >= 23 ? 2026 : 2027;
+      // Début de semaine ISO (lundi)
+      const simple = new Date(Date.UTC(year, 0, 4));
+      const dayOfWeek = simple.getUTCDay() || 7;
+      const week1Monday = new Date(Date.UTC(year, 0, 4 - dayOfWeek + 1));
+      return week1Monday.getTime() + (weekNum - 1) * 7 * 24 * 60 * 60 * 1000;
+    }
   }
 
   return 9999999999999;

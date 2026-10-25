@@ -271,8 +271,20 @@ const cleanAssigneeName = (name?: string): string | undefined => {
 
 const normalizeTask = (t: Task): Task => {
   const catDef = getCategoryDefinition(t.category || STANDARD_CATEGORIES[0].label);
-  const cleanAssignee = cleanAssigneeName(t.assignee);
+  let cleanAssignee = cleanAssigneeName(t.assignee);
   let cleanId = t.assigneeId;
+
+  if (!cleanAssignee && cleanId) {
+    if (cleanId === 'm-vianney') cleanAssignee = 'Vianney Urbanick';
+    else if (cleanId === 'm-julien') cleanAssignee = 'Julien Nicolle';
+    else if (cleanId === 'm-theo') cleanAssignee = 'Théo';
+    else if (cleanId === 'm-mathias') cleanAssignee = 'Mathias Samson';
+    else if (cleanId === 'm-sina') cleanAssignee = 'Sina Abdoul Bastoi';
+    else if (cleanId === 'm-christelle') cleanAssignee = 'Christelle Voisin';
+    else if (cleanId === 'm-marius') cleanAssignee = 'Marius Chevalier';
+    else if (cleanId === 'm-bde') cleanAssignee = 'BDE IUT GEA';
+  }
+
   if (cleanAssignee === 'Vianney Urbanick') cleanId = 'm-vianney';
   else if (cleanAssignee === 'Julien Nicolle') cleanId = 'm-julien';
   else if (cleanAssignee === 'Théo') cleanId = 'm-theo';
@@ -320,6 +332,154 @@ export const ensureAllDefaultMembers = (existingMembers?: TeamMember[]): TeamMem
   return list.map(normalizeMember);
 };
 
+/**
+ * Réconciliation intelligente et bidirectionnelle entre les événements de rétroplanning
+ * et la liste globale des tâches Gantt :
+ * 1. Garantit que chaque action de rétroplanning (event.tasks) a sa tâche Gantt correspondante dans project.tasks.
+ * 2. Maintient une synchronisation stricte 1:1 (action <-> title, statut, dates/semaine, catégorie unifiée, assigné).
+ * 3. Préserve les tâches Gantt générales autonomes (ex: "Mail prof") qui ne sont rattachées à aucun événement.
+ * 4. Déduplique strictement les tâches dans project.tasks pour éliminer tout risque de doublons.
+ */
+export const reconcileProjectTasksAndEvents = (p: Project): Project => {
+  if (!p) return p;
+
+  const members = ensureAllDefaultMembers(p.members);
+  const rawEvents = (p.events && p.events.length > 0) ? p.events : (DEFAULT_PROJECT.events || []);
+  const normalizedEvents = normalizeRetroEvents(rawEvents);
+  const rawTasks = (p.tasks && p.tasks.length > 0) ? p.tasks : DEFAULT_PROJECT.tasks;
+  const currentTasks = rawTasks.map(normalizeTask);
+
+  const finalTasks: Task[] = [...currentTasks];
+
+  // 1. Parcourir toutes les tâches de tous les événements
+  const reconciledEvents = normalizedEvents.map((evt) => {
+    const updatedEvtTasks = evt.tasks.map((rt) => {
+      const dates = weekLabelToDates(rt.weekLabel);
+      const catDef = getCategoryDefinition(rt.category || STANDARD_CATEGORIES[0].label);
+      const cleanAssignee = cleanAssigneeName(rt.assignee);
+
+      // Chercher la tâche Gantt correspondante
+      const matchIdx = finalTasks.findIndex(
+        (gt) =>
+          (rt.ganttTaskId && gt.id === rt.ganttTaskId) ||
+          (gt.retroTaskId && gt.retroTaskId === rt.id) ||
+          gt.id === rt.id ||
+          (gt.eventId === evt.id && gt.title.toLowerCase().trim() === rt.action.toLowerCase().trim()) ||
+          (!gt.eventId && gt.title.toLowerCase().trim() === rt.action.toLowerCase().trim())
+      );
+
+      if (matchIdx >= 0) {
+        // Tâche Gantt trouvée : mettre à jour et sceller le lien 1:1
+        const existingGt = finalTasks[matchIdx];
+        const linkedGanttId = existingGt.id;
+
+        const updatedGt: Task = normalizeTask({
+          ...existingGt,
+          title: rt.action,
+          startDate: existingGt.startDate || dates.startDate,
+          endDate: existingGt.endDate || dates.endDate,
+          category: catDef.label,
+          color: catDef.color,
+          assignee: cleanAssignee || existingGt.assignee,
+          eventId: evt.id,
+          eventTitle: evt.title,
+          weekLabel: rt.weekLabel,
+          retroTaskId: rt.id,
+          status: (rt.status === 'completed' || rt.status === 'event'
+            ? 'completed'
+            : rt.status === 'in_progress'
+            ? 'in_progress'
+            : existingGt.status || 'todo') as TaskStatus,
+          progress: rt.status === 'completed' || rt.status === 'event'
+            ? 100
+            : rt.status === 'in_progress'
+            ? (existingGt.progress && existingGt.progress > 0 && existingGt.progress < 100 ? existingGt.progress : 50)
+            : existingGt.progress || 0,
+          isMilestone: Boolean(rt.isEventHighlight || rt.status === 'event')
+        });
+
+        finalTasks[matchIdx] = updatedGt;
+
+        return {
+          ...rt,
+          category: catDef.label,
+          assignee: cleanAssignee || rt.assignee,
+          ganttTaskId: linkedGanttId
+        };
+      } else {
+        // Tâche présente dans le rétroplanning mais manquante dans le Gantt !
+        // Création automatique de la tâche Gantt liée
+        const newGanttId = rt.ganttTaskId || `task-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+        const newGt: Task = normalizeTask({
+          id: newGanttId,
+          title: rt.action,
+          startDate: dates.startDate,
+          endDate: dates.endDate,
+          color: catDef.color,
+          status: (rt.status === 'completed' || rt.status === 'event'
+            ? 'completed'
+            : rt.status === 'in_progress'
+            ? 'in_progress'
+            : 'todo') as TaskStatus,
+          priority: 'medium',
+          progress: rt.status === 'completed' || rt.status === 'event' ? 100 : rt.status === 'in_progress' ? 50 : 0,
+          category: catDef.label,
+          assignee: cleanAssignee,
+          isMilestone: Boolean(rt.isEventHighlight || rt.status === 'event'),
+          eventId: evt.id,
+          eventTitle: evt.title,
+          weekLabel: rt.weekLabel,
+          retroTaskId: rt.id
+        });
+
+        finalTasks.push(newGt);
+
+        return {
+          ...rt,
+          category: catDef.label,
+          assignee: cleanAssignee || rt.assignee,
+          ganttTaskId: newGanttId
+        };
+      }
+    });
+
+    return {
+      ...evt,
+      tasks: sortRetroTasksChronologically(updatedEvtTasks)
+    };
+  });
+
+  // 2. Déduplication stricte des tâches Gantt
+  const seenGanttIds = new Set<string>();
+  const seenRetroKeys = new Set<string>();
+  const deduplicatedTasks: Task[] = [];
+
+  for (const t of finalTasks) {
+    if (seenGanttIds.has(t.id)) continue;
+    seenGanttIds.add(t.id);
+
+    if (t.retroTaskId) {
+      if (seenRetroKeys.has(t.retroTaskId)) continue;
+      seenRetroKeys.add(t.retroTaskId);
+    }
+
+    if (t.eventId) {
+      const eventKey = `${t.eventId}:::${t.title.toLowerCase().trim()}`;
+      if (seenRetroKeys.has(eventKey)) continue;
+      seenRetroKeys.add(eventKey);
+    }
+
+    deduplicatedTasks.push(t);
+  }
+
+  return {
+    ...p,
+    members,
+    events: sortRetroEventsChronologically(reconciledEvents),
+    tasks: sortTasksChronologically(deduplicatedTasks)
+  };
+};
+
 export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [projects, setProjects] = useState<Project[]>(() => {
     try {
@@ -329,29 +489,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (Array.isArray(parsed) && parsed.length > 0) {
           const loaded = parsed
             .filter((p: Project) => p.id !== 'proj-gea-2026')
-            .map((p: Project) => {
-              // Ne JAMAIS écraser les événements existants s'ils sont déjà sauvegardés
-              const rawEvents = (p.events && p.events.length > 0)
-                ? p.events
-                : (DEFAULT_PROJECT.events || []);
-
-              // Ne JAMAIS écraser les tâches existantes si elles sont déjà sauvegardées
-              const rawTasks = (p.tasks && p.tasks.length > 0)
-                ? p.tasks
-                : DEFAULT_PROJECT.tasks;
-
-              const normalizedMembers = ensureAllDefaultMembers(p.members);
-              const normalizedTasks = rawTasks.map(normalizeTask);
-              const normalizedEvents = normalizeRetroEvents(rawEvents);
-
-              return {
-                ...p,
-                updatedAt: p.updatedAt || new Date().toISOString(),
-                tasks: sortTasksChronologically(normalizedTasks),
-                members: normalizedMembers,
-                events: sortRetroEventsChronologically(normalizedEvents)
-              };
-            });
+            .map((p: Project) => reconcileProjectTasksAndEvents(p));
 
           if (loaded.length > 0) {
             try {
@@ -364,7 +502,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } catch (e) {
       console.error('Erreur chargement localStorage:', e);
     }
-    return [DEFAULT_PROJECT];
+    return [reconcileProjectTasksAndEvents(DEFAULT_PROJECT)];
   });
 
   const [activeProjectId, setActiveProjectId] = useState<string>(() => {
@@ -618,14 +756,15 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const restoreVaultSnapshot = (id: string): boolean => {
     const snap = vaultSnapshots.find((s) => s.id === id);
     if (!snap || !Array.isArray(snap.projects) || snap.projects.length === 0) return false;
-    setProjects(snap.projects);
+    const reconciled = snap.projects.map((p) => reconcileProjectTasksAndEvents(p));
+    setProjects(reconciled);
     const targetActive = snap.activeProjectId || activeProjectIdRef.current;
     setActiveProjectId(targetActive);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(snap.projects));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(reconciled));
       localStorage.setItem(ACTIVE_PROJ_KEY, targetActive);
     } catch {}
-    broadcastState(snap.projects, targetActive);
+    broadcastState(reconciled, targetActive);
     return true;
   };
 
@@ -693,16 +832,11 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const validProjects = incomingProjects
       .filter((p: Project) => p.id !== 'proj-gea-2026')
       .map((p: Project) => {
-        const events = (p.events && p.events.length > 0) ? p.events : (DEFAULT_PROJECT.events || []);
-        const tasks = (p.tasks && p.tasks.length > 0) ? p.tasks : DEFAULT_PROJECT.tasks;
-        const members = ensureAllDefaultMembers(p.members);
-        return {
+        const withTimestamp = {
           ...p,
-          updatedAt: p.updatedAt || incomingLastModified || new Date().toISOString(),
-          members,
-          tasks: sortTasksChronologically(tasks.map(normalizeTask)),
-          events: sortRetroEventsChronologically(normalizeRetroEvents(events))
+          updatedAt: p.updatedAt || incomingLastModified || new Date().toISOString()
         };
+        return reconcileProjectTasksAndEvents(withTimestamp);
       });
 
     if (validProjects.length === 0) return;
@@ -1144,13 +1278,13 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const newGanttId = 'task_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
     const newRetroId = taskData.eventId ? `rtask-${Date.now()}` : undefined;
 
-    const newTask: Task = {
+    const newTask: Task = normalizeTask({
       ...taskData,
       id: newGanttId,
       category: catDef.label,
       color: taskData.color || catDef.color,
       retroTaskId: newRetroId
-    };
+    });
 
     const updatedProjects = projects.map((p) => {
       if (p.id === activeProjectId) {
@@ -1162,7 +1296,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             const newRetroTask: RetroplanningTask = {
               id: newRetroId!,
               weekLabel: newTask.weekLabel || 'S40',
-              category: newTask.category || 'Autres Tâches',
+              category: newTask.category || STANDARD_CATEGORIES[0].label,
               action: newTask.title,
               assignee: newTask.assignee || 'Toute l’équipe',
               status: newTask.isMilestone ? 'event' : newTask.status === 'completed' ? 'completed' : newTask.status === 'in_progress' ? 'in_progress' : 'todo',
@@ -1171,17 +1305,18 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             };
             updatedEvents = updatedEvents.map((e) =>
               e.id === newTask.eventId
-                ? { ...e, tasks: sortRetroTasksChronologically([...(e.tasks || []), newRetroTask]) }
+                ? { ...e, tasks: [...(e.tasks || []), newRetroTask] }
                 : e
             );
           }
         }
-        return {
+        const nextProject: Project = {
           ...p,
           updatedAt: new Date().toISOString(),
-          tasks: sortTasksChronologically([...(p.tasks || []), newTask]),
+          tasks: [...(p.tasks || []), newTask],
           events: updatedEvents
         };
+        return reconcileProjectTasksAndEvents(nextProject);
       }
       return p;
     });
@@ -1192,11 +1327,11 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const updateTask = (updatedTask: Task) => {
     const catDef = getCategoryDefinition(updatedTask.category || STANDARD_CATEGORIES[0].label);
-    const normalizedTask: Task = {
+    const normalizedTask: Task = normalizeTask({
       ...updatedTask,
       category: catDef.label,
       color: updatedTask.color || catDef.color
-    };
+    });
 
     const updatedProjects = projects.map((p) => {
       if (p.id === activeProjectId) {
@@ -1216,28 +1351,44 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 if (retroExists) {
                   return {
                     ...e,
-                    tasks: sortRetroTasksChronologically(
-                      (e.tasks || []).map((rt) => {
-                        if (rt.id === normalizedTask.retroTaskId || rt.ganttTaskId === normalizedTask.id || rt.id === normalizedTask.id) {
-                          return {
-                            ...rt,
-                            action: normalizedTask.title,
-                            category: normalizedTask.category || rt.category || 'Autres Tâches',
-                            assignee: normalizedTask.assignee || rt.assignee,
-                            weekLabel: normalizedTask.weekLabel || rt.weekLabel,
-                            status: normalizedTask.status === 'completed'
-                              ? 'completed'
-                              : normalizedTask.status === 'in_progress'
-                              ? 'in_progress'
-                              : rt.status === 'event'
-                              ? 'event'
-                              : 'todo',
-                            ganttTaskId: normalizedTask.id
-                          };
-                        }
-                        return rt;
-                      })
-                    )
+                    tasks: (e.tasks || []).map((rt) => {
+                      if (rt.id === normalizedTask.retroTaskId || rt.ganttTaskId === normalizedTask.id || rt.id === normalizedTask.id) {
+                        return {
+                          ...rt,
+                          action: normalizedTask.title,
+                          category: normalizedTask.category || rt.category || STANDARD_CATEGORIES[0].label,
+                          assignee: normalizedTask.assignee || rt.assignee,
+                          weekLabel: normalizedTask.weekLabel || rt.weekLabel,
+                          status: normalizedTask.status === 'completed'
+                            ? 'completed'
+                            : normalizedTask.status === 'in_progress'
+                            ? 'in_progress'
+                            : rt.status === 'event'
+                            ? 'event'
+                            : 'todo',
+                          ganttTaskId: normalizedTask.id
+                        };
+                      }
+                      return rt;
+                    })
+                  };
+                } else {
+                  const newRetroTask: RetroplanningTask = {
+                    id: normalizedTask.retroTaskId || `rtask-${Date.now()}`,
+                    weekLabel: normalizedTask.weekLabel || 'S40',
+                    category: normalizedTask.category || STANDARD_CATEGORIES[0].label,
+                    action: normalizedTask.title,
+                    assignee: normalizedTask.assignee || 'Toute l’équipe',
+                    status: normalizedTask.status === 'completed'
+                      ? 'completed'
+                      : normalizedTask.status === 'in_progress'
+                      ? 'in_progress'
+                      : 'todo',
+                    ganttTaskId: normalizedTask.id
+                  };
+                  return {
+                    ...e,
+                    tasks: [...(e.tasks || []), newRetroTask]
                   };
                 }
               }
@@ -1246,14 +1397,14 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           }
         }
 
-        return {
+        const nextProject: Project = {
           ...p,
           updatedAt: new Date().toISOString(),
-          tasks: sortTasksChronologically(
-            (p.tasks || []).map((t) => (t.id === normalizedTask.id ? normalizedTask : t))
-          ),
+          tasks: (p.tasks || []).map((t) => (t.id === normalizedTask.id ? normalizedTask : t)),
           events: updatedEvents
         };
+
+        return reconcileProjectTasksAndEvents(nextProject);
       }
       return p;
     });
@@ -1454,7 +1605,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           ganttTaskId: newGanttId
         };
 
-        const newGanttTask: Task = {
+        const newGanttTask: Task = normalizeTask({
           id: newGanttId,
           title: taskData.action,
           startDate: dates.startDate,
@@ -1474,22 +1625,24 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           eventTitle: eventTitle,
           weekLabel: taskData.weekLabel,
           retroTaskId: newRetroId
-        };
+        });
 
-        return {
+        const nextProject: Project = {
           ...p,
           updatedAt: new Date().toISOString(),
-          tasks: sortTasksChronologically([...(p.tasks || []), newGanttTask]),
+          tasks: [...(p.tasks || []), newGanttTask],
           events: (p.events || []).map((e) => {
             if (e.id === eventId) {
               return {
                 ...e,
-                tasks: sortRetroTasksChronologically([...(e.tasks || []), newRetroTask])
+                tasks: [...(e.tasks || []), newRetroTask]
               };
             }
             return e;
           })
         };
+
+        return reconcileProjectTasksAndEvents(nextProject);
       }
       return p;
     });
@@ -1503,16 +1656,20 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       if (p.id === activeProjectId) {
         const targetEvent = (p.events || []).find((e) => e.id === eventId);
         const eventTitle = targetEvent?.title || '';
+        const catDef = getCategoryDefinition(updatedTask.category || STANDARD_CATEGORIES[0].label);
+        const dates = weekLabelToDates(updatedTask.weekLabel);
 
-        // Synchronisation vers Gantt
+        // Synchronisation vers Gantt : si la tâche Gantt existe, la mettre à jour, sinon la créer !
+        let ganttTaskFound = false;
         const updatedTasks = (p.tasks || []).map((gt) => {
-          if (gt.retroTaskId === updatedTask.id || gt.id === updatedTask.ganttTaskId || gt.id === updatedTask.id) {
-            const catDef = getCategoryDefinition(updatedTask.category || gt.category || STANDARD_CATEGORIES[0].label);
-            const dates = updatedTask.weekLabel && updatedTask.weekLabel !== gt.weekLabel
-              ? weekLabelToDates(updatedTask.weekLabel)
-              : { startDate: gt.startDate, endDate: gt.endDate };
-
-            return {
+          if (
+            (updatedTask.ganttTaskId && gt.id === updatedTask.ganttTaskId) ||
+            (gt.retroTaskId && gt.retroTaskId === updatedTask.id) ||
+            gt.id === updatedTask.id ||
+            (gt.eventId === eventId && gt.title.toLowerCase().trim() === updatedTask.action.toLowerCase().trim())
+          ) {
+            ganttTaskFound = true;
+            return normalizeTask({
               ...gt,
               title: updatedTask.action,
               category: catDef.label,
@@ -1523,6 +1680,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
               weekLabel: updatedTask.weekLabel,
               eventId: eventId,
               eventTitle: eventTitle,
+              retroTaskId: updatedTask.id,
               status: (updatedTask.status === 'completed'
                 ? 'completed'
                 : updatedTask.status === 'in_progress'
@@ -1536,27 +1694,54 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 ? (gt.progress === 100 ? 50 : gt.progress || 50)
                 : 0,
               isMilestone: Boolean(updatedTask.isEventHighlight || updatedTask.status === 'event')
-            };
+            });
           }
           return gt;
         });
 
-        return {
+        if (!ganttTaskFound) {
+          const newGanttId = updatedTask.ganttTaskId || `gtask-${Date.now()}`;
+          updatedTask.ganttTaskId = newGanttId;
+          const newGanttTask: Task = normalizeTask({
+            id: newGanttId,
+            title: updatedTask.action,
+            startDate: dates.startDate,
+            endDate: dates.endDate,
+            color: catDef.color,
+            status: (updatedTask.status === 'completed' || updatedTask.status === 'event'
+              ? 'completed'
+              : updatedTask.status === 'in_progress'
+              ? 'in_progress'
+              : 'todo') as TaskStatus,
+            priority: 'medium',
+            progress: updatedTask.status === 'completed' || updatedTask.status === 'event' ? 100 : updatedTask.status === 'in_progress' ? 50 : 0,
+            category: catDef.label,
+            assignee: cleanAssigneeName(updatedTask.assignee),
+            isMilestone: Boolean(updatedTask.isEventHighlight || updatedTask.status === 'event'),
+            eventId: eventId,
+            eventTitle: eventTitle,
+            weekLabel: updatedTask.weekLabel,
+            retroTaskId: updatedTask.id
+          });
+          updatedTasks.push(newGanttTask);
+        }
+
+        const nextProject: Project = {
           ...p,
           updatedAt: new Date().toISOString(),
-          tasks: sortTasksChronologically(updatedTasks),
+          tasks: updatedTasks,
           events: (p.events || []).map((e) => {
             if (e.id === eventId) {
               return {
                 ...e,
-                tasks: sortRetroTasksChronologically(
-                  (e.tasks || []).map((t) => (t.id === updatedTask.id ? updatedTask : t))
-                )
+                tasks: (e.tasks || []).map((t) => (t.id === updatedTask.id ? updatedTask : t))
               };
             }
             return e;
           })
         };
+
+        return reconcileProjectTasksAndEvents(nextProject);
       }
       return p;
     });
@@ -1568,7 +1753,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const deleteRetroTask = (eventId: string, taskId: string) => {
     const updatedProjects = projects.map((p) => {
       if (p.id === activeProjectId) {
-        return {
+        const nextProject: Project = {
           ...p,
           updatedAt: new Date().toISOString(),
           // Supprime aussi la tâche Gantt liée
@@ -1577,12 +1762,13 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             if (e.id === eventId) {
               return {
                 ...e,
-                tasks: (e.tasks || []).filter((t) => t.id !== taskId)
+                tasks: (e.tasks || []).filter((t) => t.id !== taskId && t.ganttTaskId !== taskId)
               };
             }
             return e;
           })
         };
+        return reconcileProjectTasksAndEvents(nextProject);
       }
       return p;
     });
@@ -1611,12 +1797,7 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       // Cas 1 : Export complet de la base de données { projects: [...], activeProjectId: ... }
       if (Array.isArray(parsed.projects) && parsed.projects.length > 0) {
-        const validProjects = parsed.projects.map((p: Project) => ({
-          ...p,
-          tasks: sortTasksChronologically((p.tasks || []).map(normalizeTask)),
-          members: ensureAllDefaultMembers(p.members),
-          events: sortRetroEventsChronologically(normalizeRetroEvents(p.events || []))
-        }));
+        const validProjects = parsed.projects.map((p: Project) => reconcileProjectTasksAndEvents(p));
         const targetActive = (parsed.activeProjectId && validProjects.some((p: Project) => p.id === parsed.activeProjectId))
           ? parsed.activeProjectId
           : validProjects[0].id;
@@ -1629,15 +1810,16 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
       // Cas 2 : Export d’un projet individuel { tasks: [...], events: [...] }
       if (Array.isArray(parsed.tasks)) {
-        const imported: Project = {
+        const rawImported: Project = {
           id: parsed.id || 'proj_' + Date.now(),
           name: parsed.name ? `${parsed.name} (Restauré)` : 'Planning Restauré',
           description: parsed.description || '',
           createdAt: parsed.createdAt || new Date().toISOString(),
-          tasks: sortTasksChronologically(parsed.tasks.map(normalizeTask)),
-          members: ensureAllDefaultMembers(parsed.members),
-          events: sortRetroEventsChronologically(normalizeRetroEvents(parsed.events || []))
+          tasks: parsed.tasks || [],
+          members: parsed.members || [],
+          events: parsed.events || []
         };
+        const imported = reconcileProjectTasksAndEvents(rawImported);
         const nextProjects = [...projects.filter((p) => p.id !== imported.id), imported];
         setProjects(nextProjects);
         setActiveProjectId(imported.id);
@@ -1685,11 +1867,12 @@ export const PlanningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           }
         });
 
-        return {
+        const nextProject: Project = {
           ...p,
           events: sortRetroEventsChronologically(mergedEvents),
           updatedAt: new Date().toISOString()
         };
+        return reconcileProjectTasksAndEvents(nextProject);
       });
 
       setProjects(updatedProjects);
